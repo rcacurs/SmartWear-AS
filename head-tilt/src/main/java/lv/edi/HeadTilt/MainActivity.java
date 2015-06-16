@@ -1,17 +1,34 @@
 package lv.edi.HeadTilt;
 
-import android.support.v7.app.ActionBarActivity;
+
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.util.Timer;
+import java.util.TimerTask;
 
-public class MainActivity extends ActionBarActivity {
 
+public class MainActivity extends Activity {
+
+    private Timer t = new Timer();
+    private HeadTiltView htView;
+    double r=0.5;
+    double phi=0;
+    double phiIncr=0.017;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        htView = (HeadTiltView)findViewById(R.id.headtiltview);
+        t.scheduleAtFixedRate(new TimerTask(){
+            public void run(){
+                phi+=phiIncr;
+                htView.setPolarLocation(r, phi);
+            }
+        }, 15, 15);
     }
 
     @Override
