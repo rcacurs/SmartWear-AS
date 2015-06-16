@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/SmartWear-AS.iml" filepath="$PROJECT_DIR$/SmartWear-AS.iml" />
+      <module fileurl="file://$PROJECT_DIR$/core-app/core-app.iml" filepath="$PROJECT_DIR$/core-app/core-app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/head-tilt/head-tilt.iml" filepath="$PROJECT_DIR$/head-tilt/head-tilt.iml" />
+    </modules>
+  </component>
+</project>
