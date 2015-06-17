@@ -17,16 +17,23 @@ public class HeadTiltView extends View{
     private double coordX;
     private double coordY;
     private Bitmap smiley;
+    private Bitmap sadface;
 
     public HeadTiltView(Context context) {
         super(context);
-        smiley = BitmapFactory.decodeResource(getResources(), R.drawable.smileyfacetransp);
-        smiley = Bitmap.createScaledBitmap(smiley, smiley.getWidth()/2, smiley.getHeight()/2, false);
+        smiley = BitmapFactory.decodeResource(getResources(), R.drawable.happyface500);
+        sadface = BitmapFactory.decodeResource(getResources(), R.drawable.sadface500);
+        smiley = Bitmap.createScaledBitmap(smiley, smiley.getWidth() / 4, smiley.getHeight() / 4, false);
+        sadface = Bitmap.createScaledBitmap(sadface, sadface.getWidth()/4, sadface.getHeight()/4, false);
+
     }
     public HeadTiltView(Context context, AttributeSet attrs){
         super(context, attrs);
-        smiley = BitmapFactory.decodeResource(getResources(), R.drawable.smileyfacetransp);
-        smiley = Bitmap.createScaledBitmap(smiley, smiley.getWidth() / 2, smiley.getHeight() / 2, false);
+        smiley = BitmapFactory.decodeResource(getResources(), R.drawable.happyface500);
+        sadface = BitmapFactory.decodeResource(getResources(), R.drawable.sadface500);
+        smiley = Bitmap.createScaledBitmap(smiley, smiley.getWidth() / 4, smiley.getHeight() / 4, false);
+        sadface = Bitmap.createScaledBitmap(sadface, sadface.getWidth()/4, sadface.getHeight()/4, false);
+
     }
 
     /**
@@ -56,6 +63,11 @@ public class HeadTiltView extends View{
         paint.setColor(Color.BLACK);
         paint.setAlpha(0);
         canvas.drawPaint(paint);
-        canvas.drawBitmap(smiley, (int)(coordX*range+cx-bcx), (int)(coordY*range+cy-bcy), null);
+
+        if(coordX<0) {
+            canvas.drawBitmap(smiley, (int) (coordX * range + cx - bcx), (int) (coordY * range + cy - bcy), null);
+        } else{
+            canvas.drawBitmap(sadface, (int) (coordX * range + cx - bcx), (int) (coordY * range + cy - bcy), null);
+        }
     }
 }
