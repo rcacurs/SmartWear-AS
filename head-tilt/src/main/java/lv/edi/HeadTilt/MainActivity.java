@@ -2,6 +2,8 @@ package lv.edi.HeadTilt;
 
 
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,7 +13,7 @@ import java.util.TimerTask;
 
 
 public class MainActivity extends Activity {
-
+    private HeadTiltApplication application;
     private Timer t = new Timer();
     private HeadTiltView htView;
     double r=0.5;
@@ -22,6 +24,8 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        application = (HeadTiltApplication)getApplication();
+
         htView = (HeadTiltView)findViewById(R.id.headtiltview);
         t.scheduleAtFixedRate(new TimerTask(){
             public void run(){
@@ -29,6 +33,8 @@ public class MainActivity extends Activity {
                 htView.setPolarLocation(r, phi);
             }
         }, 15, 15);
+
+        application.btAdapter = BluetoothAdapter.getDefaultAdapter();
     }
 
     @Override
@@ -47,6 +53,8 @@ public class MainActivity extends Activity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent intent = new Intent(this, HeadTiltPreferenceActivity.class);
+            startActivity(intent);
             return true;
         }
         return super.onOptionsItemSelected(item);

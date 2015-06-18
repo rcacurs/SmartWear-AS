@@ -58,15 +58,19 @@ public class HeadTiltView extends View{
         int cy = canvas.getHeight()/2;
         int range = Math.max(cx,cy);
 
-        Paint paint = new Paint();
-        paint.setStyle(Paint.Style.FILL);
-        paint.setColor(Color.BLACK);
-        paint.setAlpha(0);
-        canvas.drawPaint(paint);
-
         if(coordX<0) {
+            Paint paint = new Paint();
+            paint.setStyle(Paint.Style.FILL);
+            paint.setColor(Color.GREEN);
+            paint.setAlpha(60);
+            canvas.drawPaint(paint);
             canvas.drawBitmap(smiley, (int) (coordX * range + cx - bcx), (int) (coordY * range + cy - bcy), null);
         } else{
+            Paint paint = new Paint();
+            paint.setStyle(Paint.Style.FILL);
+            paint.setColor(Color.RED);
+            paint.setAlpha(75);
+            canvas.drawPaint(paint);
             canvas.drawBitmap(sadface, (int) (coordX * range + cx - bcx), (int) (coordY * range + cy - bcy), null);
         }
     }
