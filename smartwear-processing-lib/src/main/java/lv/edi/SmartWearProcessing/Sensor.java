@@ -1,6 +1,5 @@
 package lv.edi.SmartWearProcessing;
 
-import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -95,7 +94,6 @@ public class Sensor {
 			accData[0]=rawAccFilteredData[0];
 			accData[1]=rawAccFilteredData[1];
 			accData[2]=rawAccFilteredData[2];
-			Log.d("FILTERING", "FILTERacc");
 		} else{
 			accData[0]=rawAccData[0];
 			accData[1]=rawAccData[1];
@@ -113,7 +111,6 @@ public class Sensor {
 	public synchronized float getAccNormY(){
 		float[] accData = new float[3];
 		if(filter){
-			Log.d("FILTERING", "FILTERmag");
 			accData[0]=rawAccFilteredData[0];
 			accData[1]=rawAccFilteredData[1];
 			accData[2]=rawAccFilteredData[2];
