@@ -27,5 +27,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" exported="" name="smartwear-processing-lib.smartwear-processing-lib" level="project" />
   </component>
 </module>
