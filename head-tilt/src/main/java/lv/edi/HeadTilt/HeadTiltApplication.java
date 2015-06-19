@@ -23,12 +23,16 @@ public class HeadTiltApplication extends Application implements SharedPreference
     BluetoothService btService;
     Sensor[] sensors = new Sensor[NUMBER_OF_SENSORS];
     Handler uiHandler;
+    HeadTiltProcessingService processingService;
 
     @Override
     public void onCreate(){
         super.onCreate();
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
+        for(int i=0; i<NUMBER_OF_SENSORS; i++){
+            sensors[i]=new Sensor(i, true);
+        }
     }
 
     @Override

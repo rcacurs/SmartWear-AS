@@ -94,8 +94,10 @@ public class BluetoothService {
      */
     public void disconnectDevice(){
         connectThread.cancel();
+        receiveThread.cancel();
         isConnected=false;
         connectThread = null;
+        receiveThread=null;
         if(btEventListener!=null){
             btEventListener.onBluetoothDeviceDisconnected();
         }
@@ -123,11 +125,9 @@ public class BluetoothService {
                     btEventListener.onBluetoothDeviceConnected();
                 }
                 isConnecting=false;
-                /** TODO
-                 * MUST START RECEIVING THREAD
-                 */
-                //receiveThread = new ReceiveThread(mSocket); // create instanct to new recieveThread
-                //receiveThread.start(); // start receive thread
+
+                receiveThread = new ReceiveThread(mSocket); // create instanct to new recieveThread
+                receiveThread.start(); // start receive thread
             } catch(IOException ex){ // if exception accures
                 Log.d("connection thread","could not connect");
                 isConnecting=false;
@@ -150,14 +150,14 @@ public class BluetoothService {
 
     // thread that reads data from bluetooth connection
     public class ReceiveThread extends Thread{
-       /* private BluetoothSocket socket; // bluetooth socket
+        private BluetoothSocket socket; // bluetooth socket
         private InputStream mInputStream; // data input stream
         private boolean packet_indicator = false; // acc data packet indicator, destinguishes packet frame
         private boolean escape_indicator = false; // indicator that shows, that we received escape symbol
         private int bytes_received = 0; // number of bytes received in one packet frame
         //private int packets_received = 0; //shows number of packets received
         private int b; // value read from input stream
-        private short packet[] = new short[bytes_in_packet]; // array that stores one data packet (one accelerometer data)
+        private short packet[] = new short[bytesInPacket]; // array that stores one data packet (one accelerometer data)
         private final int PACKET_SEPERATOR = 0xFF; // symbol that defines packets start and end
         private final int PACKET_ESCAPE = 0xFE; // escape symbol, that tells us that next sybol is escape symbol
         //private double length; // for data normalization
@@ -168,7 +168,6 @@ public class BluetoothService {
         // thread run
         public void run(){
             try{
-
                 mInputStream = socket.getInputStream(); // creating input stream from socket
                 Log.d("ReceiveThread","StreamCreated");
             } catch (IOException ex){
@@ -200,9 +199,9 @@ public class BluetoothService {
                             switch(b){ // checking what the received symbol is
                                 case  PACKET_SEPERATOR: //in case of packet seperator
                                     if(bytes_received>0){ //if we have at least one byte received
-                                        if(bytes_received>=bytes_in_packet){ // if we received 7 bytes, then start to from packet
+                                        if(bytes_received>=bytesInPacket){ // if we received 7 bytes, then start to from packet
                                             bytes_received = 0; // resetting received byte counter
-                                            if(packet[0]<SmartWearApplication.NR_OF_SENSORS){ // if received data packet
+                                            if(packet[0]<sensorbuffer.length){ // if received data packet
                                                 short accx = (short)(packet[1]*256+packet[2]);
                                                 short accy = (short)(packet[3]*256+packet[4]);
                                                 short accz = (short)(packet[5]*256+packet[6]);
@@ -212,34 +211,29 @@ public class BluetoothService {
                                                 double accMagnitude = Math.sqrt(Math.pow(accx, 2)+Math.pow(accy, 2)+Math.pow(accz, 2));
                                                 double magMagnitude = Math.sqrt(Math.pow(magx, 2)+Math.pow(magy, 2)+Math.pow(magz, 2));
                                                 if(((accMagnitude<20800)&&(accMagnitude>11000)&&(magMagnitude>0)&&(magMagnitude<2000))){
-                                                    application.sensorArray[packet[0]].updateSensorData(accx, // forming accelerometer x data from two received data bytes
+                                                    sensorbuffer[packet[0]].updateSensorData(accx, // forming accelerometer x data from two received data bytes
                                                             accy, // forming accelerometer y data from two received data bytes
                                                             accz, // forming accelerometer z data from two received data bytes
                                                             magx, // forming magnetometer  x data from two received data bytes
                                                             magy,// forming magnetometer  y data from two received data bytes
                                                             magz);// forming magnetometer z data from two recieved data bytes
+                                                    Log.d("BLUETOOTH_RECEIVE", ""+sensorbuffer[packet[0]].getAccRawNormX()+" "
+                                                                                 +sensorbuffer[packet[0]].getAccRawNormY()+" "
+                                                                                 +sensorbuffer[packet[0]].getAccRawNormZ());
                                                 }
-                                            } else{// if received battery status packet
-                                                short battery_level_raw=(short)(packet[1]*256+packet[2]);
-                                                double battery_level=(((battery_level_raw)-730)/294.0)*100;
-                                                battery_level=(short)(battery_level/10)*10;
-                                                application.setBatteryLevel((short)battery_level);
+                                            }
+                                            if(packet[0]==batteryPacketIndex) {// if received battery status packet
+                                                /** TODO
+                                                 * battery packet processing
+                                                 */
+                                             /*   short battery_level_raw = (short) (packet[1] * 256 + packet[2]);
+                                                double battery_level = (((battery_level_raw) - 730) / 294.0) * 100;
+                                                battery_level = (short) (battery_level / 10) * 10;
+                                                application.setBatteryLevel((short) battery_level);
                                                 //bluetoothActivityHandler.obtainMessage(DataSourceActivity.UPDATE_TARGET_BATTERY_STATUS).sendToTarget(); // update connection activity
-                                                bluetoothActivityHandler.obtainMessage(DataSourceActivity.UPDATE_TARGET_BATTERY_STATUS,DataSourceActivity.UPDATE_DISCONNECTED,1, "").sendToTarget();
-                                                Log.d("battery level packet", "received: "+battery_level_raw+" : "+battery_level);
+                                                bluetoothActivityHandler.obtainMessage(DataSourceActivity.UPDATE_TARGET_BATTERY_STATUS, DataSourceActivity.UPDATE_DISCONNECTED, 1, "").sendToTarget();
+                                                Log.d("battery level packet", "received: " + battery_level_raw + " : " + battery_level);*/
                                             }
-
-                                            if((application.getSelectedLogFile()!=null)&&(application.isDataProcessingRunning())){
-                                                long beginTime=System.currentTimeMillis();
-                                                Log.d("LOG_PACKET", " begin"+beginTime);
-                                                logPacket(packet, application.getSelectedLogFileStream());
-                                                if(application.stampPendingFlag()){
-                                                    logStamp(application.getSelectedLogFileStream());
-                                                    application.setStampPendingFlag(false);
-                                                }
-                                                Log.d("LOG_PACKET", " end , required time "+(System.currentTimeMillis()-beginTime));
-                                            }
-//
                                         }
                                         packet_indicator=false; // reset packet indicator, bacause we have received all packet data
                                         bytes_received=0;// reset received byte counter
@@ -260,7 +254,9 @@ public class BluetoothService {
                 } catch(IOException ex){
                     // exception can acure if bluetooth connection is lost
                     isConnected=false;
-                    bluetoothActivityHandler.obtainMessage(DataSourceActivity.UPDATE_CONNECTION_STATUS,DataSourceActivity.UPDATE_DISCONNECTED,1, "").sendToTarget();
+                   if(btEventListener!=null){
+                       btEventListener.onBluetoothDeviceDisconnected();
+                   }
 
                     Log.d("RECEIVE_DATA","Catched exception" +ex.toString());
                     break; // break the main cycle
@@ -270,13 +266,13 @@ public class BluetoothService {
         public void cancel(){ // cancel method closes input stream
             try{			  // this results to that exception is thrown, and main cycle is braked
                 mInputStream.close();
-                if(application.getSelectedLogFileStream()!=null){
-                    application.getSelectedLogFileStream().close();
+                if(btEventListener!=null){
+                    btEventListener.onBluetoothDeviceDisconnected();
                 }
             } catch(IOException ex){
 
             }
-        }*/
+        }
     }
 
 }

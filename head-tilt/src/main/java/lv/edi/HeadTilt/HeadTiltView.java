@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.View;
 import android.graphics.Paint;
 import android.util.AttributeSet;
@@ -13,9 +14,9 @@ import android.util.AttributeSet;
  * Created by Richards on 16/06/2015.
  * Class that represents view for representing view feedback
  */
-public class HeadTiltView extends View{
-    private double coordX;
-    private double coordY;
+public class HeadTiltView extends View implements ProcessingEventListener{
+    private double coordX=0;
+    private double coordY=0;
     private Bitmap smiley;
     private Bitmap sadface;
 
@@ -49,6 +50,12 @@ public class HeadTiltView extends View{
         postInvalidate();
     }
 
+    public void setLocation(float x, float y){
+        coordX=x;
+        coordY=y;
+        postInvalidate();
+    }
+
     @Override
     protected void onDraw(Canvas canvas){
         super.onDraw(canvas);
@@ -73,5 +80,11 @@ public class HeadTiltView extends View{
             canvas.drawPaint(paint);
             canvas.drawBitmap(sadface, (int) (coordX * range + cx - bcx), (int) (coordY * range + cy - bcy), null);
         }
+    }
+
+    @Override
+    public void onProcessingResult(float[] result){
+        setLocation(result[0], result[1]);
+        Log.d("PROCESSING_SERVICE", "RESULT");
     }
 }

@@ -11,7 +11,9 @@ import android.os.Message;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -21,7 +23,6 @@ public class MainActivity extends Activity {
     final int REQUEST_ENABLE_BT = 1;
     private HeadTiltApplication application;
     private Menu optionsMenu;
-    private Timer t = new Timer();
     private HeadTiltView htView;
     double r=0.5;
     double phi=0;
@@ -32,7 +33,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         application = (HeadTiltApplication)getApplication();
-
+        htView = (HeadTiltView) findViewById(R.id.headtiltview);
         application.btAdapter = BluetoothAdapter.getDefaultAdapter();
         if(application.btAdapter == null){
             Toast.makeText(this, "Sorry, but device does not support bluetooth conection \n Application will now close", Toast.LENGTH_SHORT).show();
@@ -55,16 +56,10 @@ public class MainActivity extends Activity {
         //create bluetooth service object and register event listener
         application.btService = new BluetoothService(application.sensors); // create service instance
         application.btService.registerBluetoothEventListener(application);
-        // starting bluetooth service
 
-        htView = (HeadTiltView)findViewById(R.id.headtiltview);
-        t.scheduleAtFixedRate(new TimerTask(){
-            public void run(){
-                phi+=phiIncr;
-                htView.setPolarLocation(r, phi);
-            }
-        }, 15, 15);
-
+        // create processing service
+        application.processingService = new HeadTiltProcessingService(application.sensors[0]);
+        application.processingService.setProcessingEventListener(htView);
 
     }
     @Override
@@ -144,6 +139,29 @@ public class MainActivity extends Activity {
                 break;
             default:
                 break;
+        }
+    }
+
+    public void onClickSave(View view){
+        if(application.btService.isConnected()) {
+            application.processingService.setReference(application.sensors[0].getAccRawNorm());
+            Toast.makeText(this, "Saved!", Toast.LENGTH_SHORT).show();
+        } else{
+            Toast.makeText(this, "Connect to bluetooth device first!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void onClickStart(View view){
+        ToggleButton button = (ToggleButton)view;
+        if(button.isChecked()){
+            if(application.processingService.isStateSaved()) {
+                application.processingService.startProcessing();
+            } else{
+                button.setChecked(false);
+                Toast.makeText(this, "Save calibration state!", Toast.LENGTH_SHORT).show();
+            }
+        } else{
+            application.processingService.stopProcessing();
         }
     }
 

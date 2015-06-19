@@ -8,4 +8,5 @@ public interface BluetoothEventListener {
     public void onBluetoothDeviceConnecting();
     public void onBluetoothDeviceConnected();
     public void onBluetoothDeviceDisconnected();
+
 }
