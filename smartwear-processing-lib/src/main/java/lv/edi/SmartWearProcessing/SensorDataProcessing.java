@@ -280,6 +280,16 @@ public class SensorDataProcessing {
 			vector[i]=temp;
 		}
 	}
+
+	/**
+	 * Mehod returns absolute value of vector lements
+	 * @param vector with absolute value of elements
+	 */
+	public static void absVector(float[] vector){
+		for(int i = 0; i<vector.length; i++){
+			vector[i]=Math.abs(vector[i]);
+		}
+	}
 	
 	/**
 	 * method that return quaternion between two vectors
