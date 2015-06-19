@@ -32,8 +32,8 @@ public class Sensor {
 	private float[] magCalibOffset;
 	
 	/** constructs sensor object that represents sensor from sensor grid
-	 * @param identificator integer that represents sensor identifier
-	 * @param orientationUp shows if integer is put up or down. true value*/
+	 * @param identifier integer that represents sensor identifier
+	 * @param isOrientationUp shows if integer is put up or down. true value*/
 	public Sensor(int identifier, boolean isOrientationUp){
 		for(int i=0; i<3; i++){
 			P_xyz_acc[i]=1;
@@ -51,10 +51,31 @@ public class Sensor {
 	 * return true if sensor orientation is up and false if orientation of sensor is down
 	 * @return isOrientationUp identifier indicates if sensor is up or down
 	 **/
+
 	public synchronized boolean isOrientationUp(){
 		return isOrientationUp;
 	}
+
+	/**
+	 *
+	 * @return return normalized raw accelerometer data for X axis
+	 */
+	public synchronized float getAccRawNormX(){ return (float)(rawAccData[0]/(Math.sqrt(Math.pow(rawAccData[0],2)+Math.pow(rawAccData[1],2)+Math.pow(rawAccData[2],2))));}
+
+	/**
+	 *
+	 * @return returns normalized raw accelerometer data for y axis
+	 */
+	public synchronized float getAccRawNormY(){ return (float)(rawAccData[1]/(Math.sqrt(Math.pow(rawAccData[0],2)+Math.pow(rawAccData[1],2)+Math.pow(rawAccData[2],2))));}
+
+	/**
+	 *
+	 * @return returns normalized raw accelerometer data for z axis
+	 */
+	public synchronized float getAccRawNormZ(){ return (float)(rawAccData[1]/(Math.sqrt(Math.pow(rawAccData[0],2)+Math.pow(rawAccData[1],2)+Math.pow(rawAccData[2],2))));}
+
 	/**@return rawData[0] returns raw X axis value of accelerometer*/
+
 	public synchronized float getAccRawX(){
 		return rawAccData[0];
 	}
