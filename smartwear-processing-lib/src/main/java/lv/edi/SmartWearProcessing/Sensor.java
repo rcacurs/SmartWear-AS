@@ -74,6 +74,18 @@ public class Sensor {
 	 */
 	public synchronized float getAccRawNormZ(){ return (float)(rawAccData[2]/(Math.sqrt(Math.pow(rawAccData[0],2)+Math.pow(rawAccData[1],2)+Math.pow(rawAccData[2],2))));}
 
+	/**
+	 * return array containing normalized raw accelerometer data
+	 * @return
+	 */
+	public synchronized float[] getAccRawNorm(){
+		float[] data = new float[3];
+		data[0]=getAccRawNormX();
+		data[1]=getAccRawNormY();
+		data[2]=getAccRawNormZ();
+		return data;
+	}
+
 	/**@return rawData[0] returns raw X axis value of accelerometer*/
 
 	public synchronized float getAccRawX(){
