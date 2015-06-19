@@ -3,7 +3,10 @@ package lv.edi.HeadTilt;
 import android.app.Application;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.widget.Toast;
 
 import lv.edi.SmartWearProcessing.Sensor;
@@ -11,18 +14,21 @@ import lv.edi.SmartWearProcessing.Sensor;
 /**
  * Created by Richards on 18/06/2015.
  */
-public class HeadTiltApplication extends Application implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class HeadTiltApplication extends Application implements SharedPreferences.OnSharedPreferenceChangeListener, BluetoothEventListener {
     final int NUMBER_OF_SENSORS = 1;
+    final int REQUEST_ENABLE_BT = 2;
+    SharedPreferences sharedPrefs;
     BluetoothAdapter btAdapter;
     BluetoothDevice btDevice;
     BluetoothService btService;
     Sensor[] sensors = new Sensor[NUMBER_OF_SENSORS];
+    Handler uiHandler;
 
     @Override
     public void onCreate(){
         super.onCreate();
-        btService = new BluetoothService(sensors); // create service instance
-        //Toast.makeText(this, "Creating application object", Toast.LENGTH_LONG).show();
+        sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+
     }
 
     @Override
@@ -35,5 +41,20 @@ public class HeadTiltApplication extends Application implements SharedPreference
                 btAdapter.getRemoteDevice(btDeviceAddress);
             }
         }
+    }
+
+
+    // Bluetooth event listeners
+    @Override
+    public void onBluetoothDeviceConnecting(){
+        uiHandler.obtainMessage(BluetoothService.BT_CONNECTING).sendToTarget();
+    }
+    @Override
+    public void onBluetoothDeviceConnected(){
+        uiHandler.obtainMessage(BluetoothService.BT_CONNECTED).sendToTarget();
+    }
+    @Override
+    public void onBluetoothDeviceDisconnected(){
+        uiHandler.obtainMessage(BluetoothService.BT_DISCONNECTED).sendToTarget();
     }
 }
