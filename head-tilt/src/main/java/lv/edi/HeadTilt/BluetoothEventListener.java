@@ -5,7 +5,7 @@ package lv.edi.HeadTilt;
  */
 public interface BluetoothEventListener {
 
-    void onBluetoothDeviceConnecting();
-    void onBluetoothDeviceConnected();
-    void onBluetoothDeviceDisconnected();
+    public void onBluetoothDeviceConnecting();
+    public void onBluetoothDeviceConnected();
+    public void onBluetoothDeviceDisconnected();
 }

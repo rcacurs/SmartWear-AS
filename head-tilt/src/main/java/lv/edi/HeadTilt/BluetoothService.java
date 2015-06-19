@@ -13,14 +13,20 @@ import lv.edi.SmartWearProcessing.Sensor;
  * Created by Richards on 18/06/2015.
  */
 public class BluetoothService {
+    public static final int BT_CONNECTING = 1;
+    public static final int BT_CONNECTED = 2;
+    public static final int BT_DISCONNECTED = 3;
+
     private BluetoothEventListener btEventListener;
     private boolean isConnected=false;
+    private boolean isConnecting=false;
     private Sensor[] sensorbuffer; // main data buffer where accelerometer data is stored
     private final UUID M_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"); //UUID for SPP profile;
     private BluetoothSocket mSocket; // bluetooth socket from this object data streams can be created
     private BluetoothDevice mDevice;// bluetooth connection target device
     private int bytesInPacket=13;
     private int batteryPacketIndex=100;
+
 
     ConnectThread connectThread; // instance of thread that creates bluetooth connection
     ReceiveThread receiveThread; // instance of thread that continously fetches data from bluetooth adapter
@@ -69,6 +75,11 @@ public class BluetoothService {
     }
 
     /**
+     * Returns if bluetooth service is in connecting.. state
+     * @return return true if is connecting false otherwise
+     */
+    public boolean isConnecting(){return isConnecting;}
+    /**
      * Creates bluetooth connection to specified bluetooth device
      * @param device BluetootDevice object for remote device
      */
@@ -85,6 +96,9 @@ public class BluetoothService {
         connectThread.cancel();
         isConnected=false;
         connectThread = null;
+        if(btEventListener!=null){
+            btEventListener.onBluetoothDeviceDisconnected();
+        }
     }
 
     //thread that creates bluetooth connection to selected device
@@ -95,23 +109,32 @@ public class BluetoothService {
         }
         public void run(){
             try{
+                isConnecting = true;
                 mSocket = mDevice.createInsecureRfcommSocketToServiceRecord(M_UUID); // create rfcomm protocol socket
                 Log.d("CONNECTING DEVICE", "created RFCOMM socket");
+                if(btEventListener!=null){
+                    btEventListener.onBluetoothDeviceConnecting();
+                }
                 mSocket.connect(); // connect to the bluetooth device
                 Log.d("CONNECTING DEVICE","connection estabilished");
+
                 isConnected=true; // set connected indicator to true
+                if(btEventListener!=null){
+                    btEventListener.onBluetoothDeviceConnected();
+                }
+                isConnecting=false;
                 /** TODO
-                 * MUST CREATE LINK TO LISTENER
+                 * MUST START RECEIVING THREAD
                  */
                 //receiveThread = new ReceiveThread(mSocket); // create instanct to new recieveThread
-                receiveThread.start(); // start receive thread
+                //receiveThread.start(); // start receive thread
             } catch(IOException ex){ // if exception accures
                 Log.d("connection thread","could not connect");
-                /**
-                 * TODO
-                 * MUST CREATE LINK TO LISTENER
-                 */
+                isConnecting=false;
                 isConnected=false;
+                if(btEventListener!=null){
+                    btEventListener.onBluetoothDeviceDisconnected();
+                }
             }
         }
         public void cancel() { // calback that allows to cancel bluetooth connection
