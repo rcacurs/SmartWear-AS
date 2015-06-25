@@ -11,5 +11,15 @@
         android:title="@string/pref_threshold"
         android:summary="@string/pref_summary_threshold"
         android:defaultValue="0.7"/>
-    android:summary="Thres"
+    <CheckBoxPreference
+        android:key="pref_vibrate"
+        android:title="@string/pref_vibrate"
+        android:summary="@string/pref_summary_vibrate"
+        android:defaultValue="false"/>
+    <CheckBoxPreference
+        android:key="pref_alert"
+        android:title="@string/pref_alert"
+        android:summary="@string/pref_summary_alert"
+        android:defaultValue="false"/>
+
 </PreferenceScreen>

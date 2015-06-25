@@ -5,5 +5,5 @@ package lv.edi.HeadTilt;
  */
 public interface ProcessingEventListener {
 
-    public void onProcessingResult(float[] coords);
+    public void onProcessingResult(float[] coords, boolean isOverThreshold);
 }

@@ -3,11 +3,14 @@ package lv.edi.HeadTilt;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
+import android.content.Context;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,6 +27,7 @@ public class MainActivity extends Activity {
     private HeadTiltApplication application;
     private Menu optionsMenu;
     private HeadTiltView htView;
+    private ToggleButton runButton;
     double r=0.5;
     double phi=0;
     @Override
@@ -33,6 +37,7 @@ public class MainActivity extends Activity {
 
         application = (HeadTiltApplication)getApplication();
         htView = (HeadTiltView) findViewById(R.id.headtiltview);
+        runButton = (ToggleButton) findViewById(R.id.buttonRun);
         application.btAdapter = BluetoothAdapter.getDefaultAdapter();
         if(application.btAdapter == null){
             Toast.makeText(this, "Sorry, but device does not support bluetooth conection \n Application will now close", Toast.LENGTH_SHORT).show();
@@ -53,19 +58,6 @@ public class MainActivity extends Activity {
         } else{
             application.btDevice = application.btAdapter.getRemoteDevice(btAddress);
         }
-
-        String thresholdSetting = application.sharedPrefs.getString("pref_threshold", "0.7");
-        float thresholdSettingf = Float.parseFloat(thresholdSetting);
-        htView.setThreshold(thresholdSettingf);
-
-        //create bluetooth service object and register event listener
-        application.btService = new BluetoothService(application.sensors); // create service instance
-        application.btService.registerBluetoothEventListener(application);
-
-        // create processing service
-        application.processingService = new HeadTiltProcessingService(application.sensors[0]);
-        application.processingService.setProcessingEventListener(htView);
-
         application.htView = htView;
 
     }
@@ -94,6 +86,36 @@ public class MainActivity extends Activity {
                 }
             }
         };
+
+        application.vibrator = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
+        application.mp = MediaPlayer.create(this, R.raw.beep);
+
+        String thresholdSetting = application.sharedPrefs.getString("pref_threshold", "0.7");
+        float thresholdSettingf = Float.parseFloat(thresholdSetting);
+        application.threshold = thresholdSettingf;
+        htView.setThreshold(thresholdSettingf);
+
+        application.vibrateFeedback=application.sharedPrefs.getBoolean("pref_vibrate", false);
+        application.alertFeedback=application.sharedPrefs.getBoolean("pref_alert", false);
+
+        //create bluetooth service object and register event listener
+        if(application.btService==null) {
+            application.btService = new BluetoothService(application.sensors); // create service instance
+            application.btService.registerBluetoothEventListener(application);
+
+        }
+
+
+        // create processing service
+
+        htView.invalidate();
+        if(application.processingService == null) {
+            application.processingService = new HeadTiltProcessingService(application.sensors[0], 10, application.threshold);
+            application.processingService.setProcessingEventListener(application);
+        }
+
+        runButton.setChecked(application.processingService.isProcessing());
+
     }
 
     @Override
@@ -102,6 +124,13 @@ public class MainActivity extends Activity {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         super.onCreateOptionsMenu(menu);
         optionsMenu = menu;
+        if(application.btService!=null){
+            if(application.btService.isConnected()){
+                optionsMenu.findItem(R.id.action_bluetooth_connection_status).setIcon(R.drawable.check);
+            } else{
+                optionsMenu.findItem(R.id.action_bluetooth_connection_status).setIcon(R.drawable.not);
+            }
+        }
         return true;
     }
 
@@ -162,6 +191,7 @@ public class MainActivity extends Activity {
         ToggleButton button = (ToggleButton)view;
         if(button.isChecked()){
             if(application.processingService.isStateSaved()) {
+                application.processingService.setIconRadius(htView.getIconRelativeRadius());
                 application.processingService.startProcessing();
             } else{
                 button.setChecked(false);

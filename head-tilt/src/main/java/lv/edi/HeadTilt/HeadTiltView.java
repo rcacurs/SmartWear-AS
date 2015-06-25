@@ -18,6 +18,8 @@ import android.util.AttributeSet;
 public class HeadTiltView extends View implements ProcessingEventListener{
     private double coordX=0;
     private double coordY=0;
+    private int canvwidth;
+    private int canvheight;
     private Bitmap smiley;
     private Bitmap sadface;
     private float threshold = 0.4f;
@@ -90,14 +92,17 @@ public class HeadTiltView extends View implements ProcessingEventListener{
         int bcy = smiley.getHeight()/2;
         int cx = canvas.getWidth()/2;
         int cy = canvas.getHeight()/2;
+
+        canvwidth = cx;
+        canvheight = cy;
         int range = Math.min(cx,cy);
 
-        float rad = (float)Math.sqrt(Math.pow(coordX,2)+Math.pow(coordY,2));
-        if((rad+((float)bcx)/range)>threshold){
-            isOverThreshold=true;
-        } else{
-            isOverThreshold=false;
-        }
+//        float rad = (float)Math.sqrt(Math.pow(coordX,2)+Math.pow(coordY,2));
+//        if((rad+((float)bcx)/range)>threshold){
+//            isOverThreshold=true;
+//        } else{
+//            isOverThreshold=false;
+//        }
         if(!isOverThreshold) {
             paint.setStyle(Paint.Style.FILL);
             paint.setColor(Color.GREEN);
@@ -127,8 +132,20 @@ public class HeadTiltView extends View implements ProcessingEventListener{
     }
 
     @Override
-    public void onProcessingResult(float[] result){
+    public void onProcessingResult(float[] result, boolean isOverThreshold){
+        this.isOverThreshold = isOverThreshold;
         setLocation(result[0], result[1]);
+
         Log.d("PROCESSING_SERVICE", "RESULT");
+    }
+
+    /**
+     * Returns relative radius for the icon in head tilt view
+     * @return relative radius 0-1;
+     */
+    public float getIconRelativeRadius(){
+        Log.d("HEAD_TILT_VIEW", "width "+canvwidth+" height "+canvheight+"smiley width: "+smiley.getWidth());
+        return (((float)smiley.getWidth())/2)/Math.min(canvwidth, canvheight);
+
     }
 }

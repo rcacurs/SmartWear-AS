@@ -26,11 +26,15 @@ public class HeadTiltProcessingService{
     private int timeInterval=10;
     private boolean isProcessing=false;
     private boolean isStateSaved=false;
+    private boolean isOverThreshold = false;
     private Timer timer;
     private ProcessingEventListener listener;
     private boolean isXZplane=false;
     private float XX;
     private float YY;
+    private float threshold = 0.7f;
+    private float iconSize = 0.1f;
+    private float previousR = 0;
 
     // locators for processing
     float[] tempSens = new float[3];
@@ -53,6 +57,36 @@ public class HeadTiltProcessingService{
         this.timeInterval=timeInterval;
     }
 
+    public HeadTiltProcessingService(Sensor sensor, int timeInterval, float threshold){
+        this(sensor, timeInterval);
+        this.threshold = threshold;
+    }
+    /**
+     * Constructor allowing to set threshold value for feedback trigger
+     * @param sensor sensor object from which input data is taken. must be not null!
+     * @param timeInterval time interval in ms for computation period
+     * @param threshold treshold value. float value in range 0-1.0f
+     * @param iconSize size of icon, relative to view width
+     *
+     */
+    public HeadTiltProcessingService(Sensor sensor, int timeInterval, float threshold, float iconSize){
+        this(sensor, timeInterval);
+        this.threshold = threshold;
+        this.iconSize = iconSize;
+    }
+
+    /** setter method for thrreshold setting. when distance of object exceeds threshold
+     * isOverThreshold flag is raised;
+     *
+     * @param threshold
+     */
+    public void setThreshold(float threshold){
+        this.threshold = threshold;
+    }
+
+    public void setIconRadius(float iconRadius){
+        this.iconSize = iconRadius;
+    }
     /**
      * Sets accelerometer data for reference state
      * @param reference float[3] array containing reference sensor data
@@ -85,7 +119,7 @@ public class HeadTiltProcessingService{
      */
     public void startProcessing(){
         timer = new Timer();
-
+        isProcessing = true;
         timer.scheduleAtFixedRate(new TimerTask(){
             @Override
             public void run(){
@@ -134,11 +168,18 @@ public class HeadTiltProcessingService{
                 XX=-(float)(Math.asin(SensorDataProcessing.dotProduct(crossHorizontal, crossHorizontalN))*180/Math.PI)/90;
                 YY=(float)(Math.asin(SensorDataProcessing.dotProduct(crossVertical, crossVerticalN))*180/Math.PI)/90;
 
+                float radius = ((float)Math.sqrt(Math.pow(XX,2)+Math.pow(YY, 2)))+iconSize;
+                Log.d("PROCESSING_SERVICE", "ICONSIZE: "+iconSize+" THRESHOLD: "+threshold);
+                if(radius>threshold){
+                    isOverThreshold = true;
+                } else{
+                    isOverThreshold = false;
+                }
                 if(listener!=null){
                     float[] result = new float[2];
                     result[0]=XX;
                     result[1]=YY;
-                    listener.onProcessingResult(result);
+                    listener.onProcessingResult(result, isOverThreshold);
                     result = null;
                     Log.d("PROCESSING_SERVICE", "SENDING TO LISTENER");
                 }
@@ -153,6 +194,7 @@ public class HeadTiltProcessingService{
      */
     public void stopProcessing(){
         if(timer!=null){
+            isProcessing = false;
             timer.cancel();
         }
     }
@@ -173,5 +215,10 @@ public class HeadTiltProcessingService{
         return isStateSaved;
     }
 
+    /**
+     * Returns if currently is over threshold
+     * @return
+     */
+    public boolean isOverThreshold(){return isOverThreshold;}
 
 }
