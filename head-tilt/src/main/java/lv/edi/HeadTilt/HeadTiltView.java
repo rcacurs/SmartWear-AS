@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.DashPathEffect;
 import android.util.Log;
 import android.view.View;
 import android.graphics.Paint;
@@ -19,6 +20,9 @@ public class HeadTiltView extends View implements ProcessingEventListener{
     private double coordY=0;
     private Bitmap smiley;
     private Bitmap sadface;
+    private float threshold = 0.4f;
+    private boolean isOverThreshold = false;
+    Paint paint = new Paint();
 
     public HeadTiltView(Context context) {
         super(context);
@@ -50,12 +54,24 @@ public class HeadTiltView extends View implements ProcessingEventListener{
         postInvalidate();
     }
 
+    /**
+     * Sets location of the smiley
+     * @param x - coordinate
+     * @param y - coordinate
+     */
     public void setLocation(float x, float y){
         coordX=x;
         coordY=y;
         postInvalidate();
     }
 
+    /**
+     * Method sets if head tilt is over threshold
+     * @param overThreshold
+     */
+    public void setOverThreshold(boolean overThreshold){
+        overThreshold = overThreshold;
+    }
     @Override
     protected void onDraw(Canvas canvas){
         super.onDraw(canvas);
@@ -65,12 +81,22 @@ public class HeadTiltView extends View implements ProcessingEventListener{
         int cy = canvas.getHeight()/2;
         int range = Math.max(cx,cy);
 
-        if(coordX<0) {
-            Paint paint = new Paint();
+        float rad = (float)Math.sqrt(Math.pow(coordX,2)+Math.pow(coordY,2));
+        if((rad+((float)bcx)/cx)>threshold){
+            isOverThreshold=true;
+        } else{
+            isOverThreshold=false;
+        }
+        if(!isOverThreshold) {
             paint.setStyle(Paint.Style.FILL);
             paint.setColor(Color.GREEN);
             paint.setAlpha(60);
             canvas.drawPaint(paint);
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setStrokeWidth(6);
+            paint.setPathEffect(new DashPathEffect(new float[]{10, 20}, 0));
+            paint.setColor(Color.YELLOW);
+            canvas.drawCircle(cx, cy, cx*(threshold), paint);
             canvas.drawBitmap(smiley, (int) (coordX * range + cx - bcx), (int) (coordY * range + cy - bcy), null);
         } else{
             Paint paint = new Paint();
@@ -78,6 +104,11 @@ public class HeadTiltView extends View implements ProcessingEventListener{
             paint.setColor(Color.RED);
             paint.setAlpha(75);
             canvas.drawPaint(paint);
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setStrokeWidth(6);
+            paint.setPathEffect(new DashPathEffect(new float[]{10, 20}, 0));
+            paint.setColor(Color.YELLOW);
+            canvas.drawCircle(cx, cy, cx*(threshold), paint);
             canvas.drawBitmap(sadface, (int) (coordX * range + cx - bcx), (int) (coordY * range + cy - bcy), null);
         }
     }
