@@ -72,6 +72,15 @@ public class HeadTiltView extends View implements ProcessingEventListener{
     public void setOverThreshold(boolean overThreshold){
         overThreshold = overThreshold;
     }
+
+    /**
+     * Sets cuurent threshold value for head tilt view
+     * @param threshold curren threshold setting. designed to be for value 0-1.0. Forces to redraw view
+     */
+    public void setThreshold(float threshold){
+        this.threshold = threshold;
+        postInvalidate();
+    }
     @Override
     protected void onDraw(Canvas canvas){
         super.onDraw(canvas);

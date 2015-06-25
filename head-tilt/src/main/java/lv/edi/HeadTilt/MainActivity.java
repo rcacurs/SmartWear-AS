@@ -26,7 +26,6 @@ public class MainActivity extends Activity {
     private HeadTiltView htView;
     double r=0.5;
     double phi=0;
-    double phiIncr=0.017;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,12 +45,18 @@ public class MainActivity extends Activity {
             startActivityForResult(enableIntent, REQUEST_ENABLE_BT); //start activity for result
         }
 
+        // fetch preferences
+
         String btAddress = application.sharedPrefs.getString("pref_bluetooth_target", "none");
         if(btAddress.equals("none")){
             application.btDevice = null;
         } else{
             application.btDevice = application.btAdapter.getRemoteDevice(btAddress);
         }
+
+        String thresholdSetting = application.sharedPrefs.getString("pref_threshold", "0.7");
+        float thresholdSettingf = Float.parseFloat(thresholdSetting);
+        htView.setThreshold(thresholdSettingf);
 
         //create bluetooth service object and register event listener
         application.btService = new BluetoothService(application.sensors); // create service instance
@@ -60,6 +65,8 @@ public class MainActivity extends Activity {
         // create processing service
         application.processingService = new HeadTiltProcessingService(application.sensors[0]);
         application.processingService.setProcessingEventListener(htView);
+
+        application.htView = htView;
 
     }
     @Override

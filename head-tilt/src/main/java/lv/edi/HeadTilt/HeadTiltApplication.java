@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.widget.Toast;
 
 import lv.edi.SmartWearProcessing.Sensor;
@@ -24,12 +25,13 @@ public class HeadTiltApplication extends Application implements SharedPreference
     Sensor[] sensors = new Sensor[NUMBER_OF_SENSORS];
     Handler uiHandler;
     HeadTiltProcessingService processingService;
+    HeadTiltView htView;
 
     @Override
     public void onCreate(){
         super.onCreate();
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-
+        sharedPrefs.registerOnSharedPreferenceChangeListener(this);
         for(int i=0; i<NUMBER_OF_SENSORS; i++){
             sensors[i]=new Sensor(i, true);
         }
@@ -44,6 +46,12 @@ public class HeadTiltApplication extends Application implements SharedPreference
             } else{
                 btAdapter.getRemoteDevice(btDeviceAddress);
             }
+        }
+
+        if(key.equals("pref_threshold")){
+            String thresholdSetting = sharedPreferences.getString("pref_threshold", "0.7");
+            float thresholdSettingf = Float.parseFloat(thresholdSetting);
+            htView.setThreshold(thresholdSettingf);
         }
     }
 

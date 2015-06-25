@@ -5,4 +5,11 @@
         android:title="@string/pref_bluetooth_target"
         android:defaultValue="none"
         android:summary="@string/pref_summary_bluetooth_target" />
+    <EditTextPreference
+        android:key="pref_threshold"
+        android:digits="0123456789."
+        android:title="@string/pref_threshold"
+        android:summary="@string/pref_summary_threshold"
+        android:defaultValue="0.7"/>
+    android:summary="Thres"
 </PreferenceScreen>
