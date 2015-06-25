@@ -60,6 +60,7 @@ public class HeadTiltView extends View implements ProcessingEventListener{
      * @param y - coordinate
      */
     public void setLocation(float x, float y){
+
         coordX=x;
         coordY=y;
         postInvalidate();
@@ -83,15 +84,16 @@ public class HeadTiltView extends View implements ProcessingEventListener{
     }
     @Override
     protected void onDraw(Canvas canvas){
+        Log.d("HEAD_TILT_VIEW", "ON_DRAW_START");
         super.onDraw(canvas);
         int bcx = smiley.getWidth()/2;
         int bcy = smiley.getHeight()/2;
         int cx = canvas.getWidth()/2;
         int cy = canvas.getHeight()/2;
-        int range = Math.max(cx,cy);
+        int range = Math.min(cx,cy);
 
         float rad = (float)Math.sqrt(Math.pow(coordX,2)+Math.pow(coordY,2));
-        if((rad+((float)bcx)/cx)>threshold){
+        if((rad+((float)bcx)/range)>threshold){
             isOverThreshold=true;
         } else{
             isOverThreshold=false;
@@ -105,7 +107,7 @@ public class HeadTiltView extends View implements ProcessingEventListener{
             paint.setStrokeWidth(6);
             paint.setPathEffect(new DashPathEffect(new float[]{10, 20}, 0));
             paint.setColor(Color.YELLOW);
-            canvas.drawCircle(cx, cy, cx*(threshold), paint);
+            canvas.drawCircle(cx, cy, range*(threshold), paint);
             canvas.drawBitmap(smiley, (int) (coordX * range + cx - bcx), (int) (coordY * range + cy - bcy), null);
         } else{
             Paint paint = new Paint();
@@ -117,9 +119,11 @@ public class HeadTiltView extends View implements ProcessingEventListener{
             paint.setStrokeWidth(6);
             paint.setPathEffect(new DashPathEffect(new float[]{10, 20}, 0));
             paint.setColor(Color.YELLOW);
-            canvas.drawCircle(cx, cy, cx*(threshold), paint);
+            canvas.drawCircle(cx, cy, range*(threshold), paint);
             canvas.drawBitmap(sadface, (int) (coordX * range + cx - bcx), (int) (coordY * range + cy - bcy), null);
         }
+
+        Log.d("HEAD_TILT_VIEW", "ON_DRAW_END");
     }
 
     @Override
