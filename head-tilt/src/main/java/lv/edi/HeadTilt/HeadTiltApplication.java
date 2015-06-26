@@ -59,6 +59,9 @@ public class HeadTiltApplication extends Application implements SharedPreference
             String thresholdSetting = sharedPreferences.getString("pref_threshold", "0.7");
             float thresholdSettingf = Float.parseFloat(thresholdSetting);
             htView.setThreshold(thresholdSettingf);
+            if(processingService!=null){
+                processingService.setThreshold(thresholdSettingf);
+            }
         }
 
         if(key.equals("pref_vibrate")){
