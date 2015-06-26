@@ -18,10 +18,10 @@
     />
     <ListView android:id="@+id/paired_devices"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:stackFromBottom="true"
+        android:layout_height="0dp"
+        android:stackFromBottom="false"
         android:layout_weight="1"
-        android:layout_gravity="top"
+        android:layout_alignParentTop="true"
     />
     <TextView android:id="@+id/title_new_devices"
         android:layout_width="fill_parent"
@@ -35,10 +35,9 @@
     />
     <ListView android:id="@+id/new_devices"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:stackFromBottom="true"
-        android:layout_weight="2"
-    />
+        android:layout_height="470dp"
+        android:stackFromBottom="false"
+        android:layout_weight="1" />
     <Button android:id="@+id/button_scan"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
