@@ -10,7 +10,6 @@ import android.os.Handler;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import lv.edi.SmartWearProcessing.Sensor;
 

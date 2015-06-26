@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
@@ -28,11 +29,13 @@ public class MainActivity extends Activity {
     private Menu optionsMenu;
     private HeadTiltView htView;
     private ToggleButton runButton;
+    private Resources res;
     double r=0.5;
     double phi=0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        res = getResources();
         setContentView(R.layout.activity_main);
 
         application = (HeadTiltApplication)getApplication();
@@ -40,7 +43,7 @@ public class MainActivity extends Activity {
         runButton = (ToggleButton) findViewById(R.id.buttonRun);
         application.btAdapter = BluetoothAdapter.getDefaultAdapter();
         if(application.btAdapter == null){
-            Toast.makeText(this, "Sorry, but device does not support bluetooth conection \n Application will now close", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, res.getString(R.string.toast_bt_not_supported), Toast.LENGTH_SHORT).show();
             finish();
         }
         // check if bluetooth is turned on
@@ -60,6 +63,7 @@ public class MainActivity extends Activity {
         }
         application.htView = htView;
 
+
     }
     @Override
     public void onResume(){
@@ -70,15 +74,15 @@ public class MainActivity extends Activity {
             public void handleMessage(Message inputMessage){
                 switch(inputMessage.what){
                     case BluetoothService.BT_CONNECTING:
-                        Toast.makeText(getApplicationContext(), "Connecting BT device...", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), res.getString(R.string.toast_connecting_bt), Toast.LENGTH_SHORT).show();
                         optionsMenu.findItem(R.id.action_bluetooth_connection_status).setIcon(R.drawable.loading);
                         break;
                     case BluetoothService.BT_CONNECTED:
-                        Toast.makeText(getApplicationContext(), "Connected to BT device!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), res.getString(R.string.toast_connected_bt), Toast.LENGTH_SHORT).show();
                         optionsMenu.findItem(R.id.action_bluetooth_connection_status).setIcon(R.drawable.check);
                         break;
                     case BluetoothService.BT_DISCONNECTED:
-                        Toast.makeText(getApplicationContext(), "Not connected to BT device!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), res.getString(R.string.toast_disconnected_bt), Toast.LENGTH_SHORT).show();
                         optionsMenu.findItem(R.id.action_bluetooth_connection_status).setIcon(R.drawable.not);
                         break;
                     default:
@@ -120,6 +124,7 @@ public class MainActivity extends Activity {
             public void run() {
                 Log.d("HEADTILTVIEW", "ICON RADIUS" + htView.getIconRelativeRadius());
                 Log.d("HEADTILTVIEW", "WIDTH"+htView.getMeasuredWidth());
+                application.processingService.setIconRadius(htView.getIconRelativeRadius());
             }
         });
 
@@ -164,7 +169,7 @@ public class MainActivity extends Activity {
                     if (application.btDevice != null) {
                         application.btService.connectDevice(application.btDevice);
                     } else {
-                        Toast.makeText(this, "Set target bluetooth device in settings!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, res.getString(R.string.toast_set_bt_target), Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -177,7 +182,7 @@ public class MainActivity extends Activity {
         switch(requestCode){
             case REQUEST_ENABLE_BT:
                 if(resultCode!=Activity.RESULT_OK){
-                    Toast.makeText(this, "In order to use this application \n bluetooth must bet turned on!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, res.getString(R.string.toast_bt_must_be_on), Toast.LENGTH_SHORT).show();
                     finish();
                 }
                 break;
@@ -189,9 +194,9 @@ public class MainActivity extends Activity {
     public void onClickSave(View view){
         if(application.btService.isConnected()) {
             application.processingService.setReference(application.sensors[0].getAccRawNorm());
-            Toast.makeText(this, "Saved!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, res.getString(R.string.toast_saved), Toast.LENGTH_SHORT).show();
         } else{
-            Toast.makeText(this, "Connect to bluetooth device first!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, res.getString(R.string.toast_must_connect_bt), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -203,7 +208,7 @@ public class MainActivity extends Activity {
                 application.processingService.startProcessing();
             } else{
                 button.setChecked(false);
-                Toast.makeText(this, "Save calibration state!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, res.getString(R.string.toast_save_state), Toast.LENGTH_SHORT).show();
             }
         } else{
             application.processingService.stopProcessing();
