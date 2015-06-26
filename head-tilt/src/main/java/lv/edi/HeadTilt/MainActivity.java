@@ -105,6 +105,7 @@ public class MainActivity extends Activity {
         //create bluetooth service object and register event listener
         if(application.btService==null) {
             application.btService = new BluetoothService(application.sensors); // create service instance
+            application.btService.setBatteryLevelAlocator(application.batteryLevel);
             application.btService.registerBluetoothEventListener(application);
 
         }

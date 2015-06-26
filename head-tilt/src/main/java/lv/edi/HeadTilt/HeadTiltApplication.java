@@ -27,6 +27,7 @@ public class HeadTiltApplication extends Application implements SharedPreference
     float threshold;
     BluetoothService btService;
     Sensor[] sensors = new Sensor[NUMBER_OF_SENSORS];
+    BatteryLevel batteryLevel;
     Handler uiHandler;
     HeadTiltProcessingService processingService;
     HeadTiltView htView;
@@ -41,6 +42,7 @@ public class HeadTiltApplication extends Application implements SharedPreference
         for(int i=0; i<NUMBER_OF_SENSORS; i++){
             sensors[i]=new Sensor(i, true);
         }
+        batteryLevel = new BatteryLevel();
     }
 
     @Override
