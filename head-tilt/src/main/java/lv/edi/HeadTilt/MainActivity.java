@@ -115,6 +115,14 @@ public class MainActivity extends Activity {
         }
 
         runButton.setChecked(application.processingService.isProcessing());
+        htView.post(new Runnable() {
+            @Override
+            public void run() {
+                Log.d("HEADTILTVIEW", "ICON RADIUS" + htView.getIconRelativeRadius());
+                Log.d("HEADTILTVIEW", "WIDTH"+htView.getMeasuredWidth());
+            }
+        });
+
 
     }
 

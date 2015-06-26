@@ -28,6 +28,7 @@ public class HeadTiltView extends View implements ProcessingEventListener{
 
     public HeadTiltView(Context context) {
         super(context);
+        setWillNotDraw(false);
         smiley = BitmapFactory.decodeResource(getResources(), R.drawable.happyface500);
         sadface = BitmapFactory.decodeResource(getResources(), R.drawable.sadface500);
         smiley = Bitmap.createScaledBitmap(smiley, smiley.getWidth() / 4, smiley.getHeight() / 4, false);
@@ -36,6 +37,7 @@ public class HeadTiltView extends View implements ProcessingEventListener{
     }
     public HeadTiltView(Context context, AttributeSet attrs){
         super(context, attrs);
+        setWillNotDraw(false);
         smiley = BitmapFactory.decodeResource(getResources(), R.drawable.happyface500);
         sadface = BitmapFactory.decodeResource(getResources(), R.drawable.sadface500);
         smiley = Bitmap.createScaledBitmap(smiley, smiley.getWidth() / 4, smiley.getHeight() / 4, false);
@@ -145,7 +147,7 @@ public class HeadTiltView extends View implements ProcessingEventListener{
      */
     public float getIconRelativeRadius(){
         Log.d("HEAD_TILT_VIEW", "width "+canvwidth+" height "+canvheight+"smiley width: "+smiley.getWidth());
-        return (((float)smiley.getWidth())/2)/Math.min(canvwidth, canvheight);
+        return (((float)smiley.getWidth())/2)/Math.min(getMeasuredWidth()/2, getMeasuredHeight()/2);
 
     }
 }
