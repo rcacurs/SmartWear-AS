@@ -26,5 +26,9 @@ public class BatteryLevel {
     public float getBatteryVoltage(){
         return inputScaling*getADCVoltage();
     }
-    
+
+    public void updateAdcValue(int adcValue){
+        this.adcValue = adcValue;
+    }
+
 }
