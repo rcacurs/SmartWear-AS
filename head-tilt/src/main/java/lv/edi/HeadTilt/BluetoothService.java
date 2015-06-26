@@ -25,7 +25,8 @@ public class BluetoothService {
     private BluetoothSocket mSocket; // bluetooth socket from this object data streams can be created
     private BluetoothDevice mDevice;// bluetooth connection target device
     private int bytesInPacket=13;
-    private int batteryPacketIndex=100;
+    private int batteryPacketIndex=63;
+    private BatteryLevel batteryLevel;
 
 
     ConnectThread connectThread; // instance of thread that creates bluetooth connection
@@ -66,6 +67,15 @@ public class BluetoothService {
         btEventListener = null;
     }
 
+    /**
+     * Function receives reference battery level reference where battery level
+     * is saved from bluetooth service.
+     * @param batteryLevel BatteryLevel object where battery level data will be stored.
+     */
+
+    public void setBatteryLevelAlocator(BatteryLevel batteryLevel){
+        this.batteryLevel = batteryLevel;
+    }
     /**
      * Returns if bluetooth service is connected to remote device
      * @return returns true if service is connected to remote bt device
@@ -223,16 +233,10 @@ public class BluetoothService {
                                                 }
                                             }
                                             if(packet[0]==batteryPacketIndex) {// if received battery status packet
-                                                /** TODO
-                                                 * battery packet processing
-                                                 */
-                                             /*   short battery_level_raw = (short) (packet[1] * 256 + packet[2]);
-                                                double battery_level = (((battery_level_raw) - 730) / 294.0) * 100;
-                                                battery_level = (short) (battery_level / 10) * 10;
-                                                application.setBatteryLevel((short) battery_level);
-                                                //bluetoothActivityHandler.obtainMessage(DataSourceActivity.UPDATE_TARGET_BATTERY_STATUS).sendToTarget(); // update connection activity
-                                                bluetoothActivityHandler.obtainMessage(DataSourceActivity.UPDATE_TARGET_BATTERY_STATUS, DataSourceActivity.UPDATE_DISCONNECTED, 1, "").sendToTarget();
-                                                Log.d("battery level packet", "received: " + battery_level_raw + " : " + battery_level);*/
+                                                if(batteryLevel!=null){
+                                                    short battery_level_raw = (short) (packet[1] * 256 + packet[2]);
+                                                    batteryLevel.updateAdcValue(battery_level_raw);
+                                                }
                                             }
                                         }
                                         packet_indicator=false; // reset packet indicator, bacause we have received all packet data
