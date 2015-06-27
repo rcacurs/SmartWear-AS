@@ -165,8 +165,8 @@ public class HeadTiltProcessingService{
                 SensorDataProcessing.absVector(crossHorizontal);
                 SensorDataProcessing.absVector(crossVertical);
 
-                XX=-(float)(Math.asin(SensorDataProcessing.dotProduct(crossHorizontal, crossHorizontalN))*180/Math.PI)/90;
-                YY=(float)(Math.asin(SensorDataProcessing.dotProduct(crossVertical, crossVerticalN))*180/Math.PI)/90;
+                XX=-(float)(Math.asin(SensorDataProcessing.dotProduct(crossHorizontal, crossHorizontalN))*180/Math.PI)/45; // may include sensitivity multiplier
+                YY=(float)(Math.asin(SensorDataProcessing.dotProduct(crossVertical, crossVerticalN))*180/Math.PI)/45;      // may include sensitivity mult in futuree
 
                 float radius = ((float)Math.sqrt(Math.pow(XX,2)+Math.pow(YY, 2)))+iconSize;
                 Log.d("PROCESSING_SERVICE", "ICONSIZE: "+iconSize+" THRESHOLD: "+threshold);
