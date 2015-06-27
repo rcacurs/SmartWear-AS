@@ -7,6 +7,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import lv.edi.SmartWearProcessing.Sensor;
+import lv.edi.SmartWearProcessing.Filter;
 import lv.edi.SmartWearProcessing.SensorDataProcessing;
 
 /**
@@ -40,13 +41,19 @@ public class HeadTiltProcessingService{
     float[] tempSens = new float[3];
     float[] tempRef = new float[3];
 
+    Filter filterX;
+    Filter filterY;
+    Filter filterZ;
+
     /**
      * @param - Sensor object from which input data is taken. must be not null!
      */
     public HeadTiltProcessingService(Sensor sensor){
         this.sensor=sensor;
+        filterX = new Filter();
+        filterY = new Filter();
+        filterZ = new Filter();
     }
-
     /**
      * Allows specifying time interval at which computation is done
      * @param sensor sensor object from which input data is taken. must be not null!
@@ -124,6 +131,9 @@ public class HeadTiltProcessingService{
             @Override
             public void run(){
                 currentSens1 = sensor.getAccRawNorm();
+                currentSens1[0] = filterX.filter(currentSens1[0]);
+                currentSens1[1] = filterY.filter(currentSens1[1]);
+                currentSens1[2] = filterZ.filter(currentSens1[2]);
 
                 if(isXZplane){
                     tempSens[0]=currentSens1[0];

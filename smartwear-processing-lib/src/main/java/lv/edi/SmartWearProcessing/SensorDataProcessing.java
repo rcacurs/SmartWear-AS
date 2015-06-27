@@ -88,12 +88,19 @@ public class SensorDataProcessing {
 	}
 	/**
 	 * Method that calculates dot product of two vectors v1 v2
-	 * @param v1  input vector float[3] array
-	 * @param v2  input vector float[3] array
+	 * @param v1  input vector float[n] array
+	 * @param v2  input vector float[n] array
 	 * @return return dot product of type float
 	 */
 	public static float dotProduct(float[] v1, float[] v2){
-		return v1[0]*v2[0]+v1[1]*v2[1]+v1[2]*v2[2];
+		if(v1.length!=v2.length){
+			return 0;
+		}
+		float sum=0;
+		for(int i=0; i<v1.length; i++){
+			sum+=v1[i]*v2[i];
+		}
+		return sum;
 	}
 	/**
 	 * Method that calculates quaternion from given rotation axis and angle
