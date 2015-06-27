@@ -16,7 +16,8 @@ import lv.edi.SmartWearProcessing.Sensor;
 /**
  * Created by Richards on 18/06/2015.
  */
-public class HeadTiltApplication extends Application implements SharedPreferences.OnSharedPreferenceChangeListener, BluetoothEventListener, ProcessingEventListener {
+public class HeadTiltApplication extends Application implements SharedPreferences.OnSharedPreferenceChangeListener, BluetoothEventListener, ProcessingEventListener, BatteryLevelEventListener {
+    public static final int  BATTERY_LEVEL_UPDATE = 45;
     final int NUMBER_OF_SENSORS = 1;
     final int REQUEST_ENABLE_BT = 2;
     SharedPreferences sharedPrefs;
@@ -43,6 +44,7 @@ public class HeadTiltApplication extends Application implements SharedPreference
             sensors[i]=new Sensor(i, true);
         }
         batteryLevel = new BatteryLevel();
+        batteryLevel.registerListener(this);
     }
 
     @Override
@@ -76,7 +78,10 @@ public class HeadTiltApplication extends Application implements SharedPreference
         }
     }
 
-
+    // battery level listeners
+    public void onBatteryLevelChange(BatteryLevel bLevel){
+        uiHandler.obtainMessage(BATTERY_LEVEL_UPDATE).sendToTarget();
+    }
     // Bluetooth event listeners
     @Override
     public void onBluetoothDeviceConnecting(){

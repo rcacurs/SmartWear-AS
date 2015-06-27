@@ -13,17 +13,20 @@ public class BatteryLevel {
     private float referenceVoltageN = 0.0f;
     private int resolution=10;
     private float inputScaling=0.5f;
+    private BatteryLevelEventListener listener;
+
+    private float percentHysteresis = 8;
+    private float currentPercentage = 0;
+    private float previousPercentage = 100;
+    private float outputPercentage = 100;
 
     // curve fir coeefficients
-    float p1 = 18.56f;
-    float p2 = -253.2f;
-    float p3 = 1291;
-    float p4 = -2918;
-    float p5 = 2466;
-    float q1 = -15.64f;
-    float q2 = 92;
-    float q3 = -241;
-    float q4 = 237.2f;
+    float a1 = 95.9f;
+    float b1 = 4.16f;
+    float c1 = 0.37f;
+    float a2 = 24.09f;
+    float b2 = 3.833f;
+    float c2 = -0.1082f;
 
     /**
      * return integer representing raw ADC value
@@ -36,6 +39,9 @@ public class BatteryLevel {
         return (float)(adcValue*(referenceVoltageP-referenceVoltageN)/(Math.pow(2, resolution)-1)+referenceVoltageN);
     }
 
+    public void registerListener(BatteryLevelEventListener listener){
+        this.listener = listener;
+    }
     public float getBatteryVoltage(){
         return getADCVoltage()/inputScaling;
     }
@@ -46,12 +52,23 @@ public class BatteryLevel {
         Log.d("BATTERY_LEVEL", " adc value: " + adcValue);
         Log.d("BATTERY_LEVEL", " battery voltage" + getBatteryVoltage());
         Log.d("BATTERY_LEVEL", " battery percentage " + batteryVoltageLevelToPercent(getBatteryVoltage()));
+        currentPercentage = batteryVoltageLevelToPercent(getBatteryVoltage());
+
+        if(Math.abs(currentPercentage-previousPercentage)>percentHysteresis){
+           previousPercentage=currentPercentage;
+            Log.d("BATTERY_LEVEL_UPDATE", "BATTERY LEVEL UPDATE "+previousPercentage);
+            if(listener!=null){
+                listener.onBatteryLevelChange(this);
+            }
+        }
     }
 
     public float batteryVoltageLevelToPercent(float x){
+        return (float)(a1*Math.exp(-Math.pow((x-b1)/c1,2))+a2*Math.exp(-Math.pow((x-b2)/c2,2)));
+    }
 
-        return (float)((p1*Math.pow(x, 4)+p2*Math.pow(x,3)+p3*Math.pow(x,2)+p4*x+p5)/
-                (Math.pow(x,4)+q1*Math.pow(x,3)+q2*Math.pow(x,2)+q3*x+q4));
+    public float getBatteryPercentage(){
+        return previousPercentage;
     }
 
 }

@@ -32,6 +32,12 @@ public class MainActivity extends Activity {
     private Resources res;
     double r=0.5;
     double phi=0;
+    private int[] batteryIcons = {R.drawable.battery_discharging_000,
+                                  R.drawable.battery_discharging_040,
+                                  R.drawable.battery_discharging_060,
+                                  R.drawable.battery_discharging_080,
+                                  R.drawable.battery_discharging_100};
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,7 +69,6 @@ public class MainActivity extends Activity {
         }
         application.htView = htView;
 
-
     }
     @Override
     public void onResume(){
@@ -85,6 +90,15 @@ public class MainActivity extends Activity {
                         Toast.makeText(getApplicationContext(), res.getString(R.string.toast_disconnected_bt), Toast.LENGTH_SHORT).show();
                         optionsMenu.findItem(R.id.action_bluetooth_connection_status).setIcon(R.drawable.not);
                         break;
+                    case HeadTiltApplication.BATTERY_LEVEL_UPDATE:
+                        int batteryLevelIndex = (int) (application.batteryLevel.getBatteryPercentage() / 20);
+                        if(batteryLevelIndex < 0){
+                            batteryLevelIndex = 0;
+                        }
+                        if(batteryLevelIndex>=batteryIcons.length){
+                            batteryLevelIndex = batteryIcons.length - 1;
+                        }
+                        optionsMenu.findItem(R.id.action_battery_level_icon).setIcon(batteryIcons[batteryLevelIndex]);
                     default:
                         break;
                 }
@@ -107,7 +121,6 @@ public class MainActivity extends Activity {
             application.btService = new BluetoothService(application.sensors); // create service instance
             application.btService.setBatteryLevelAlocator(application.batteryLevel);
             application.btService.registerBluetoothEventListener(application);
-
         }
 
 
@@ -124,11 +137,10 @@ public class MainActivity extends Activity {
             @Override
             public void run() {
                 Log.d("HEADTILTVIEW", "ICON RADIUS" + htView.getIconRelativeRadius());
-                Log.d("HEADTILTVIEW", "WIDTH"+htView.getMeasuredWidth());
+                Log.d("HEADTILTVIEW", "WIDTH" + htView.getMeasuredWidth());
                 application.processingService.setIconRadius(htView.getIconRelativeRadius());
             }
         });
-
 
     }
 
