@@ -15,7 +15,7 @@ public class BatteryLevel {
     private float inputScaling=0.5f;
     private BatteryLevelEventListener listener;
 
-    private float percentHysteresis = 8;
+    private float percentHysteresis = 15;
     private float currentPercentage = 0;
     private float previousPercentage = 100;
     private float outputPercentage = 100;
