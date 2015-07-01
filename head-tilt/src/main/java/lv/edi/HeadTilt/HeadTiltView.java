@@ -75,7 +75,8 @@ public class HeadTiltView extends View implements ProcessingEventListener{
      * @param overThreshold
      */
     public void setOverThreshold(boolean overThreshold){
-        overThreshold = overThreshold;
+        this.isOverThreshold = overThreshold;
+        postInvalidate();
     }
 
     /**

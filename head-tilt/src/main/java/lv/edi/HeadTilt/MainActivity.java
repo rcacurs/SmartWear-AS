@@ -126,19 +126,23 @@ public class MainActivity extends Activity {
 
         // create processing service
 
-        htView.invalidate();
+
         if(application.processingService == null) {
             application.processingService = new HeadTiltProcessingService(application.sensors[0], 10, application.threshold);
             application.processingService.setProcessingEventListener(application);
         }
 
         runButton.setChecked(application.processingService.isProcessing());
+
         htView.post(new Runnable() {
             @Override
             public void run() {
                 Log.d("HEADTILTVIEW", "ICON RADIUS" + htView.getIconRelativeRadius());
                 Log.d("HEADTILTVIEW", "WIDTH" + htView.getMeasuredWidth());
+
                 application.processingService.setIconRadius(htView.getIconRelativeRadius());
+
+
             }
         });
 

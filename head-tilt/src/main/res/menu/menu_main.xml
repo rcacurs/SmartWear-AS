@@ -3,19 +3,19 @@
     xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
 
     <item android:title="BT STATUS:"
-          android:showAsAction="ifRoom"
+          android:showAsAction="always"
         />
 
     <item android:id="@+id/action_bluetooth_connection_status"
           android:icon="@drawable/not"
           android:title="bt status"
-          android:showAsAction="ifRoom"
+          android:showAsAction="always"
 
         />
     <item android:id="@+id/action_battery_level_icon"
         android:icon="@drawable/battery_discharging_100"
         android:title="battery level"
-        android:showAsAction="ifRoom"/>
+        android:showAsAction="always"/>
     <item android:id="@+id/action_settings" android:title="@string/action_settings"
         android:orderInCategory="100" android:showAsAction="never" />
 </menu>
