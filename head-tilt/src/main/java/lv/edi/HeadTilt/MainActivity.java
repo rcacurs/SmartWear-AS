@@ -12,6 +12,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Vibrator;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -145,6 +146,10 @@ public class MainActivity extends Activity {
 
             }
         });
+        htView.setGoodTimePercentLable(res.getString(R.string.good_time_percent_lable));
+        htView.setSessionTimeLable(res.getString(R.string.session_time_lable));
+        htView.setGoodTimePercent(application.processingService.getGoodPercentage());
+        htView.setSessionTime(DateUtils.formatElapsedTime(application.processingService.getSessionDuration()));
 
     }
 

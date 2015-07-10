@@ -36,6 +36,10 @@ public class HeadTiltProcessingService{
     private float threshold = 0.7f;
     private float iconSize = 0.1f;
     private float previousR = 0;
+    private long startTime;
+    private long currentTime;
+    private int goodFrameCount=0;
+    private int badFrameCount=0;
 
     // locators for processing
     float[] tempSens = new float[3];
@@ -127,6 +131,10 @@ public class HeadTiltProcessingService{
     public void startProcessing(){
         timer = new Timer();
         isProcessing = true;
+        startTime=System.currentTimeMillis();
+        currentTime=System.currentTimeMillis();
+        goodFrameCount=0;
+        badFrameCount=0;
         timer.scheduleAtFixedRate(new TimerTask(){
             @Override
             public void run(){
@@ -182,14 +190,15 @@ public class HeadTiltProcessingService{
                 Log.d("PROCESSING_SERVICE", "ICONSIZE: "+iconSize+" THRESHOLD: "+threshold);
                 if(radius>threshold){
                     isOverThreshold = true;
+                    badFrameCount++;
                 } else{
                     isOverThreshold = false;
+                    goodFrameCount++;
                 }
                 if(listener!=null){
-                    float[] result = new float[2];
-                    result[0]=XX;
-                    result[1]=YY;
-                    listener.onProcessingResult(result, isOverThreshold);
+                    currentTime=System.currentTimeMillis();
+                    ProcessingResult result = new ProcessingResult(XX, YY, (currentTime-startTime)/1000, isOverThreshold, getGoodPercentage());
+                    listener.onProcessingResult(result);
                     result = null;
                     Log.d("PROCESSING_SERVICE", "SENDING TO LISTENER");
                 }
@@ -230,5 +239,35 @@ public class HeadTiltProcessingService{
      * @return
      */
     public boolean isOverThreshold(){return isOverThreshold;}
+
+    /**
+     * Returns current duration of processing session
+     * @return long number of seconds since session start
+     */
+    public long getSessionDuration(){
+        return (currentTime-startTime)/1000;
+    }
+
+    /**
+     * Gives fraciont of session when head tilt was good (in threshold range)
+     * @return float percentage of good tim
+     */
+    public float getGoodPercentage(){
+        float result;
+        try {
+            result = ((float)(goodFrameCount)) / (goodFrameCount + badFrameCount)*100;
+            Log.d("PROCESSING_SERVICE", "goodTimePercentage = "+result);
+        } catch(ArithmeticException ex){
+            result = 100;
+            Log.d("PROCESSING_SERVICE", "goodTimePercentage = "+result);
+        }
+        Log.d("PROCESSING_SERVICE", "goodTimePercentage = "+result);
+        if(Float.isNaN(result)){
+            Log.d("PROCESSING_SERVICE", "goodTimePercentage = "+result);
+            result=100;
+            Log.d("PROCESSING_SERVICE", "goodTimePercentage = "+result);
+        }
+        return result;
+    }
 
 }

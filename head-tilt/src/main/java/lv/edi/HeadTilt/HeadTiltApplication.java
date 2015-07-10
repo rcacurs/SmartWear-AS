@@ -97,9 +97,9 @@ public class HeadTiltApplication extends Application implements SharedPreference
     }
 
     @Override
-    public void onProcessingResult(float[] coords, boolean isOverThreshold){
-        htView.onProcessingResult(coords, isOverThreshold);
-        if(isOverThreshold){
+    public void onProcessingResult(ProcessingResult result){
+        htView.onProcessingResult(result);
+        if(result.isOverThreshold()){
             if(vibrateFeedback) {
                 vibrator.vibrate(100);
             }

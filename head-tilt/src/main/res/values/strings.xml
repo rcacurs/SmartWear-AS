@@ -31,4 +31,6 @@
     <string name="toast_connecting_bt">Connecting bluetooth device...</string>
     <string name="toast_connected_bt">Connected bluetooth device!</string>
     <string name="toast_disconnected_bt">Bluetooth device not connected!</string>
+    <string name="session_time_lable">Time</string>
+    <string name="good_time_percent_lable">Good</string>
 </resources>

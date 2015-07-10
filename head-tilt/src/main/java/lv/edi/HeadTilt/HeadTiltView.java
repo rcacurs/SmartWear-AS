@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.View;
 import android.graphics.Paint;
@@ -24,7 +25,12 @@ public class HeadTiltView extends View implements ProcessingEventListener{
     private Bitmap sadface;
     private float threshold = 0.4f;
     private boolean isOverThreshold = false;
+    private String sessionTimeLable = "Time";
+    private String goodTimePercentLable = "Good";
+    private String sessionTime="00-00-00";
+    private float goodTimePercent=100;
     Paint paint = new Paint();
+    Paint textPaint = new Paint();
 
     public HeadTiltView(Context context) {
         super(context);
@@ -32,7 +38,11 @@ public class HeadTiltView extends View implements ProcessingEventListener{
         smiley = BitmapFactory.decodeResource(getResources(), R.drawable.happyface500);
         sadface = BitmapFactory.decodeResource(getResources(), R.drawable.sadface500);
         smiley = Bitmap.createScaledBitmap(smiley, smiley.getWidth() / 4, smiley.getHeight() / 4, false);
-        sadface = Bitmap.createScaledBitmap(sadface, sadface.getWidth()/4, sadface.getHeight()/4, false);
+        sadface = Bitmap.createScaledBitmap(sadface, sadface.getWidth() / 4, sadface.getHeight() / 4, false);
+
+        textPaint.setColor(Color.YELLOW);
+        textPaint.setStrokeWidth(10);
+        textPaint.setTextSize(30);
 
     }
     public HeadTiltView(Context context, AttributeSet attrs){
@@ -41,8 +51,11 @@ public class HeadTiltView extends View implements ProcessingEventListener{
         smiley = BitmapFactory.decodeResource(getResources(), R.drawable.happyface500);
         sadface = BitmapFactory.decodeResource(getResources(), R.drawable.sadface500);
         smiley = Bitmap.createScaledBitmap(smiley, smiley.getWidth() / 4, smiley.getHeight() / 4, false);
-        sadface = Bitmap.createScaledBitmap(sadface, sadface.getWidth()/4, sadface.getHeight()/4, false);
+        sadface = Bitmap.createScaledBitmap(sadface, sadface.getWidth() / 4, sadface.getHeight() / 4, false);
 
+        textPaint.setColor(Color.YELLOW);
+        textPaint.setStrokeWidth(10);
+        textPaint.setTextSize(30);
     }
 
     /**
@@ -131,13 +144,17 @@ public class HeadTiltView extends View implements ProcessingEventListener{
             canvas.drawBitmap(sadface, (int) (coordX * range + cx - bcx), (int) (coordY * range + cy - bcy), null);
         }
 
+        canvas.drawText(sessionTimeLable+": "+sessionTime, 10, canvas.getHeight()-10, textPaint);
+        canvas.drawText(goodTimePercentLable+": "+String.format("%3.1f", goodTimePercent)+"%", 10, canvas.getHeight()-40, textPaint);
         Log.d("HEAD_TILT_VIEW", "ON_DRAW_END");
     }
 
     @Override
-    public void onProcessingResult(float[] result, boolean isOverThreshold){
-        this.isOverThreshold = isOverThreshold;
-        setLocation(result[0], result[1]);
+    public void onProcessingResult(ProcessingResult result){
+        this.isOverThreshold = result.isOverThreshold();
+        sessionTime=DateUtils.formatElapsedTime(result.getElapsedTimeSeconds());
+        goodTimePercent=result.getGoodTimePercent();
+        setLocation(result.getRelativeX(), result.getRelativeY());
 
         Log.d("PROCESSING_SERVICE", "RESULT");
     }
@@ -150,5 +167,37 @@ public class HeadTiltView extends View implements ProcessingEventListener{
         Log.d("HEAD_TILT_VIEW", "width "+canvwidth+" height "+canvheight+"smiley width: "+smiley.getWidth());
         return (((float)smiley.getWidth())/2)/Math.min(getMeasuredWidth()/2, getMeasuredHeight()/2);
 
+    }
+
+    /**
+     * Sets session time lable
+     * @param sessionTimeLable
+     */
+    public void setSessionTimeLable(String sessionTimeLable){
+        this.sessionTimeLable = sessionTimeLable;
+    }
+
+    /**
+     * Sets lable for good time percent
+     * @param goodTimePercentLable
+     */
+    public void setGoodTimePercentLable(String goodTimePercentLable){
+        this.goodTimePercentLable = goodTimePercentLable;
+    }
+
+    /**
+     * sets session time
+     * @param sessionTime
+     */
+    public void setSessionTime(String sessionTime){
+        this.sessionTime = sessionTime;
+    }
+
+    /**
+     * sets good time percentage
+     * @param goodTimePercent
+     */
+    public void setGoodTimePercent(float goodTimePercent){
+        this.goodTimePercent=goodTimePercent;
     }
 }
