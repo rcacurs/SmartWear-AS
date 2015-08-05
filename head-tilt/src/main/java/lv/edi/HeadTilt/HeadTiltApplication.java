@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import lv.edi.BluetoothLib.*;
 
 import lv.edi.SmartWearProcessing.Sensor;
 

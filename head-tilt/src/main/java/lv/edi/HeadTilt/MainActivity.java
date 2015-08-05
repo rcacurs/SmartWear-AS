@@ -20,8 +20,7 @@ import android.view.View;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import java.util.Timer;
-import java.util.TimerTask;
+import lv.edi.BluetoothLib.*;
 
 
 public class MainActivity extends Activity {

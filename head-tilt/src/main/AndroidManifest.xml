@@ -27,10 +27,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="lv.edi.BluetoothLib.DeviceListActivity"></activity>
         <activity android:name=".HeadTiltPreferenceActivity"
                   android:label="@string/preferences_label"
             ></activity>
-        <activity android:name=".DeviceListActivity"
-            android:label="@string/bt_device_select"></activity>
     </application>
 </manifest>

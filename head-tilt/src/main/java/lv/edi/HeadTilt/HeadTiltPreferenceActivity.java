@@ -10,6 +10,7 @@ import android.preference.PreferenceFragment;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.bluetooth.BluetoothDevice;
 import android.util.Log;
+import lv.edi.BluetoothLib.*;
 
 
 /**
