@@ -10,6 +10,7 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/bluetooth-lib" />
             <option value="$PROJECT_DIR$/core-app" />
             <option value="$PROJECT_DIR$/head-tilt" />
             <option value="$PROJECT_DIR$/smartwear-processing-lib" />
