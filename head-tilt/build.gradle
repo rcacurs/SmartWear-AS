@@ -30,4 +30,5 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':smartwear-processing-lib')
+    compile project(':bluetooth-lib')
 }

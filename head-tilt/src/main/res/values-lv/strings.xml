@@ -14,7 +14,7 @@
     <string name="title_paired_devices">Sapārotās ierīces</string>
     <string name="title_other_devices">Citas ierīces</string>
     <string name="button_scan">Skenēt</string>
-    <string name="none_paired">Ne sapārots</string>
+    <string name="none_paired">Nav sapārotu ierīču</string>
     <string name="scanning">Skenē...</string>
     <string name="select_device">Izvēlēties ierīci</string>
     <string name="none_found">Nav atrastas</string>
