@@ -6,7 +6,9 @@ import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.UUID;
+import java.util.Vector;
 
 import lv.edi.SmartWearProcessing.Sensor;
 
@@ -21,7 +23,7 @@ public class BluetoothService {
     private BluetoothEventListener btEventListener;
     private boolean isConnected=false;
     private boolean isConnecting=false;
-    private Sensor[] sensorbuffer; // main data buffer where accelerometer data is stored
+    private Vector<Sensor> sensorbuffer; // main data buffer where accelerometer data is stored
     private final UUID M_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"); //UUID for SPP profile;
     private BluetoothSocket mSocket; // bluetooth socket from this object data streams can be created
     private BluetoothDevice mDevice;// bluetooth connection target device
@@ -35,20 +37,20 @@ public class BluetoothService {
 
     /**
      * Constructor for creating bluetooth service
-     * @param sensors Array of type Senssors where sensor data will be stored
+     * @param sensors Vector of type Senssors where sensor data will be stored
      */
 
-    public BluetoothService(Sensor[] sensors){
+    public BluetoothService(Vector<Sensor> sensors){
         sensorbuffer=sensors;
     }
 
     /**
      * Constructor allowing to specify the index of battery level packet
-     * @param sensors Array of type Senssors where sensor data will be stored
+     * @param sensors Vector of type Senssors where sensor data will be stored
      * @param batteryPacketIndex index for the bluetooth battery packet
      */
 
-    public BluetoothService(Sensor[] sensors, int batteryPacketIndex){
+    public BluetoothService(Vector<Sensor> sensors, int batteryPacketIndex){
         sensorbuffer=sensors;
         this.batteryPacketIndex = batteryPacketIndex;
     }
@@ -212,7 +214,7 @@ public class BluetoothService {
                                     if(bytes_received>0){ //if we have at least one byte received
                                         if(bytes_received>=bytesInPacket){ // if we received 7 bytes, then start to from packet
                                             bytes_received = 0; // resetting received byte counter
-                                            if(packet[0]<sensorbuffer.length){ // if received data packet
+                                            if(packet[0]<sensorbuffer.size()){ // if received data packet
                                                 short accx = (short)(packet[1]*256+packet[2]);
                                                 short accy = (short)(packet[3]*256+packet[4]);
                                                 short accz = (short)(packet[5]*256+packet[6]);
@@ -222,15 +224,15 @@ public class BluetoothService {
                                                 double accMagnitude = Math.sqrt(Math.pow(accx, 2)+Math.pow(accy, 2)+Math.pow(accz, 2));
                                                 double magMagnitude = Math.sqrt(Math.pow(magx, 2)+Math.pow(magy, 2)+Math.pow(magz, 2));
                                                 if(((accMagnitude<20800)&&(accMagnitude>11000)&&(magMagnitude>0)&&(magMagnitude<2000))){
-                                                    sensorbuffer[packet[0]].updateSensorData(accx, // forming accelerometer x data from two received data bytes
+                                                    sensorbuffer.get(packet[0]).updateSensorData(accx, // forming accelerometer x data from two received data bytes
                                                             accy, // forming accelerometer y data from two received data bytes
                                                             accz, // forming accelerometer z data from two received data bytes
                                                             magx, // forming magnetometer  x data from two received data bytes
                                                             magy,// forming magnetometer  y data from two received data bytes
                                                             magz);// forming magnetometer z data from two recieved data bytes
-                                                    Log.d("BLUETOOTH_RECEIVE", ""+sensorbuffer[packet[0]].getAccRawNormX()+" "
-                                                                                 +sensorbuffer[packet[0]].getAccRawNormY()+" "
-                                                                                 +sensorbuffer[packet[0]].getAccRawNormZ());
+                                                    Log.d("BLUETOOTH_RECEIVE", ""+sensorbuffer.get(packet[0]).getAccRawNormX()+" "
+                                                                                 +sensorbuffer.get(packet[0]).getAccRawNormY()+" "
+                                                                                 +sensorbuffer.get(packet[0]).getAccRawNormZ());
                                                 }
                                             }
                                             if(packet[0]==batteryPacketIndex) {// if received battery status packet

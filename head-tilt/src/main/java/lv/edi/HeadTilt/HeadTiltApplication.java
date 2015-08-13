@@ -10,6 +10,10 @@ import android.os.Handler;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.util.Log;
+
+import java.util.ArrayList;
+import java.util.Vector;
+
 import lv.edi.BluetoothLib.*;
 
 import lv.edi.SmartWearProcessing.Sensor;
@@ -28,7 +32,8 @@ public class HeadTiltApplication extends Application implements SharedPreference
     boolean alertFeedback;
     float threshold;
     BluetoothService btService;
-    Sensor[] sensors = new Sensor[NUMBER_OF_SENSORS];
+    Vector<Sensor> sensors; ;
+
     BatteryLevel batteryLevel;
     Handler uiHandler;
     HeadTiltProcessingService processingService;
@@ -41,8 +46,10 @@ public class HeadTiltApplication extends Application implements SharedPreference
         super.onCreate();
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         sharedPrefs.registerOnSharedPreferenceChangeListener(this);
+        sensors = new Vector<Sensor>(NUMBER_OF_SENSORS);
+        sensors.setSize(NUMBER_OF_SENSORS);
         for(int i=0; i<NUMBER_OF_SENSORS; i++){
-            sensors[i]=new Sensor(i, true);
+            sensors.set(i,new Sensor(i, true));
         }
         batteryLevel = new BatteryLevel();
         batteryLevel.registerListener(this);

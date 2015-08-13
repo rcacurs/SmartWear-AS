@@ -128,7 +128,7 @@ public class MainActivity extends Activity {
 
 
         if(application.processingService == null) {
-            application.processingService = new HeadTiltProcessingService(application.sensors[0], 10, application.threshold);
+            application.processingService = new HeadTiltProcessingService(application.sensors.get(0), 10, application.threshold);
             application.processingService.setProcessingEventListener(application);
         }
 
@@ -214,7 +214,7 @@ public class MainActivity extends Activity {
 
     public void onClickSave(View view){
         if(application.btService.isConnected()) {
-            application.processingService.setReference(application.sensors[0].getAccRawNorm());
+            application.processingService.setReference(application.sensors.get(0).getAccRawNorm());
             Toast.makeText(this, res.getString(R.string.toast_saved), Toast.LENGTH_SHORT).show();
         } else{
             Toast.makeText(this, res.getString(R.string.toast_must_connect_bt), Toast.LENGTH_SHORT).show();
