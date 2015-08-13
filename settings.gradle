@@ -1,1 +1,1 @@
-include ':core-app', ':head-tilt', ':smartwear-processing-lib', ':bluetooth-lib'
+include ':core-app', ':head-tilt', ':smartwear-processing-lib', ':bluetooth-lib', ':head-and-posture'
