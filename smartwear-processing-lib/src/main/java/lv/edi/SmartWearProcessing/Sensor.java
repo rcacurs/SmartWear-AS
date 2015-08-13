@@ -42,6 +42,15 @@ public class Sensor {
 		this.identifier = identifier;
 		this.isOrientationUp = isOrientationUp;
 	}
+
+	/**
+	 * constructs sensor object that represents sensor from sensor grid. set sensor orientation
+	 * up
+	 * @param identifier
+	 */
+	public Sensor(int identifier){
+		this(identifier, true);
+	}
 	/**returns identifier of sensor object
 	 * @return identifier returns identifier of accelerometer*/
 	public synchronized int getIdentifier(){
