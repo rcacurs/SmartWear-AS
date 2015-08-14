@@ -56,6 +56,22 @@ public class BluetoothService {
     }
 
     /**
+     * Method that sets reference to sesnsor data buffer
+     * @param sensors Vector of sensors where data is stored
+     */
+    public void setSensorBuffer(Vector<Sensor> sensors){
+        this.sensorbuffer = sensors;
+    }
+
+    /**
+     * sets index for battery level packet
+     * @param batteryPacketIndex integer representing battery packet index
+     */
+    public void setBatteryPacketIndex(int batteryPacketIndex){
+        this.batteryPacketIndex=batteryPacketIndex;
+    }
+
+    /**
      * Register bluetooth event event listener
      * @param listener bluetooth event listener
      */
