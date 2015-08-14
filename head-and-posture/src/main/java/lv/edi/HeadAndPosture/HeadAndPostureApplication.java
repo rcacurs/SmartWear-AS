@@ -124,7 +124,9 @@ public class HeadAndPostureApplication extends Application implements SharedPref
         if(key.equals("pref_head_idx")){
             String headSensorIndexS = sharedPreferences.getString("pref_head_idx", "20");
             headSensorIndex = Integer.parseInt(headSensorIndexS);
-
+            if((processingService!=null)&&(headSensorIndex<sensors.size())){
+                processingService.setSensor(sensors.get(headSensorIndex));
+            }
             Log.d("PREFERENCES", "head sensor idx changed "+headSensorIndex);
         }
 
@@ -148,9 +150,11 @@ public class HeadAndPostureApplication extends Application implements SharedPref
         }
 
         if(key.equals("pref_battery_idx")){
-            String batteryPacketIndexS = sharedPreferences.getString("pref_battery_idx", "21");
+            String batteryPacketIndexS = sharedPreferences.getString("pref_battery_idx", "63");
             batteryPacketIndex = Integer.parseInt(batteryPacketIndexS);
-
+            if(btService!=null){
+                btService.setBatteryPacketIndex(batteryPacketIndex);
+            }
             Log.d("PREFERENCES", "battery packet index changed "+batteryPacketIndex);
         }
 

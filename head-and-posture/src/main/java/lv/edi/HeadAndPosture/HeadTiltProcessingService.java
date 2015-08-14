@@ -86,6 +86,13 @@ public class HeadTiltProcessingService{
         this.iconSize = iconSize;
     }
 
+    /**
+     * Sets sensor on which head tilt processing is pefromed
+     * @param sensor sensor object that cotains the data
+     */
+    public void setSensor(Sensor sensor){
+        this.sensor = sensor;
+    }
     /** setter method for thrreshold setting. when distance of object exceeds threshold
      * isOverThreshold flag is raised;
      *
