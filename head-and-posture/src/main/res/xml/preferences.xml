@@ -22,5 +22,9 @@
         android:title="@string/pref_alert"
         android:summary="@string/pref_summary_alert"
         android:defaultValue="false"/>
+    <Preference
+        android:key="open_sensor_preference_activity"
+        android:title="@string/pref_title_open_sensor_prefs"
+        android:summary="@string/pref_summary_open_sensor_prefs"></Preference>
 
 </PreferenceScreen>

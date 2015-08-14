@@ -31,5 +31,7 @@
         <activity android:name=".AppPreferenceActivity"
                   android:label="@string/preferences_label"
             ></activity>
+        <activity android:name=".SensorHardwarePreferenceActivity"
+                  android:label="@string/sensor_preferences_label"></activity>
     </application>
 </manifest>

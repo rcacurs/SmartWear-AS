@@ -23,6 +23,7 @@ public class AppPreferenceActivity extends Activity {
     public static class SettingsFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
 
         private Preference bluetoothTargetPreference;
+        private Preference openSensorSettingsPreference;
         @Override
         public void onCreate(Bundle savedInstanceState){
             super.onCreate(savedInstanceState);
@@ -34,6 +35,15 @@ public class AppPreferenceActivity extends Activity {
                 public boolean onPreferenceClick(Preference preference) {
                     Intent intent = new Intent(getActivity(), DeviceListActivity.class);
                     startActivityForResult(intent, REQUEST_SELECT_TARGET_DEVICE);
+                    return true;
+                }
+            });
+
+            openSensorSettingsPreference = findPreference("open_sensor_preference_activity");
+            openSensorSettingsPreference.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+                public boolean onPreferenceClick(Preference preference) {
+                    Intent intent = new Intent(getActivity(), SensorHardwarePreferenceActivity.class);
+                    startActivity(intent);
                     return true;
                 }
             });
@@ -71,14 +81,14 @@ public class AppPreferenceActivity extends Activity {
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key){
             if(key.equals("pref_bluetooth_target")) {
                 Preference pref = findPreference(key);
-                String targetDeviceAddress=sharedPreferences.getString("pref_bluetooth_target", "none");
+                String targetDeviceAddress = sharedPreferences.getString("pref_bluetooth_target", "none");
                 Resources res = getResources();
 
-                if(targetDeviceAddress.equals("none")){
-                    pref.setSummary(res.getString(R.string.pref_summary_bluetooth_target)+": none");
-                } else{
+                if (targetDeviceAddress.equals("none")) {
+                    pref.setSummary(res.getString(R.string.pref_summary_bluetooth_target) + ": none");
+                } else {
                     BluetoothDevice btDevice = application.btAdapter.getRemoteDevice(targetDeviceAddress);
-                    pref.setSummary(res.getString(R.string.pref_summary_bluetooth_target)+": "+btDevice.getName());
+                    pref.setSummary(res.getString(R.string.pref_summary_bluetooth_target) + ": " + btDevice.getName());
                 }
 
             }
