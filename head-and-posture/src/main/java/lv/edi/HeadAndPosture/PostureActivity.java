@@ -5,12 +5,25 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.util.Vector;
+
+import lv.edi.SmartWearGraphics3D.PostureRenderer;
+import lv.edi.SmartWearGraphics3D.PostureView;
+import lv.edi.SmartWearProcessing.Segment;
+
 public class PostureActivity extends Activity {
+    private PostureView postureView;
+    private PostureRenderer renderer;
+
+    Vector<Vector<Segment>> segments;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_posture);
+
+        postureView = (PostureView)findViewById(R.id.posture_view);
+
     }
 
     @Override
