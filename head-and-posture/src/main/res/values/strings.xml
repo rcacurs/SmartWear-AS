@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">HeadPosture</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_posture">Posture</string>
     <string name="none_paired">Non paired</string>
     <string name="none_found">None found</string>
     <string name="button_save_state">Save</string>
@@ -17,4 +19,7 @@
     <string name="toast_disconnected_bt">Bluetooth device not connected!</string>
     <string name="session_time_lable">Time</string>
     <string name="good_time_percent_lable">Good</string>
+    <string name="title_activity_posture">PostureActivity</string>
+
+    <string name="hello_world">Hello world!</string>
 </resources>

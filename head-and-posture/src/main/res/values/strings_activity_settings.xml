@@ -1,6 +1,5 @@
 <resources>
     <string name="title_activity_settings">Settings</string>
-    <string name="action_settings">Settings</string>
     <string name="pref_bluetooth_target">Bluetooth target</string>
     <string name="pref_threshold">Threshold</string>
     <string name="pref_vibrate">Vibrate Feedback</string>

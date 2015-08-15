@@ -1,5 +1,7 @@
 <resources>
     <string name="none_found">Nav atrastas</string>
+    <string name="action_settings">Iestatījumi</string>
+    <string name="action_posture">Stāja</string>
     <string name="button_save_state">Saglabāt</string>
     <string name="toggle_button_start">Sākt</string>
     <string name="toggle_button_stop">Apturēt</string>

@@ -184,6 +184,12 @@ public class MainActivity extends Activity {
             return true;
         }
 
+        if(id==R.id.action_posture){
+            Intent intent = new Intent(this, PostureActivity.class);
+            startActivity(intent);
+            return true;
+        }
+
         if(id == R.id.action_bluetooth_connection_status){
             if(!application.btService.isConnecting()) {
                 if (application.btService.isConnected()) {
