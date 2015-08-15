@@ -146,6 +146,7 @@ public class HeadTiltProcessingService{
             @Override
             public void run(){
                 currentSens1 = sensor.getAccRawNorm();
+                Log.d("PROCESSING", "SENSOR PROCESSED "+sensor.getIdentifier());
                 currentSens1[0] = filterX.filter(currentSens1[0]);
                 currentSens1[1] = filterY.filter(currentSens1[1]);
                 currentSens1[2] = filterZ.filter(currentSens1[2]);

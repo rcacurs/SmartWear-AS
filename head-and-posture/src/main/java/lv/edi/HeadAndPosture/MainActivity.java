@@ -126,8 +126,10 @@ public class MainActivity extends Activity {
 
         // create processing service
 
-
+        String headSensorIndexS = application.sharedPrefs.getString("pref_head_idx", "20");
+        application.headSensorIndex = Integer.parseInt(headSensorIndexS);
         if(application.processingService == null) {
+            Log.d("PREFERENCES", "HEAD SENSOR IDX "+application.headSensorIndex);
             application.processingService = new HeadTiltProcessingService(application.sensors.get(application.headSensorIndex), 10, application.threshold);
             application.processingService.setProcessingEventListener(application);
         }

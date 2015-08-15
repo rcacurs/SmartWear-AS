@@ -125,6 +125,7 @@ public class HeadAndPostureApplication extends Application implements SharedPref
             String headSensorIndexS = sharedPreferences.getString("pref_head_idx", "20");
             headSensorIndex = Integer.parseInt(headSensorIndexS);
             if((processingService!=null)&&(headSensorIndex<sensors.size())){
+                Log.d("PREFERENCES", "SENSOR IDX CHANGED IN PROCESSING SERVICE "+headSensorIndex);
                 processingService.setSensor(sensors.get(headSensorIndex));
             }
             Log.d("PREFERENCES", "head sensor idx changed "+headSensorIndex);
