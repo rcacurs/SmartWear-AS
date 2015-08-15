@@ -2,6 +2,7 @@ package lv.edi.SmartWearGraphics3D;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView;
+import android.opengl.GLU;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -10,7 +11,10 @@ import javax.microedition.khronos.opengles.GL10;
  * Created by Richards on 15.08.2015..
  */
 public class PostureRenderer implements GLSurfaceView.Renderer{
-    Context mContext;
+    private Context mContext;
+    volatile public double viewPointVector[] = {0, -40, 0};
+    volatile public double cameraUpVector[] = {0, 0, 1};
+    private PostureSurfaceModel surfaceModel;
 
     public PostureRenderer(Context context)
     {
@@ -28,6 +32,11 @@ public class PostureRenderer implements GLSurfaceView.Renderer{
         gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
         gl.glEnableClientState(GL10.GL_COLOR_ARRAY);
         gl.glDisable(GL10.GL_CULL_FACE);
+
+        GLU.gluLookAt(gl, (float) viewPointVector[0], (float) viewPointVector[1], (float) viewPointVector[2], 0, 0, 0, (float) cameraUpVector[0], (float) cameraUpVector[1], (float) cameraUpVector[2]);
+        if(surfaceModel!=null) {
+            surfaceModel.draw(gl);
+        }
     }
 
     @Override
@@ -51,5 +60,13 @@ public class PostureRenderer implements GLSurfaceView.Renderer{
         gl.glClearColor(1,1,1,1);
         gl.glEnable(GL10.GL_CULL_FACE);
         gl.glEnable(GL10.GL_DEPTH_TEST);
+    }
+
+    /**
+     * sets model for renderer to render
+     * @param model PostureSurfaceModel object
+     */
+    public void setSurfaceModel(PostureSurfaceModel model){
+        this.surfaceModel = model;
     }
 }
