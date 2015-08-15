@@ -1,4 +1,6 @@
 package lv.edi.SmartWearProcessing;
+import java.util.Vector;
+
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 
@@ -331,6 +333,29 @@ public class Segment {
 				segmentArray[i][j].center[0]=5*j;
 			}
 		}
+	}
+
+	/**
+	 * Generates array of segments in predefined grid
+	 * @param rows nr of rows
+	 * @param cols nr of cols
+	 * @return segment grid
+	 */
+	public static Vector<Vector<Segment>> generateSegmentArray(int rows, int cols){
+		Vector<Vector<Segment>> segments= new Vector(rows);
+		segments.setSize(rows);
+		for(int i=0; i<rows; i++) {
+			Vector<Segment> rowSeg = new Vector<Segment>(cols);
+			rowSeg.setSize(cols);
+			for (int j = 0; j < cols; j++) {
+				Segment seg = new Segment();
+				seg.center[2] = 5 * i;
+				seg.center[0] = 5 * j;
+				rowSeg.set(j, seg);
+			}
+			segments.set(i, rowSeg);
+		}
+		return segments;
 	}
 	/**
 	 * method that compares two segment arrays by distance between segment centres
