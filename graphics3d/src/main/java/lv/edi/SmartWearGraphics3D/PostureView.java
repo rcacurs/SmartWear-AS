@@ -39,4 +39,11 @@ public class PostureView extends GLSurfaceView {
     public void addPostureModel(PostureSurfaceModel model){
         renderer.addPostureModel(model);
     }
+
+    /**
+     * removes all models from renderer
+     */
+    public void removeAllPostureModels(){
+        renderer.removeAllPostureModels();
+    }
 }
