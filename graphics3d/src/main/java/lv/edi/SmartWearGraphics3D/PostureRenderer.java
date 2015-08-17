@@ -20,7 +20,7 @@ public class PostureRenderer implements GLSurfaceView.Renderer{
     private Vector<PostureSurfaceModel> surfaceModels;
 
     public PostureRenderer(Context context)
-    {
+    {   surfaceModels = new Vector<PostureSurfaceModel>();
         mContext = context;
     }
 
@@ -80,6 +80,8 @@ public class PostureRenderer implements GLSurfaceView.Renderer{
      * epties posture surface model buffer
      */
     public void removeAllPostureModels(){
-        this.surfaceModels.clear();
+        if(surfaceModels!=null) {
+            this.surfaceModels.clear();
+        }
     }
 }
