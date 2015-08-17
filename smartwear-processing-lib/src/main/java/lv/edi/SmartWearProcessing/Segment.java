@@ -117,6 +117,21 @@ public class Segment {
 			}
 		}
 	}
+
+
+	/**
+	 * Function sets segment orientation where segments and sensors are stored in
+	 * Vector<Vector<T>> type 2D structure
+	 * @param segments array containing segments objects
+	 * @param sensors array containing sensor objects
+	 */
+	public static void setAllSegmentOrientations(Vector<Vector<Segment>> segments, Vector<Vector<Sensor>>sensors){
+		for(int i=0; i<segments.size(); i++){
+			for(int j=0; j<segments.get(i).size(); j++){
+				segments.get(i).get(j).setSegmentOrientation(sensors.get(i).get(j));
+			}
+		}
+	}
 	/**
 	 * method sets segment rotation around vertical axis
 	 * @param angle - rotation angle in radians
@@ -285,6 +300,144 @@ public class Segment {
 			for(int j=0; j<segmentArray[0].length; j++){
 				for(int coord=0; coord<3; coord++){
 					segmentArray[i][j].center[coord]=(tempCentersR[i][j][coord]+tempCentersC[i][j][coord])/2;//+tempCentersR[i][j][coord])/2;
+				}
+			}
+		}
+	}
+
+	/**method sets segment center coordinates for segment grid @args segmentArray is array of segments , referenceRow
+	 * is row index for accelerometer from which to draw, referenceColumns is column index for accelerometer from which
+	 * to draw*/
+	public static void setSegmentCenters(Vector<Vector<Segment>> segmentArray, short referenceRow, short referenceCol){
+		// calculating row
+		short NR_ROWS = (short)segmentArray.size();
+		short NR_COLS = (short)segmentArray.get(0).size();
+
+		float[][][] tempCentersR = new float[NR_ROWS][NR_COLS][3];
+
+		short toBottom=referenceRow;
+		// solve centers for reference column
+		while(toBottom>0){
+			toBottom--;
+			tempCentersR[toBottom][referenceCol][0]=tempCentersR[toBottom+1][referenceCol][0]+
+					segmentArray.get(toBottom+1).get(referenceCol).cross[2][0]+
+					segmentArray.get(toBottom).get(referenceCol).cross[2][0]; // X coordinate for segment center
+			tempCentersR[toBottom][referenceCol][1]=tempCentersR[toBottom+1][referenceCol][1]+
+					segmentArray.get(toBottom+1).get(referenceCol).cross[2][1]+
+					segmentArray.get(toBottom).get(referenceCol).cross[2][1]; // Y coordinate for segment center
+			tempCentersR[toBottom][referenceCol][2]=tempCentersR[toBottom+1][referenceCol][2]+
+					segmentArray.get(toBottom+1).get(referenceCol).cross[2][2]+
+					segmentArray.get(toBottom).get(referenceCol).cross[2][2]; // Z coordinate for segment center
+		}
+		short toTop=referenceRow;
+		while(toTop<(NR_ROWS-1)){
+			toTop++;
+			tempCentersR[toTop][referenceCol][0]=tempCentersR[toTop-1][referenceCol][0]+
+					segmentArray.get(toTop-1).get(referenceCol).cross[0][0]+
+					segmentArray.get(toTop).get(referenceCol).cross[0][0];// X coordinate for segment center
+			tempCentersR[toTop][referenceCol][1]=tempCentersR[toTop-1][referenceCol][1]+
+					segmentArray.get(toTop-1).get(referenceCol).cross[0][1]+
+					segmentArray.get(toTop).get(referenceCol).cross[0][1];// Y coordinate for segment center
+			tempCentersR[toTop][referenceCol][2]=tempCentersR[toTop-1][referenceCol][2]+
+					segmentArray.get(toTop-1).get(referenceCol).cross[0][2]+
+					segmentArray.get(toTop).get(referenceCol).cross[0][2];// Z coordinate for segment center
+		}
+		// calculating centres for rest of the segments row-wise
+
+		for(int i=0;i<NR_ROWS;i++){
+			short toLeft=referenceCol;
+			while(toLeft<(NR_COLS-1)){
+				toLeft++;
+				tempCentersR[i][toLeft][0]=tempCentersR[i][toLeft-1][0]+
+						segmentArray.get(i).get(toLeft-1).cross[3][0]+
+						segmentArray.get(i).get(toLeft).cross[3][0]; // X coordinate
+				tempCentersR[i][toLeft][1]=tempCentersR[i][toLeft-1][1]+
+						segmentArray.get(i).get(toLeft-1).cross[3][1]+
+						segmentArray.get(i).get(toLeft).cross[3][1]; // Y coordinate
+				tempCentersR[i][toLeft][2]=tempCentersR[i][toLeft-1][2]+
+						segmentArray.get(i).get(toLeft-1).cross[3][2]+
+						segmentArray.get(i).get(toLeft).cross[3][2]; // Z coordinate
+			}
+
+			short toRight=referenceCol;
+			while(toRight>0){
+				toRight--;
+				tempCentersR[i][toRight][0]=tempCentersR[i][toRight+1][0]+
+						segmentArray.get(i).get(toRight+1).cross[1][0]+
+						segmentArray.get(i).get(toRight).cross[1][0]; // X coordinate
+				tempCentersR[i][toRight][1]=tempCentersR[i][toRight+1][1]+
+						segmentArray.get(i).get(toRight+1).cross[1][1]+
+						segmentArray.get(i).get(toRight).cross[1][1]; // Y coordinate
+				tempCentersR[i][toRight][2]=tempCentersR[i][toRight+1][2]+
+						segmentArray.get(i).get(toRight+1).cross[1][2]+
+						segmentArray.get(i).get(toRight).cross[1][2]; // X coordinate
+			}
+		}
+		// calculating centres for reference row
+		float[][][] tempCentersC = new float[NR_ROWS][NR_COLS][3];
+		short toLeft=referenceCol;
+		while(toLeft<(NR_COLS-1)){
+			toLeft++;
+			tempCentersC[referenceRow][toLeft][0]=tempCentersC[referenceRow][toLeft-1][0]+
+					segmentArray.get(referenceRow).get(toLeft-1).cross[3][0]+
+					segmentArray.get(referenceRow).get(toLeft).cross[3][0]; // X coordinate for segment center
+			tempCentersC[referenceRow][toLeft][1]=tempCentersC[referenceRow][toLeft-1][1]+
+					segmentArray.get(referenceRow).get(toLeft-1).cross[3][1]+
+					segmentArray.get(referenceRow).get(toLeft).cross[3][1]; // Y coordinate for segment center
+			tempCentersC[referenceRow][toLeft][2]=tempCentersC[referenceRow][toLeft-1][2]+
+					segmentArray.get(referenceRow).get(toLeft-1).cross[3][2]+
+					segmentArray.get(referenceRow).get(toLeft).cross[3][2]; // Z coordinate for segment center
+		}
+		short toRight=referenceCol;
+
+		while(toRight>0){
+			toRight--;
+			tempCentersC[referenceRow][toRight][0]=tempCentersC[referenceRow][toRight+1][0]+
+					segmentArray.get(referenceRow).get(toRight+1).cross[1][0]+
+					segmentArray.get(referenceRow).get(toRight).cross[1][0];// X coordinate for segment center
+			tempCentersC[referenceRow][toRight][1]=tempCentersC[referenceRow][toRight+1][1]+
+					segmentArray.get(referenceRow).get(toRight+1).cross[1][1]+
+					segmentArray.get(referenceRow).get(toRight).cross[1][1];// Y coordinate for segment center
+			tempCentersC[referenceRow][toRight][2]=tempCentersC[referenceRow][toRight+1][2]+
+					segmentArray.get(referenceRow).get(toRight+1).cross[1][2]+
+					segmentArray.get(referenceRow).get(toRight).cross[1][2];// Z coordinate for segment center
+		}
+
+		// calculating centres for rest of the segments columnwise
+
+		for(int i=0;i<NR_COLS;i++){
+			toBottom=referenceRow;
+			while(toBottom>0){
+				toBottom--;
+				tempCentersC[toBottom][i][0]=tempCentersC[toBottom+1][i][0]+
+						segmentArray.get(toBottom+1).get(i).cross[2][0]+
+						segmentArray.get(toBottom).get(i).cross[2][0]; // X coordinate
+				tempCentersC[toBottom][i][1]=tempCentersC[toBottom+1][i][1]+
+						segmentArray.get(toBottom+1).get(i).cross[2][1]+
+						segmentArray.get(toBottom).get(i).cross[2][1]; // Y coordinate
+				tempCentersC[toBottom][i][2]=tempCentersC[toBottom+1][i][2]+
+						segmentArray.get(toBottom+1).get(i).cross[2][2]+
+						segmentArray.get(toBottom).get(i).cross[2][2]; // Z coordinate
+			}
+			toTop=referenceRow;
+			while(toTop<(NR_ROWS-1)){
+				toTop++;
+				tempCentersC[toTop][i][0]=tempCentersC[toTop-1][i][0]+
+						segmentArray.get(toTop-1).get(i).cross[0][0]+
+						segmentArray.get(toTop).get(i).cross[0][0]; // X coordinate
+				tempCentersC[toTop][i][1]=tempCentersC[toTop-1][i][1]+
+						segmentArray.get(toTop-1).get(i).cross[0][1]+
+						segmentArray.get(toTop).get(i).cross[0][1]; // Y coordinate
+				tempCentersC[toTop][i][2]=tempCentersC[toTop-1][i][2]+
+						segmentArray.get(toTop-1).get(i).cross[0][2]+
+						segmentArray.get(toTop).get(i).cross[0][2]; // X coordinate
+			}
+		}
+		// combine centres solved by columns and rows by computing average
+		for(int i=0; i<segmentArray.size(); i++){
+			for(int j=0; j<segmentArray.get(i).size(); j++){
+				for(int coord=0; coord<3; coord++){
+					segmentArray.get(i).get(j).center[coord]=(tempCentersR[i][j][coord]+tempCentersC[i][j][coord])/2;//+tempCentersR[i][j][coord])/2;
 				}
 			}
 		}
