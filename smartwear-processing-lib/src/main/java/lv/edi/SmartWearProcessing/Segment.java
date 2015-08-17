@@ -44,7 +44,6 @@ public class Segment {
 	public float[] center={0,0,0};				   // center coordinates of segment
 	/**
 	 * constructor
-	 * @param angle angle that represents initial rotation around Z axis
 	 */
 	
 	public Segment(){
@@ -157,17 +156,36 @@ public class Segment {
 		initialCross[0][0]=0;
 		initialCross[0][1]=0;
 		initialCross[0][2]=verticDistance/2;
-		
+
 		initialCross[1][0]=0;
 		initialCross[1][1]=horizDistance/2;
 		initialCross[1][2]=0;
-		
+
 		initialCross[2][0]=0;
 		initialCross[2][1]=0;
 		initialCross[2][2]=-verticDistance/2;
-		
+
 		initialCross[3][0]=0;
 		initialCross[3][1]=-horizDistance/2;
+		initialCross[3][2]=0;
+	}
+
+	/** sets initial cross vectors @args verticDistance - vertical distance between sensors horizDistance - horizontal ditances between sensors*/
+	public void setInitialCross2(float verticDistance, float horizDistance){
+		initialCross[0][0]=0;
+		initialCross[0][1]=0;
+		initialCross[0][2]=verticDistance/2;
+
+		initialCross[1][0]=horizDistance/2;
+		initialCross[1][1]=0;
+		initialCross[1][2]=0;
+
+		initialCross[2][0]=0;
+		initialCross[2][1]=0;
+		initialCross[2][2]=-verticDistance/2;
+
+		initialCross[3][0]=-horizDistance/2;
+		initialCross[3][1]=0;
 		initialCross[3][2]=0;
 	}
 	/**method sets segment center coordinates for segment grid @args segmentArray is array of segments , referenceRow
