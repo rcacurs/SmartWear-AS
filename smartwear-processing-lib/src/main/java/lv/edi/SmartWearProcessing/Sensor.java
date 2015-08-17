@@ -222,7 +222,7 @@ public class Sensor {
 			accData[1]=rawAccData[1];
 			accData[2]=rawAccData[2];
 		}
-
+		SensorDataProcessing.normalizeVector(accData);
 		float[] data = new float[3];
 		SensorDataProcessing.multiplyMatrix(mountTransformMatrix, accData, data);
 		return data;

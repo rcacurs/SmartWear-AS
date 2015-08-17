@@ -1,6 +1,8 @@
 package lv.edi.SmartWearProcessing;
 import java.util.Vector;
 
+import sun.rmi.runtime.Log;
+
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 
@@ -70,7 +72,7 @@ public class Segment {
 		float[] vec = {0, 0, 1};  // Z axis
 		float fi = 0; 			  // rotation angle
 		float[] q = new float[4];// quaternion
-		
+		float[] accnorm = sensor.getAccNorm();
 		SensorDataProcessing.crossProduct(sensor.getAccNorm(),vec, n); // rotation axis
 		SensorDataProcessing.normalizeVector(n);					      // normalize rotation axis				
 		fi = (float)Math.acos(SensorDataProcessing.dotProduct(vec, sensor.getAccNorm())); // get rotation angle
