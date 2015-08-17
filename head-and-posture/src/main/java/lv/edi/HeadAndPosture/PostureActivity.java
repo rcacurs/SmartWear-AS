@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import java.util.Vector;
 
 import lv.edi.SmartWearGraphics3D.PostureRenderer;
+import lv.edi.SmartWearGraphics3D.PostureSurfaceModel;
 import lv.edi.SmartWearGraphics3D.PostureView;
 import lv.edi.SmartWearProcessing.Segment;
 
@@ -16,6 +17,7 @@ public class PostureActivity extends Activity {
     private PostureRenderer renderer;
 
     Vector<Vector<Segment>> segments;
+    PostureSurfaceModel surfaceModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +25,9 @@ public class PostureActivity extends Activity {
         setContentView(R.layout.activity_posture);
 
         postureView = (PostureView)findViewById(R.id.posture_view);
+        segments = Segment.generateSegmentArray(5,4);
+        surfaceModel = new PostureSurfaceModel(segments);
+        postureView.setPostureModel(surfaceModel);
 
     }
 
