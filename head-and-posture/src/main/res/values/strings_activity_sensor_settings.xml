@@ -17,4 +17,8 @@
     <string name="pref_title_ref_row_idx">Reference sensor row index</string>
     <string name="pref_summary_ref_col_idx">Specifies the reference sensor from which shape is reconstructed</string>
     <string name="pref_summary_ref_row_idx">Specified the reference sensor from which shape is reconstructed</string>
+    <string name="pref_title_row_distance">Row distance</string>
+    <string name="pref_summary_row_distance">Specifies distance between sensors rowise [cm]</string>
+    <string name="pref_title_col_distance">Column distance</string>
+    <string name="pref_summary_col_distance">Specifies distance between sensors for cokumnwise [cm]</string>
 </resources>

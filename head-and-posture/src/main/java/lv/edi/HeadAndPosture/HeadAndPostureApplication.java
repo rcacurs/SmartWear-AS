@@ -37,6 +37,7 @@ public class HeadAndPostureApplication extends Application implements SharedPref
     int nrOfCols, nrOfRows;
     int refRow, refCol;
     int batteryPacketIndex;
+    float rowDist, colDist;
     boolean startSensorLeft;
 
     private boolean isStateSaved=false;
@@ -47,6 +48,7 @@ public class HeadAndPostureApplication extends Application implements SharedPref
     Vector<Vector<Segment>> segmentsSaved;
     Vector<Vector<Segment>> segmentsSavedInitial;
     Vector<Vector<Segment>> segmentsCurrent;
+    Vector<Vector<byte[]>> modelColors;
 
     BatteryLevel batteryLevel;
     Handler uiHandler;
@@ -79,6 +81,11 @@ public class HeadAndPostureApplication extends Application implements SharedPref
         String refRowS = sharedPrefs.getString("pref_ref_row_idx", "2");
         refRow = Integer.parseInt(refRowS);
         String refColS = sharedPrefs.getString("pref_ref_col_idx", "2");
+        refCol = Integer.parseInt(refColS);
+        String colDistS = sharedPrefs.getString("pref_col_distance", "4.25");
+        colDist = Float.parseFloat(colDistS);
+        String rowDistS = sharedPrefs.getString("pref_row_distance", "6.75");
+        rowDist = Float.parseFloat(rowDistS);
 
         sensors = new Vector<Sensor>(numberOfSensors);
         sensors.setSize(numberOfSensors);
@@ -113,9 +120,17 @@ public class HeadAndPostureApplication extends Application implements SharedPref
             segmentRowCurrent.setSize(nrOfCols);
             for(int j=0; j<nrOfCols; j++){
                 sensorRow.set(j, sensors.get(SensorDataProcessing.getIndex(i, j, nrOfRows, nrOfCols, startSensorLeft)));
-                segmentRow.set(j, new Segment());
+                Segment segment = new Segment();
+                segment.setInitialCross2(rowDist, colDist);
+                segmentRow.set(j, segment);
+
+                segment=new Segment();
+                segment.setInitialCross2(rowDist, colDist);
                 segmentRowInit.set(j, new Segment());
-                segmentRowCurrent.set(j, new Segment());
+
+                segment=new Segment();
+                segment.setInitialCross2(rowDist, colDist);
+                segmentRowCurrent.set(j, segment);
             }
             sensorGrid.set(i, sensorRow);
             segmentsSaved.set(i, segmentRow);

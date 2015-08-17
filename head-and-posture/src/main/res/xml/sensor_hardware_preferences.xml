@@ -26,6 +26,21 @@
         android:inputType="numberDecimal"
         android:digits="0123456789">
     </EditTextPreference>
+    <EditTextPreference
+        android:key="pref_row_distance"
+        android:title="@string/pref_title_row_distance"
+        android:summary="@string/pref_summary_row_distance"
+        android:defaultValue="6.75"
+        android:inputType="numberDecimal"
+        android:digits="0123456789."></EditTextPreference>
+
+    <EditTextPreference
+        android:key="pref_col_distance"
+        android:title="@string/pref_title_col_distance"
+        android:summary="@string/pref_summary_col_distance"
+        android:defaultValue="4.25"
+        android:inputType="numberDecimal"
+        android:digits="0123456789."></EditTextPreference>
 
     <EditTextPreference
         android:key="pref_ref_col_idx"
@@ -50,6 +65,7 @@
         android:inputType="numberDecimal"
         android:digits="0123456789">
     </EditTextPreference>
+
 
     <CheckBoxPreference
         android:key="pref_start_left"

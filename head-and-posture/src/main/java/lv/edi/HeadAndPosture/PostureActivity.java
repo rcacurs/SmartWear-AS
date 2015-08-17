@@ -21,9 +21,9 @@ import lv.edi.SmartWearProcessing.SensorDataProcessing;
 
 public class PostureActivity extends Activity {
     private PostureView postureView;
-    private PostureRenderer renderer;
 
     PostureSurfaceModel currentStateModel;
+    PostureSurfaceModel savedStateModel;
 
     private Resources res;
     private HeadAndPostureApplication application;
@@ -49,13 +49,17 @@ public class PostureActivity extends Activity {
         }
 
         currentStateModel = new PostureSurfaceModel(application.segmentsCurrent);
-        postureView.setPostureModel(currentStateModel);
-        
+        savedStateModel = new PostureSurfaceModel(application.segmentsSaved);
+        postureView.removeAllPostureModels();
+
+        postureView.addPostureModel(currentStateModel);
+        postureView.addPostureModel(savedStateModel);
+
     }
 
     public void onClickSave(View view){
         if(application.btService.isConnected()) {
-
+            Log.d("PROCESSING", "references "+application.refRow+" "+application.refCol);
             application.segmentsSaved.get(application.refRow).get(application.refCol).center[0]=0;
             application.segmentsSaved.get(application.refRow).get(application.refCol).center[1]=0;
             application.segmentsSaved.get(application.refRow).get(application.refCol).center[2]=0;

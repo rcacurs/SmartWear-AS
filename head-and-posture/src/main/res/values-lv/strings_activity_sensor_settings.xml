@@ -19,4 +19,8 @@
     <string name="pref_title_ref_row_idx">References sensora rindas indekss</string>
     <string name="pref_summary_ref_col_idx">Norāda references sensoru no kura tiek rekonstruēta virsma</string>
     <string name="pref_summary_ref_row_idx">Norāda references sensoru no kura tiek rekonstruēta virsma</string>
+    <string name="pref_title_row_distance">Rindu attālumi</string>
+    <string name="pref_summary_row_distance">Attālumi starp sensoru kolonām [cm]</string>
+    <string name="pref_title_col_distance">Kolonu attālumi</string>
+    <string name="pref_summary_col_distance">Attālumi starp sensoru kolonām [cm]</string>
 </resources>
