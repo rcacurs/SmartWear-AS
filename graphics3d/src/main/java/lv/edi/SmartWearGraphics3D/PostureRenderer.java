@@ -5,6 +5,8 @@ import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
 import android.util.Log;
 
+import java.util.Vector;
+
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
@@ -15,7 +17,7 @@ public class PostureRenderer implements GLSurfaceView.Renderer{
     private Context mContext;
     volatile public double viewPointVector[] = {0, -40, 0};
     volatile public double cameraUpVector[] = {0, 0, 1};
-    private PostureSurfaceModel surfaceModel;
+    private Vector<PostureSurfaceModel> surfaceModels;
 
     public PostureRenderer(Context context)
     {
@@ -35,9 +37,10 @@ public class PostureRenderer implements GLSurfaceView.Renderer{
         gl.glDisable(GL10.GL_CULL_FACE);
 
         GLU.gluLookAt(gl, (float) viewPointVector[0], (float) viewPointVector[1], (float) viewPointVector[2], 0, 0, 0, (float) cameraUpVector[0], (float) cameraUpVector[1], (float) cameraUpVector[2]);
-        Log.d("RENDERING", "in on draw frame surface model is " + surfaceModel);
-        if(surfaceModel!=null) {
-            surfaceModel.draw(gl);
+        for(int i=0; i<surfaceModels.size(); i++) {
+            if (surfaceModels.get(i) != null) {
+                surfaceModels.get(i).draw(gl);
+            }
         }
     }
 
@@ -59,16 +62,24 @@ public class PostureRenderer implements GLSurfaceView.Renderer{
         gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT,
                 GL10.GL_FASTEST);
 
-        gl.glClearColor(1,1,1,1);
+        gl.glClearColor(1, 1, 1, 1);
         //gl.glEnable(GL10.GL_CULL_FACE);
         gl.glEnable(GL10.GL_DEPTH_TEST);
     }
 
     /**
-     * sets model for renderer to render
+     * pushes posutre model to render
      * @param model PostureSurfaceModel object
      */
-    public void setSurfaceModel(PostureSurfaceModel model){
-        this.surfaceModel = model;
+    public void addPostureModel(PostureSurfaceModel model){
+
+        this.surfaceModels.add(model);
+    }
+
+    /**
+     * epties posture surface model buffer
+     */
+    public void removeAllPostureModels(){
+        this.surfaceModels.clear();
     }
 }

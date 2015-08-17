@@ -36,7 +36,7 @@ public class PostureView extends GLSurfaceView {
      * Sets posture model to be drawed in this view
      * @param model model to be drawed
      */
-    public void setPostureModel(PostureSurfaceModel model){
-        renderer.setSurfaceModel(model);
+    public void addPostureModel(PostureSurfaceModel model){
+        renderer.addPostureModel(model);
     }
 }
