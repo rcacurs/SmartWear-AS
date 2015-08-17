@@ -16,7 +16,9 @@ import java.util.Vector;
 
 import lv.edi.BluetoothLib.*;
 
+import lv.edi.SmartWearProcessing.Segment;
 import lv.edi.SmartWearProcessing.Sensor;
+import lv.edi.SmartWearProcessing.SensorDataProcessing;
 
 /**
  * Created by Richards on 18/06/2015.
@@ -29,7 +31,7 @@ public class HeadAndPostureApplication extends Application implements SharedPref
     BluetoothDevice btDevice;
     boolean vibrateFeedback;
     boolean alertFeedback;
-    float threshold;
+    float threshold, postureThreshold=3;
     int numberOfSensors;
     int headSensorIndex;
     int nrOfCols, nrOfRows;
@@ -37,12 +39,19 @@ public class HeadAndPostureApplication extends Application implements SharedPref
     int batteryPacketIndex;
     boolean startSensorLeft;
 
+    private boolean isStateSaved=false;
+
     BluetoothService btService;
-    Vector<Sensor> sensors; ;
+    Vector<Sensor> sensors;
+    Vector<Vector<Sensor>> sensorGrid;
+    Vector<Vector<Segment>> segmentsSaved;
+    Vector<Vector<Segment>> segmentsSavedInitial;
+    Vector<Vector<Segment>> segmentsCurrent;
 
     BatteryLevel batteryLevel;
     Handler uiHandler;
     HeadTiltProcessingService processingService;
+    PostureProcessingService postureProcessingService;
     HeadTiltView htView;
     Vibrator vibrator;
     MediaPlayer mp;
@@ -64,7 +73,7 @@ public class HeadAndPostureApplication extends Application implements SharedPref
         nrOfRows = Integer.parseInt(nrOfRowsS);
         String batteryPacketIndexS = sharedPrefs.getString("pref_battery_idx", "21");
         batteryPacketIndex = Integer.parseInt(batteryPacketIndexS);
-        startSensorLeft = sharedPrefs.getBoolean("pref_start_left", true);
+        startSensorLeft = sharedPrefs.getBoolean("pref_start_left", false);
         alertFeedback = sharedPrefs.getBoolean("pref_vibrate", false);
         vibrateFeedback = sharedPrefs.getBoolean("pref_alert", false);
         String refRowS = sharedPrefs.getString("pref_ref_row_idx", "2");
@@ -74,10 +83,45 @@ public class HeadAndPostureApplication extends Application implements SharedPref
         sensors = new Vector<Sensor>(numberOfSensors);
         sensors.setSize(numberOfSensors);
         for(int i=0; i<numberOfSensors; i++){
-            sensors.set(i,new Sensor(i, true));
+            int columnIndex = i/nrOfRows;
+            if(columnIndex%2==0) {
+                sensors.set(i, new Sensor(i, true));
+            }else{
+                sensors.set(i, new Sensor(i, false));
+            }
         }
         batteryLevel = new BatteryLevel();
         batteryLevel.registerListener(this);
+
+        sensorGrid = new Vector<Vector<Sensor>>(nrOfRows);
+        segmentsSaved = new Vector<Vector<Segment>>(nrOfRows);
+        segmentsSavedInitial = new Vector<Vector<Segment>>(nrOfRows);
+        segmentsCurrent = new Vector<Vector<Segment>>(nrOfRows);
+        sensorGrid.setSize(nrOfRows);
+        segmentsSaved.setSize(nrOfRows);
+        segmentsSavedInitial.setSize(nrOfRows);
+        segmentsCurrent.setSize(nrOfRows);
+
+        for(int i=0; i<nrOfRows; i++){
+            Vector<Sensor> sensorRow = new Vector<Sensor>(nrOfCols);
+            Vector<Segment> segmentRow = new Vector<Segment>(nrOfCols);
+            Vector<Segment> segmentRowInit = new Vector<Segment>(nrOfCols);
+            Vector<Segment> segmentRowCurrent = new Vector<Segment>(nrOfCols);
+            sensorRow.setSize(nrOfCols);
+            segmentRow.setSize(nrOfCols);
+            segmentRowInit.setSize(nrOfCols);
+            segmentRowCurrent.setSize(nrOfCols);
+            for(int j=0; j<nrOfCols; j++){
+                sensorRow.set(j, sensors.get(SensorDataProcessing.getIndex(i, j, nrOfRows, nrOfCols, startSensorLeft)));
+                segmentRow.set(j, new Segment());
+                segmentRowInit.set(j, new Segment());
+                segmentRowCurrent.set(j, new Segment());
+            }
+            sensorGrid.set(i, sensorRow);
+            segmentsSaved.set(i, segmentRow);
+            segmentsSavedInitial.set(i, segmentRowInit);
+            segmentsCurrent.set(i, segmentRowCurrent);
+        }
     }
 
     @Override
@@ -146,7 +190,7 @@ public class HeadAndPostureApplication extends Application implements SharedPref
         }
 
         if(key.equals("pref_start_left")){
-            startSensorLeft = sharedPreferences.getBoolean("pref_start_left", true);
+            startSensorLeft = sharedPreferences.getBoolean("pref_start_left", false);
             Log.d("PREFERENCES", "starting sensor from left: "+startSensorLeft);
         }
 
@@ -173,6 +217,14 @@ public class HeadAndPostureApplication extends Application implements SharedPref
             Log.d("PREFERENCES", "reference col changed  "+refCol);
         }
 
+    }
+
+    public void setIsStateSaved(boolean isStateSaved){
+        this.isStateSaved = isStateSaved;
+    }
+
+    public boolean isStateSaved(){
+        return isStateSaved;
     }
 
     // battery level listeners

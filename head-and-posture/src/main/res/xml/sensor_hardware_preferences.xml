@@ -55,7 +55,7 @@
         android:key="pref_start_left"
         android:title="@string/pref_title_start_left"
         android:summary="@string/pref_summary_start_left"
-        android:defaultValue="true">
+        android:defaultValue="false">
 
     </CheckBoxPreference>
 
