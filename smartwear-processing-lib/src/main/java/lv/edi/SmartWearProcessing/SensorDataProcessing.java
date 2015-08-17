@@ -523,6 +523,36 @@ public class SensorDataProcessing {
 		}
 		return indexes;	
 	}
+
+	/** methodreturns sensor identifier by taking sensors location in grid.
+	 * @param row - sensor row location in the grid
+	 * @param col - sensor column location in the grid
+	 * @param ROWS - total number of rows of sensor grid
+	 * @param COLS - total nomber of columns of sensor grid
+	 * @param startLeft - flag that shows if sensors in grid are mounted with first sensor (index 0)
+	 *        				mounted on the left side. if truer first sensor is on lefts side if false
+	 *        				sensor is on the right side
+	 *@return sensor identifier as integer
+	 *
+	 */
+	public static int getIndex(int row, int col, int ROWS, int COLS, boolean startLeft){
+		int index=0;
+		if(!startLeft){
+			if(col%2==0){ // if upgoing column
+				index = col*ROWS+row;
+			} else{
+				index = col*ROWS+(ROWS-row-1);
+			}
+		}else{
+			int firstDown =(COLS+1)%2;
+			if((col+firstDown)%2==0){
+				index=ROWS*COLS-(col*ROWS+row)-1;
+			} else{
+				index=ROWS*COLS-(col*ROWS+(ROWS-row-1))-1;
+			}
+		}
+		return index;
+	}
 	
 	// Quaternion operations
 	/**
