@@ -27,9 +27,12 @@ public class Sensor {
 	private float[] rawMagData = new float[3];
 	private float[] rawMagFilteredData = new float[3];
 	private float[] P_xyz_mag = new float[3]; // for Kalman filter
-	private float[] calibratedMagData = new float[3];
+	private float[] calibratedMagData;
 	private float[][] magCalibMat;
 	private float[] magCalibOffset;
+
+
+	private float[][] mountTransformMatrix = new float[3][3];
 	
 	/** constructs sensor object that represents sensor from sensor grid
 	 * @param identifier integer that represents sensor identifier
@@ -41,6 +44,18 @@ public class Sensor {
 		}
 		this.identifier = identifier;
 		this.isOrientationUp = isOrientationUp;
+
+		// set mount axis transformation matrix
+		mountTransformMatrix=new float[3][3];
+		if(isOrientationUp){
+			mountTransformMatrix[0][1] = -1;
+			mountTransformMatrix[1][2] = 1;
+			mountTransformMatrix[2][0]=-1;
+		} else{
+			mountTransformMatrix[0][1]=1;
+			mountTransformMatrix[1][2]=1;
+			mountTransformMatrix[2][0]=1;
+		}
 	}
 
 	/**
@@ -51,6 +66,17 @@ public class Sensor {
 	public Sensor(int identifier){
 		this(identifier, true);
 	}
+
+	/**
+	 * Constructor that allows specifying mount transform matrix
+	 * @param identifier - sensor identifier
+	 * @param isOrientationUp - is sensor mounted up
+	 * @param mountTransformMatrix - mount transform matrix
+	 */
+	public Sensor(int identifier, boolean isOrientationUp, float[][] mountTransformMatrix){
+		this(identifier, isOrientationUp);
+		this.mountTransformMatrix = mountTransformMatrix;
+	}
 	/**returns identifier of sensor object
 	 * @return identifier returns identifier of accelerometer*/
 	public synchronized int getIdentifier(){
@@ -60,7 +86,6 @@ public class Sensor {
 	 * return true if sensor orientation is up and false if orientation of sensor is down
 	 * @return isOrientationUp identifier indicates if sensor is up or down
 	 **/
-
 	public synchronized boolean isOrientationUp(){
 		return isOrientationUp;
 	}
@@ -187,10 +212,19 @@ public class Sensor {
 	}
 	/**returns array of normed accelerometer data with transformed coordinates*/
 	public synchronized float[] getAccNorm(){
-		float[] data = new float [3];
-		data[0] = getAccNormX();
-		data[1] = getAccNormY();
-		data[2] = getAccNormZ();
+		float[] accData = new float[3];
+		if(filter){
+			accData[0]=rawAccFilteredData[0];
+			accData[1]=rawAccFilteredData[1];
+			accData[2]=rawAccFilteredData[2];
+		} else{
+			accData[0]=rawAccData[0];
+			accData[1]=rawAccData[1];
+			accData[2]=rawAccData[2];
+		}
+
+		float[] data = new float[3];
+		SensorDataProcessing.multiplyMatrix(mountTransformMatrix, accData, data);
 		return data;
 	}
 	/**return normed magnetometer X axis data considering magnetometer orientation in grid*/
