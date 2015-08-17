@@ -10,12 +10,26 @@
         android:layout_width="wrap_content"
         android:layout_weight="2"></lv.edi.SmartWearGraphics3D.PostureView>
     <LinearLayout
-        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-    <Button
-            android:layout_width="wrap_content"
+        android:layout_width="match_parent"
+        android:padding="5pt"
+        android:orientation="horizontal"
+        >
+        <Button
             android:layout_height="wrap_content"
-            android:text="test"/>
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="@string/button_save_state"
+            android:onClick="onClickSave"
+            ></Button>
+        <ToggleButton
+            android:id="@+id/buttonRunPosture"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textOn="@string/toggle_button_stop"
+            android:textOff="@string/toggle_button_start"
+            android:onClick="onClickStart"/>
+
     </LinearLayout>
 </LinearLayout>
