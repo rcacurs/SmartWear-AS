@@ -15,7 +15,7 @@ import javax.microedition.khronos.opengles.GL10;
  */
 public class PostureRenderer implements GLSurfaceView.Renderer{
     private Context mContext;
-    volatile public double viewPointVector[] = {0, -40, 0};
+    volatile public double viewPointVector[] = {0, -30, 0};
     volatile public double cameraUpVector[] = {0, 0, 1};
     private Vector<PostureSurfaceModel> surfaceModels;
 
