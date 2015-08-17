@@ -3,6 +3,7 @@ package lv.edi.SmartWearGraphics3D;
 import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
+import android.util.Log;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -34,6 +35,7 @@ public class PostureRenderer implements GLSurfaceView.Renderer{
         gl.glDisable(GL10.GL_CULL_FACE);
 
         GLU.gluLookAt(gl, (float) viewPointVector[0], (float) viewPointVector[1], (float) viewPointVector[2], 0, 0, 0, (float) cameraUpVector[0], (float) cameraUpVector[1], (float) cameraUpVector[2]);
+        Log.d("RENDERING", "in on draw frame surface model is " + surfaceModel);
         if(surfaceModel!=null) {
             surfaceModel.draw(gl);
         }
@@ -58,7 +60,7 @@ public class PostureRenderer implements GLSurfaceView.Renderer{
                 GL10.GL_FASTEST);
 
         gl.glClearColor(1,1,1,1);
-        gl.glEnable(GL10.GL_CULL_FACE);
+        //gl.glEnable(GL10.GL_CULL_FACE);
         gl.glEnable(GL10.GL_DEPTH_TEST);
     }
 

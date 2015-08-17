@@ -15,6 +15,7 @@ public class PostureView extends GLSurfaceView {
      * sonctructor of view
      * @param context
      */
+    PostureRenderer renderer;
     public PostureView(Context context){
         this(context, null);
     }
@@ -27,11 +28,15 @@ public class PostureView extends GLSurfaceView {
         super(context, attrs);
 
         setEGLContextClientVersion(2);
-
-        setRenderer(new PostureRenderer(context));
+        renderer = new PostureRenderer(context);
+        setRenderer(renderer);
     }
 
-
-
-
+    /**
+     * Sets posture model to be drawed in this view
+     * @param model model to be drawed
+     */
+    public void setPostureModel(PostureSurfaceModel model){
+        renderer.setSurfaceModel(model);
+    }
 }

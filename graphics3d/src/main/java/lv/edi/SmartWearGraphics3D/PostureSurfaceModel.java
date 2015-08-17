@@ -1,5 +1,7 @@
 package lv.edi.SmartWearGraphics3D;
 
+import android.util.Log;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -38,7 +40,7 @@ public class PostureSurfaceModel {
         cols = segments.get(0).size();
 
 
-        gridContourcolors=ByteBuffer.allocateDirect(rows * cols * 3);
+        gridContourcolors=ByteBuffer.allocateDirect(rows * cols * 4);
         for(int i=0; i<rows*cols; i++){
             gridContourcolors.put((byte)0);
             gridContourcolors.put((byte)0);
@@ -129,7 +131,7 @@ public class PostureSurfaceModel {
 //
 //				49, 50, 57, 49, 57, 56, 50, 51, 58, 50, 58, 57, 51, 52, 59, 51, 59, 58, 52, 53, 60, 52, 60, 59, 53, 54, 61, 53, 61, 60, 54, 55, 62, 54, 62, 61,
 //			};
-        gridFillIndexes = ByteBuffer.allocateDirect((rows - 1) * (cols - 1));
+        gridFillIndexes = ByteBuffer.allocateDirect((rows - 1) * (cols - 1)*6);
         for(int r=0;r<rows-1;r++){
             for(int c=0;c<cols-1;c++){
                 gridFillIndexes.put((byte)(r*cols+c));
@@ -207,7 +209,7 @@ public class PostureSurfaceModel {
             gl.glFrontFace(GL11.GL_CCW);
         }
 
-        gridContourcolors.position(0);
+
         vertexBuffer.position(0);
         // fill vertex buffer
         for (int i = 0; i < segments.size(); i++) {
@@ -217,11 +219,23 @@ public class PostureSurfaceModel {
                 vertexBuffer.put(segments.get(i).get(j).getSegmentCenterZ());
             }
         }
-
+        vertexBuffer.position(0);
+        gridContourcolors.position(0);
+        gridContourIndexes.position(0);
         gl.glFrontFace(GL11.GL_CW);
         gl.glColorPointer(4, GL11.GL_UNSIGNED_BYTE, 0, gridContourcolors);
         gl.glVertexPointer(3, GL11.GL_FLOAT, 0, vertexBuffer);
         gl.glDrawElements(GL11.GL_LINE_STRIP, gridContourIndexes.capacity(), GL11.GL_UNSIGNED_BYTE, gridContourIndexes);
+        Log.d("RENDERING", "index buffer size " + gridContourIndexes.capacity());
+        Log.d("RENDERING",""+segments.get(1).get(1).getSegmentCenterX()+" "+segments.get(1).get(1).getSegmentCenterY()+" "+segments.get(1).get(1).getSegmentCenterZ() );
+
+        String out = "";
+
+        for(int i=0; i<gridContourIndexes.capacity(); i++){
+            out+=" "+gridContourIndexes.get(i);
+        }
+        Log.d("RENDERING", out);
+
     }
 
 }
