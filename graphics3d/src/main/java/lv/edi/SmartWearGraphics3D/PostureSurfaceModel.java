@@ -22,6 +22,7 @@ public class PostureSurfaceModel {
     private ByteBuffer gridContourIndexes;
     private ByteBuffer gridFillIndexes;
     private ByteBuffer fillColors;
+    private ByteBuffer vertexByteBuffer;
     private FloatBuffer vertexBuffer;
     private int rows, cols;
     private boolean fill = false;
@@ -38,7 +39,6 @@ public class PostureSurfaceModel {
         // also set up reference grid colors
         rows = segments.size();
         cols = segments.get(0).size();
-
 
         gridContourcolors=ByteBuffer.allocateDirect(rows * cols * 4);
         for(int i=0; i<rows*cols; i++){
@@ -69,6 +69,7 @@ public class PostureSurfaceModel {
         // --------  |  |   |
         //        |  |  |   |
         // --------  |  -----
+
 
         gridContourIndexes=ByteBuffer.allocateDirect(rows*cols*2);
         boolean flag=true; //direction flag currently indicates direction to left
@@ -145,7 +146,7 @@ public class PostureSurfaceModel {
         gridFillIndexes.position(0);
 
         // allocate vertex buffers
-        ByteBuffer vertexByteBuffer = ByteBuffer.allocateDirect(rows*cols*3*4);
+        vertexByteBuffer = ByteBuffer.allocateDirect(rows*cols*3*4);
         vertexByteBuffer.order(ByteOrder.nativeOrder());
         vertexBuffer=vertexByteBuffer.asFloatBuffer();
     }
@@ -190,7 +191,19 @@ public class PostureSurfaceModel {
      * @param gl
      */
     public void draw(GL10 gl){
+
+       vertexBuffer.position(0);
+        // fill vertex buffer
+        for (int i = 0; i < segments.size(); i++) {
+            for(int j = 0; j < segments.get(0).size(); j++) {
+                vertexBuffer.put(segments.get(i).get(j).getSegmentCenterX());
+                vertexBuffer.put(segments.get(i).get(j).getSegmentCenterY());
+                vertexBuffer.put(segments.get(i).get(j).getSegmentCenterZ());
+            }
+        }
+
         if(fill){
+            Log.d("RENDERING", "fill true");
             vertexBuffer.position(0);
             //update color buffer
             for(int i=0; i<colors.size(); i++){
@@ -209,16 +222,6 @@ public class PostureSurfaceModel {
             gl.glFrontFace(GL11.GL_CCW);
         }
 
-
-        vertexBuffer.position(0);
-        // fill vertex buffer
-        for (int i = 0; i < segments.size(); i++) {
-            for(int j = 0; j < segments.get(0).size(); j++) {
-                vertexBuffer.put(segments.get(i).get(j).getSegmentCenterX());
-                vertexBuffer.put(segments.get(i).get(j).getSegmentCenterY());
-                vertexBuffer.put(segments.get(i).get(j).getSegmentCenterZ());
-            }
-        }
         vertexBuffer.position(0);
         gridContourcolors.position(0);
         gridContourIndexes.position(0);
@@ -226,15 +229,7 @@ public class PostureSurfaceModel {
         gl.glColorPointer(4, GL11.GL_UNSIGNED_BYTE, 0, gridContourcolors);
         gl.glVertexPointer(3, GL11.GL_FLOAT, 0, vertexBuffer);
         gl.glDrawElements(GL11.GL_LINE_STRIP, gridContourIndexes.capacity(), GL11.GL_UNSIGNED_BYTE, gridContourIndexes);
-        Log.d("RENDERING", "index buffer size " + gridContourIndexes.capacity());
-        Log.d("RENDERING",""+segments.get(1).get(1).getSegmentCenterX()+" "+segments.get(1).get(1).getSegmentCenterY()+" "+segments.get(1).get(1).getSegmentCenterZ() );
-
-        String out = "";
-
-        for(int i=0; i<gridContourIndexes.capacity(); i++){
-            out+=" "+gridContourIndexes.get(i);
-        }
-        Log.d("RENDERING", out);
+        gl.glFrontFace(GL11.GL_CCW);
 
     }
 

@@ -27,7 +27,7 @@ public class PostureView extends GLSurfaceView {
     public PostureView(Context context, AttributeSet attrs, int defStyle){
         super(context, attrs);
 
-        setEGLContextClientVersion(2);
+        setEGLContextClientVersion(1);
         renderer = new PostureRenderer(context);
         setRenderer(renderer);
     }
