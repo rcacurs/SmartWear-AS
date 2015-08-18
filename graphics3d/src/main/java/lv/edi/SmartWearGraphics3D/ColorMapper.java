@@ -44,7 +44,7 @@ public class ColorMapper {
      */
     public byte[] getColor(float value){
         int index = (int)((drawingModelColormap.length-1)*(value-minRange)/(maxRange-minRange));
-        index = Math.max(index, drawingModelColormap.length-1);
+        index = Math.min(index, drawingModelColormap.length-1);
         return drawingModelColormap[index];
     }
 }

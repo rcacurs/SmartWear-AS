@@ -175,10 +175,12 @@ public class PostureSurfaceModel {
         this(segments, fill);
         this.colors = colors;
         if(fill){
+            fillColors=ByteBuffer.allocateDirect(colors.size()*colors.get(0).size()*4);
+            fillColors.position(0);
             for(int i=0; i<colors.size(); i++){
                 for(int j=0; j<colors.get(0).size(); j++){
                     for(int k=0; k<colors.get(0).get(0).length; k++){
-                        fillColors.put(colors.get(0).get(0));
+                        fillColors.put(colors.get(i).get(j)[k]);
                     }
                     fillColors.put((byte)255);
                 }
@@ -205,21 +207,23 @@ public class PostureSurfaceModel {
         if(fill){
             Log.d("RENDERING", "fill true");
             vertexBuffer.position(0);
+            fillColors.position(0);
             //update color buffer
             for(int i=0; i<colors.size(); i++){
                 for(int j=0; j<colors.get(0).size(); j++){
                     for(int k=0; k<colors.get(0).get(0).length; k++){
-                        fillColors.put(colors.get(0).get(0));
+                        fillColors.put(colors.get(i).get(j)[k]);
                     }
                     fillColors.put((byte)255);
                 }
             }
             vertexBuffer.position(0);
+            fillColors.position(0);
             gl.glFrontFace(GL11.GL_CW);
             gl.glColorPointer(4, GL11.GL_UNSIGNED_BYTE, 0, fillColors);
             gl.glVertexPointer(3, GL11.GL_FLOAT, 0, vertexBuffer);
             gl.glDrawElements(GL11.GL_TRIANGLES, gridFillIndexes.capacity(), GL11.GL_UNSIGNED_BYTE, gridFillIndexes);
-            gl.glFrontFace(GL11.GL_CCW);
+            //gl.glFrontFace(GL11.GL_CCW);
         }
 
         vertexBuffer.position(0);
