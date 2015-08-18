@@ -23,4 +23,6 @@
     <string name="pref_summary_row_distance">Attālumi starp sensoru kolonām [cm]</string>
     <string name="pref_title_col_distance">Kolonu attālumi</string>
     <string name="pref_summary_col_distance">Attālumi starp sensoru kolonām [cm]</string>
+    <string name="pref_title_sample_rate">Nolasīšanas frekvence</string>
+    <string name="pref_summary_sample_rate">Iestata sensoru ierīces uzstādīto nolasīšanas frekvenci</string>
 </resources>

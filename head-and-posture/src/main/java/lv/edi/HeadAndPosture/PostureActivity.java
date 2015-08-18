@@ -46,9 +46,12 @@ public class PostureActivity extends Activity {
         if(application.postureProcessingService==null){
             application.postureProcessingService=new PostureProcessingService(application.segmentsCurrent,
                     application.sensorGrid, application.refRow, application.refCol, application.postureThreshold);
+            application.postureProcessingService.setDistancesArray(application.distances);
+            application.postureProcessingService.setProcessingResultEventListener(application);
         }
 
-        currentStateModel = new PostureSurfaceModel(application.segmentsCurrent);
+
+        currentStateModel = new PostureSurfaceModel(application.segmentsCurrent, application.modelColors, true);
         savedStateModel = new PostureSurfaceModel(application.segmentsSaved);
         postureView.removeAllPostureModels();
 
@@ -72,10 +75,9 @@ public class PostureActivity extends Activity {
             Segment.setAllSegmentOrientations(application.segmentsSavedInitial, application.sensorGrid);
 
             Segment.setSegmentCenters(application.segmentsSaved, (short) application.refRow, (short) application.refCol);
-            Segment.setSegmentCenters(application.segmentsSavedInitial, (short)application.refRow, (short)application.refCol);
+            Segment.setSegmentCenters(application.segmentsSavedInitial, (short) application.refRow, (short)application.refCol);
 
             application.postureProcessingService.setReferenceState(application.segmentsSaved, application.segmentsSavedInitial);
-
 
 
             application.setIsStateSaved(true);
@@ -90,7 +92,7 @@ public class PostureActivity extends Activity {
         ToggleButton button = (ToggleButton)view;
         if(button.isChecked()){
             if(application.postureProcessingService.isStateSaved()) {
-                application.postureProcessingService.startProcessing();
+                application.postureProcessingService.startProcessing(application.samplingFrequency);
             } else{
                 button.setChecked(false);
                 Toast.makeText(this, res.getString(R.string.toast_save_state), Toast.LENGTH_SHORT).show();

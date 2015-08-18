@@ -40,6 +40,7 @@ public class HeadTiltProcessingService{
     private long currentTime;
     private int goodFrameCount=0;
     private int badFrameCount=0;
+    private float verticalAngle = 0;
 
     // locators for processing
     float[] tempSens = new float[3];
@@ -135,7 +136,9 @@ public class HeadTiltProcessingService{
     /** starts processing service
      *
      */
-    public void startProcessing(){
+    public void startProcessing(float samplingFrequency){
+        timeInterval=(int)((1/samplingFrequency)*1000);
+
         timer = new Timer();
         isProcessing = true;
         startTime=System.currentTimeMillis();
@@ -173,6 +176,9 @@ public class HeadTiltProcessingService{
 
                     SensorDataProcessing.crossProduct(tempRef, tempSens, crossVertical);
                 }
+                float length = SensorDataProcessing.getVectorLength(crossVertical);
+                verticalAngle = (float) Math.toDegrees(Math.asin(length));  // process vertical angle of sensor
+                Log.d("PROCESSING_VERTICAL", "COS ANGLE "+length+" VERTICAL ANGLE "+verticalAngle);
                 crossVerticalN = Arrays.copyOf(crossVertical, crossVertical.length);
                 SensorDataProcessing.normalizeVector(crossVerticalN);
 
@@ -276,6 +282,14 @@ public class HeadTiltProcessingService{
             Log.d("PROCESSING_SERVICE", "goodTimePercentage = "+result);
         }
         return result;
+    }
+
+    /**
+     * Method returns vertical angle of head
+     * @return
+     */
+    public float getVerticalAngle(){
+        return verticalAngle;
     }
 
 }

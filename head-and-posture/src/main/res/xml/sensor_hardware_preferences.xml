@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <EditTextPreference
+        android:key="pref_sample_rate"
+        android:title="@string/pref_title_sample_rate"
+        android:summary="@string/pref_summary_sample_rate"
+        android:defaultValue="20"
+        android:inputType="numberDecimal"
+        android:digits="0123456789."></EditTextPreference>
+    <EditTextPreference
         android:key="pref_nr_sensors"
         android:title="@string/pref_title_nr_sensors"
         android:summary="@string/pref_summary_nr_sensors"

@@ -234,7 +234,7 @@ public class MainActivity extends Activity {
         if(button.isChecked()){
             if(application.processingService.isStateSaved()) {
                 application.processingService.setIconRadius(htView.getIconRelativeRadius());
-                application.processingService.startProcessing();
+                application.processingService.startProcessing(application.samplingFrequency);
             } else{
                 button.setChecked(false);
                 Toast.makeText(this, res.getString(R.string.toast_save_state), Toast.LENGTH_SHORT).show();

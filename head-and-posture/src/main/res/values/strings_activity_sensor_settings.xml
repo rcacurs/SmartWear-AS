@@ -20,5 +20,7 @@
     <string name="pref_title_row_distance">Row distance</string>
     <string name="pref_summary_row_distance">Specifies distance between sensors rowise [cm]</string>
     <string name="pref_title_col_distance">Column distance</string>
-    <string name="pref_summary_col_distance">Specifies distance between sensors for cokumnwise [cm]</string>
+    <string name="pref_summary_col_distance">Specifies distance between sensors for columnwise [cm]</string>
+    <string name="pref_title_sample_rate">Sampling Frequency</string>
+    <string name="pref_summary_sample_rate">Sets sample rate of sensor device</string>
 </resources>

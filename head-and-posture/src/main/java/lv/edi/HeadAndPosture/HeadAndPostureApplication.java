@@ -41,6 +41,7 @@ public class HeadAndPostureApplication extends Application implements SharedPref
     int refRow, refCol;
     int batteryPacketIndex;
     float rowDist, colDist;
+    float samplingFrequency;
     boolean startSensorLeft;
 
     private boolean isStateSaved=false;
@@ -95,6 +96,8 @@ public class HeadAndPostureApplication extends Application implements SharedPref
         postureThreshold = Float.parseFloat(postureThresholdS);
         String colormapMaxRangeS = sharedPrefs.getString("pref_max_range_colormap", "5.0");
         colormapMaxRange = Float.parseFloat(colormapMaxRangeS);
+        String samplingFrequencyS = sharedPrefs.getString("pref_sample_rate", "20");
+        samplingFrequency = Float.parseFloat(samplingFrequencyS);
 
         colorMapper = new ColorMapper(0, colormapMaxRange);
 
@@ -115,20 +118,31 @@ public class HeadAndPostureApplication extends Application implements SharedPref
         segmentsSaved = new Vector<Vector<Segment>>(nrOfRows);
         segmentsSavedInitial = new Vector<Vector<Segment>>(nrOfRows);
         segmentsCurrent = new Vector<Vector<Segment>>(nrOfRows);
+        modelColors = new Vector<Vector<byte[]>>(nrOfRows);
+        distances = new Vector<Vector<Float>>(nrOfRows);
+
         sensorGrid.setSize(nrOfRows);
         segmentsSaved.setSize(nrOfRows);
         segmentsSavedInitial.setSize(nrOfRows);
         segmentsCurrent.setSize(nrOfRows);
+        modelColors.setSize(nrOfRows);
+        distances.setSize(nrOfRows);
 
+        // initialize all aarays for posture 3D model
         for(int i=0; i<nrOfRows; i++){
             Vector<Sensor> sensorRow = new Vector<Sensor>(nrOfCols);
             Vector<Segment> segmentRow = new Vector<Segment>(nrOfCols);
             Vector<Segment> segmentRowInit = new Vector<Segment>(nrOfCols);
             Vector<Segment> segmentRowCurrent = new Vector<Segment>(nrOfCols);
+            Vector<byte[]> posturesRowColors = new Vector<byte[]>(nrOfCols);
+            Vector <Float> distancesRow = new Vector<Float>(nrOfCols);
+
             sensorRow.setSize(nrOfCols);
             segmentRow.setSize(nrOfCols);
             segmentRowInit.setSize(nrOfCols);
             segmentRowCurrent.setSize(nrOfCols);
+            posturesRowColors.setSize(nrOfCols);
+            distancesRow.setSize(nrOfCols);
             for(int j=0; j<nrOfCols; j++){
                 sensorRow.set(j, sensors.get(SensorDataProcessing.getIndex(i, j, nrOfRows, nrOfCols, startSensorLeft)));
                 Segment segment = new Segment();
@@ -137,16 +151,27 @@ public class HeadAndPostureApplication extends Application implements SharedPref
 
                 segment=new Segment();
                 segment.setInitialCross2(rowDist, colDist);
-                segmentRowInit.set(j, new Segment());
+                segmentRowInit.set(j, segment);
 
                 segment=new Segment();
                 segment.setInitialCross2(rowDist, colDist);
                 segmentRowCurrent.set(j, segment);
+
+                byte [] color = new byte[3];
+                color[0]=(byte)255;
+                color[1]=0;
+                color[2]=(byte)255;
+                posturesRowColors.set(j, color);
+
+                distancesRow.set(j, new Float(0.0));
+
             }
             sensorGrid.set(i, sensorRow);
             segmentsSaved.set(i, segmentRow);
             segmentsSavedInitial.set(i, segmentRowInit);
             segmentsCurrent.set(i, segmentRowCurrent);
+            modelColors.set(i, posturesRowColors);
+            distances.set(i, distancesRow);
         }
     }
 
@@ -254,6 +279,11 @@ public class HeadAndPostureApplication extends Application implements SharedPref
             postureThreshold = Float.parseFloat(postureThresholdS);
             Log.d("PREFERENCES", "posture threshold value changed "+postureThreshold);
         }
+        if(key.equals("pref_sample_rate")){
+            String samplingFrequencyS = sharedPreferences.getString("pref_sample_rate", "20");
+            samplingFrequency = Float.parseFloat(samplingFrequencyS);
+            Log.d("PREFERENCES", "SAMPLING FREQ SET "+samplingFrequency);
+        }
 
     }
 
@@ -285,13 +315,27 @@ public class HeadAndPostureApplication extends Application implements SharedPref
 
     @Override
     public void onProcessingResult(ProcessingResult result){
-        htView.onProcessingResult(result);
-        if(result.isOverThreshold()){
-            if(vibrateFeedback) {
-                vibrator.vibrate(100);
+        if(result.getResultType()==ProcessingResult.RESULT_HEAD) {
+            htView.onProcessingResult(result);
+            if (result.isOverThreshold()) {
+                if (vibrateFeedback) {
+                    vibrator.vibrate(100);
+                }
+                if (alertFeedback && !mp.isPlaying()) {
+                    mp.start();
+                }
             }
-            if(alertFeedback && ! mp.isPlaying()){
-                mp.start();
+        }
+
+        if(result.getResultType()==ProcessingResult.RESULT_POSTURE){
+            Log.d("PROCESSING", "RESULT POSTURE ACQUIRED");
+            for(int i=0; i<distances.size(); i++){
+                for(int j=0; j<distances.get(0).size(); j++){
+                    byte[] color = colorMapper.getColor(distances.get(i).get(j));
+                    modelColors.get(i).get(j)[0]=color[0];
+                    modelColors.get(i).get(j)[1]=color[1];
+                    modelColors.get(i).get(j)[2]=color[2];
+                }
             }
         }
     }
