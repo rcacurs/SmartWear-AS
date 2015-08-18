@@ -214,9 +214,7 @@ public class HeadTiltProcessingService{
                     ProcessingResult result = new ProcessingResult(XX, YY, (currentTime-startTime)/1000, isOverThreshold, getGoodPercentage());
                     listener.onProcessingResult(result);
                     result = null;
-                    Log.d("PROCESSING_SERVICE", "SENDING TO LISTENER");
                 }
-                Log.d("PROCESSING_SERVICE", "XX: "+XX+" YY: "+YY);
             }
         }, 0, timeInterval);
 
@@ -270,16 +268,16 @@ public class HeadTiltProcessingService{
         float result;
         try {
             result = ((float)(goodFrameCount)) / (goodFrameCount + badFrameCount)*100;
-            Log.d("PROCESSING_SERVICE", "goodTimePercentage = "+result);
+            //Log.d("PROCESSING_SERVICE", "goodTimePercentage = "+result);
         } catch(ArithmeticException ex){
             result = 100;
-            Log.d("PROCESSING_SERVICE", "goodTimePercentage = "+result);
+            //Log.d("PROCESSING_SERVICE", "goodTimePercentage = "+result);
         }
-        Log.d("PROCESSING_SERVICE", "goodTimePercentage = "+result);
+        //Log.d("PROCESSING_SERVICE", "goodTimePercentage = "+result);
         if(Float.isNaN(result)){
-            Log.d("PROCESSING_SERVICE", "goodTimePercentage = "+result);
+            //Log.d("PROCESSING_SERVICE", "goodTimePercentage = "+result);
             result=100;
-            Log.d("PROCESSING_SERVICE", "goodTimePercentage = "+result);
+           // Log.d("PROCESSING_SERVICE", "goodTimePercentage = "+result);
         }
         return result;
     }

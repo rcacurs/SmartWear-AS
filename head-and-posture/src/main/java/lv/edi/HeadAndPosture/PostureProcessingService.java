@@ -92,12 +92,12 @@ public class PostureProcessingService {
             public void run(){
                 Segment.setAllSegmentOrientations(currentStateSegments, sensors);
                 Segment.setSegmentCenters(currentStateSegments, (short) referenceRow, (short) referenceCol);
-                Log.d("PROCESSING ", " "+savedStateSegmentsInitial);
+               // Log.d("PROCESSING ", " "+savedStateSegmentsInitial);
                 Segment.compansateCentersForTilt(savedStateSegmentsInitial, currentStateSegments, savedStateSegments, referenceRow, referenceCol);
                 if(distances!=null) {
                     Segment.compareByDistances(savedStateSegments, currentStateSegments, distances);
                 }
-                Log.d("PROCESSING", "POSTURE_PROCESSIN_PROCESSED");
+               // Log.d("PROCESSING", "POSTURE_PROCESSIN_PROCESSED");
                 ProcessingResult result = new ProcessingResult(3.0f); // TODO add exact value;
                 if(listener!=null){
                     listener.onProcessingResult(result);

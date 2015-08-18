@@ -1,8 +1,12 @@
 package lv.edi.HeadAndPosture;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,6 +16,7 @@ import android.widget.ToggleButton;
 
 import java.util.Vector;
 
+import lv.edi.BluetoothLib.BluetoothService;
 import lv.edi.SmartWearGraphics3D.PostureRenderer;
 import lv.edi.SmartWearGraphics3D.PostureSurfaceModel;
 import lv.edi.SmartWearGraphics3D.PostureView;
@@ -27,11 +32,21 @@ public class PostureActivity extends Activity {
 
     private Resources res;
     private HeadAndPostureApplication application;
+    private Menu optionsMenu;
+
+    private ToggleButton runButton;
+
+    private int[] batteryIcons = {R.drawable.battery_discharging_000,
+            R.drawable.battery_discharging_040,
+            R.drawable.battery_discharging_060,
+            R.drawable.battery_discharging_080,
+            R.drawable.battery_discharging_100};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_posture);
+        runButton = (ToggleButton) findViewById(R.id.buttonRunPosture);
 
         postureView = (PostureView)findViewById(R.id.posture_view);
         this.application = (HeadAndPostureApplication)getApplication();
@@ -43,14 +58,6 @@ public class PostureActivity extends Activity {
     protected void onResume(){
         super.onResume();
 
-        if(application.postureProcessingService==null){
-            application.postureProcessingService=new PostureProcessingService(application.segmentsCurrent,
-                    application.sensorGrid, application.refRow, application.refCol, application.postureThreshold);
-            application.postureProcessingService.setDistancesArray(application.distances);
-            application.postureProcessingService.setProcessingResultEventListener(application);
-        }
-
-
         currentStateModel = new PostureSurfaceModel(application.segmentsCurrent, application.modelColors, true);
         savedStateModel = new PostureSurfaceModel(application.segmentsSaved);
         postureView.removeAllPostureModels();
@@ -58,11 +65,45 @@ public class PostureActivity extends Activity {
         postureView.addPostureModel(currentStateModel);
         postureView.addPostureModel(savedStateModel);
 
+        application.uiHandler = new Handler(Looper.getMainLooper()){
+
+            public void handleMessage(Message inputMessage){
+                switch(inputMessage.what){
+                    case BluetoothService.BT_CONNECTING:
+                        Toast.makeText(getApplicationContext(), res.getString(R.string.toast_connecting_bt), Toast.LENGTH_SHORT).show();
+                        optionsMenu.findItem(R.id.action_bluetooth_connection_status).setIcon(R.drawable.loading);
+                        break;
+                    case BluetoothService.BT_CONNECTED:
+                        Toast.makeText(getApplicationContext(), res.getString(R.string.toast_connected_bt), Toast.LENGTH_SHORT).show();
+                        optionsMenu.findItem(R.id.action_bluetooth_connection_status).setIcon(R.drawable.check);
+                        break;
+                    case BluetoothService.BT_DISCONNECTED:
+                        Toast.makeText(getApplicationContext(), res.getString(R.string.toast_disconnected_bt), Toast.LENGTH_SHORT).show();
+                        optionsMenu.findItem(R.id.action_bluetooth_connection_status).setIcon(R.drawable.not);
+                        break;
+                    case HeadAndPostureApplication.BATTERY_LEVEL_UPDATE:
+                        int batteryLevelIndex = (int) (application.batteryLevel.getBatteryPercentage() / 20);
+                        if(batteryLevelIndex < 0){
+                            batteryLevelIndex = 0;
+                        }
+                        if(batteryLevelIndex>=batteryIcons.length){
+                            batteryLevelIndex = batteryIcons.length - 1;
+                        }
+                        optionsMenu.findItem(R.id.action_battery_level_icon).setIcon(batteryIcons[batteryLevelIndex]);
+                    default:
+                        break;
+                }
+            }
+        };
+
+        runButton.setChecked(application.isProcessing());
+
     }
 
     public void onClickSave(View view){
         if(application.btService.isConnected()) {
-            Log.d("PROCESSING", "references "+application.refRow+" "+application.refCol);
+
+            application.processingService.setReference(application.sensors.get(application.headSensorIndex).getAccRawNorm());
             application.segmentsSaved.get(application.refRow).get(application.refCol).center[0]=0;
             application.segmentsSaved.get(application.refRow).get(application.refCol).center[1]=0;
             application.segmentsSaved.get(application.refRow).get(application.refCol).center[2]=0;
@@ -93,12 +134,20 @@ public class PostureActivity extends Activity {
         if(button.isChecked()){
             if(application.postureProcessingService.isStateSaved()) {
                 application.postureProcessingService.startProcessing(application.samplingFrequency);
+
+
+                //application.processingService.setIconRadius(htView.getIconRelativeRadius());
+                application.processingService.startProcessing(application.samplingFrequency);
+
+                application.setIsProcessing(true);
             } else{
                 button.setChecked(false);
                 Toast.makeText(this, res.getString(R.string.toast_save_state), Toast.LENGTH_SHORT).show();
             }
         } else{
             application.postureProcessingService.stopProcessing();
+            application.processingService.stopProcessing();
+            application.setIsProcessing(false);
         }
     }
 
@@ -106,6 +155,15 @@ public class PostureActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        super.onCreateOptionsMenu(menu);
+        optionsMenu = menu;
+        if(application.btService!=null){
+            if(application.btService.isConnected()){
+                optionsMenu.findItem(R.id.action_bluetooth_connection_status).setIcon(R.drawable.check);
+            } else{
+                optionsMenu.findItem(R.id.action_bluetooth_connection_status).setIcon(R.drawable.not);
+            }
+        }
         return true;
     }
 
@@ -118,9 +176,30 @@ public class PostureActivity extends Activity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent intent = new Intent(this, AppPreferenceActivity.class);
+            startActivity(intent);
             return true;
         }
 
+        if(id==R.id.action_head){
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            return true;
+        }
+
+        if(id == R.id.action_bluetooth_connection_status){
+            if(!application.btService.isConnecting()) {
+                if (application.btService.isConnected()) {
+                    application.btService.disconnectDevice();
+                } else {
+                    if (application.btDevice != null) {
+                        application.btService.connectDevice(application.btDevice);
+                    } else {
+                        Toast.makeText(this, res.getString(R.string.toast_set_bt_target), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        }
         return super.onOptionsItemSelected(item);
     }
 }

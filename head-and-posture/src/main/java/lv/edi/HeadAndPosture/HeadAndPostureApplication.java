@@ -64,6 +64,8 @@ public class HeadAndPostureApplication extends Application implements SharedPref
     Vibrator vibrator;
     MediaPlayer mp;
 
+    boolean isProcessing=false;
+
     @Override
     public void onCreate(){
         super.onCreate();
@@ -328,7 +330,6 @@ public class HeadAndPostureApplication extends Application implements SharedPref
         }
 
         if(result.getResultType()==ProcessingResult.RESULT_POSTURE){
-            Log.d("PROCESSING", "RESULT POSTURE ACQUIRED");
             for(int i=0; i<distances.size(); i++){
                 for(int j=0; j<distances.get(0).size(); j++){
                     byte[] color = colorMapper.getColor(distances.get(i).get(j));
@@ -338,5 +339,20 @@ public class HeadAndPostureApplication extends Application implements SharedPref
                 }
             }
         }
+    }
+
+    /** sets if both processing services are running
+     *
+     */
+    public void setIsProcessing(boolean isProcessing){
+        this.isProcessing = isProcessing;
+    }
+
+    /**
+     * returns true if both processes are processing
+     * @return
+     */
+    public boolean isProcessing(){
+        return isProcessing;
     }
 }

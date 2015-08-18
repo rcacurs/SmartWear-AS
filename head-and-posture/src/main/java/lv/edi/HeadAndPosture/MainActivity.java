@@ -21,6 +21,7 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import lv.edi.BluetoothLib.*;
+import lv.edi.SmartWearProcessing.Segment;
 
 
 public class MainActivity extends Activity {
@@ -134,7 +135,14 @@ public class MainActivity extends Activity {
             application.processingService.setProcessingEventListener(application);
         }
 
-        runButton.setChecked(application.processingService.isProcessing());
+        if(application.postureProcessingService==null){
+            application.postureProcessingService=new PostureProcessingService(application.segmentsCurrent,
+                    application.sensorGrid, application.refRow, application.refCol, application.postureThreshold);
+            application.postureProcessingService.setDistancesArray(application.distances);
+            application.postureProcessingService.setProcessingResultEventListener(application);
+        }
+
+        runButton.setChecked(application.isProcessing());
 
         htView.post(new Runnable() {
             @Override
@@ -223,6 +231,24 @@ public class MainActivity extends Activity {
     public void onClickSave(View view){
         if(application.btService.isConnected()) {
             application.processingService.setReference(application.sensors.get(application.headSensorIndex).getAccRawNorm());
+
+            application.segmentsSaved.get(application.refRow).get(application.refCol).center[0]=0;
+            application.segmentsSaved.get(application.refRow).get(application.refCol).center[1]=0;
+            application.segmentsSaved.get(application.refRow).get(application.refCol).center[2]=0;
+
+            application.segmentsSavedInitial.get(application.refRow).get(application.refCol).center[0]=0;
+            application.segmentsSavedInitial.get(application.refRow).get(application.refCol).center[1]=0;
+            application.segmentsSavedInitial.get(application.refRow).get(application.refCol).center[2]=0;
+
+            Segment.setAllSegmentOrientations(application.segmentsSaved, application.sensorGrid);
+            Segment.setAllSegmentOrientations(application.segmentsSavedInitial, application.sensorGrid);
+
+            Segment.setSegmentCenters(application.segmentsSaved, (short) application.refRow, (short) application.refCol);
+            Segment.setSegmentCenters(application.segmentsSavedInitial, (short) application.refRow, (short)application.refCol);
+
+            application.postureProcessingService.setReferenceState(application.segmentsSaved, application.segmentsSavedInitial);
+
+            application.setIsStateSaved(true);
             Toast.makeText(this, res.getString(R.string.toast_saved), Toast.LENGTH_SHORT).show();
         } else{
             Toast.makeText(this, res.getString(R.string.toast_must_connect_bt), Toast.LENGTH_SHORT).show();
@@ -235,12 +261,17 @@ public class MainActivity extends Activity {
             if(application.processingService.isStateSaved()) {
                 application.processingService.setIconRadius(htView.getIconRelativeRadius());
                 application.processingService.startProcessing(application.samplingFrequency);
+
+                application.postureProcessingService.startProcessing(application.samplingFrequency);
+                application.setIsProcessing(true);
             } else{
                 button.setChecked(false);
                 Toast.makeText(this, res.getString(R.string.toast_save_state), Toast.LENGTH_SHORT).show();
             }
         } else{
             application.processingService.stopProcessing();
+            application.postureProcessingService.stopProcessing();
+            application.setIsProcessing(false);
         }
     }
 

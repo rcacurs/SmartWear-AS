@@ -2,6 +2,7 @@
     <string name="app_name">HeadPosture</string>
     <string name="action_settings">Settings</string>
     <string name="action_posture">Posture</string>
+    <string name="action_head">Head</string>
     <string name="none_paired">Non paired</string>
     <string name="none_found">None found</string>
     <string name="button_save_state">Save</string>

@@ -16,6 +16,9 @@
         android:icon="@drawable/battery_discharging_100"
         android:title="battery level"
         android:showAsAction="always"/>
+    <item android:id="@+id/action_head"
+        android:title="@string/action_head"
+        android:showAsAction="never"></item>
     <item android:id="@+id/action_posture"
           android:title="@string/action_posture"
           android:showAsAction="never"></item>
