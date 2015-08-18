@@ -16,6 +16,7 @@ import java.util.Vector;
 
 import lv.edi.BluetoothLib.*;
 
+import lv.edi.SmartWearGraphics3D.ColorMapper;
 import lv.edi.SmartWearProcessing.Segment;
 import lv.edi.SmartWearProcessing.Sensor;
 import lv.edi.SmartWearProcessing.SensorDataProcessing;
@@ -32,6 +33,8 @@ public class HeadAndPostureApplication extends Application implements SharedPref
     boolean vibrateFeedback;
     boolean alertFeedback;
     float threshold, postureThreshold=3;
+    float colormapMaxRange=5;
+
     int numberOfSensors;
     int headSensorIndex;
     int nrOfCols, nrOfRows;
@@ -49,6 +52,8 @@ public class HeadAndPostureApplication extends Application implements SharedPref
     Vector<Vector<Segment>> segmentsSavedInitial;
     Vector<Vector<Segment>> segmentsCurrent;
     Vector<Vector<byte[]>> modelColors;
+    Vector<Vector<Float>> distances;
+    ColorMapper colorMapper;
 
     BatteryLevel batteryLevel;
     Handler uiHandler;
@@ -86,6 +91,12 @@ public class HeadAndPostureApplication extends Application implements SharedPref
         colDist = Float.parseFloat(colDistS);
         String rowDistS = sharedPrefs.getString("pref_row_distance", "6.75");
         rowDist = Float.parseFloat(rowDistS);
+        String postureThresholdS = sharedPrefs.getString("pref_threshold_posture", "3.0") ;
+        postureThreshold = Float.parseFloat(postureThresholdS);
+        String colormapMaxRangeS = sharedPrefs.getString("pref_max_range_colormap", "5.0");
+        colormapMaxRange = Float.parseFloat(colormapMaxRangeS);
+
+        colorMapper = new ColorMapper(0, colormapMaxRange);
 
         sensors = new Vector<Sensor>(numberOfSensors);
         sensors.setSize(numberOfSensors);
@@ -230,6 +241,18 @@ public class HeadAndPostureApplication extends Application implements SharedPref
             refCol = Integer.parseInt(refColS);
 
             Log.d("PREFERENCES", "reference col changed  "+refCol);
+        }
+        if(key.equals("pref_max_range_colormap")){
+            String colormmapMaxRangeS = sharedPreferences.getString("pref_max_range_colormap", "5");
+            colormapMaxRange = Float.parseFloat(colormmapMaxRangeS);
+            colorMapper.setMaxRange(colormapMaxRange);
+            Log.d("PREFERENCES", "colormapper range vluae changed "+colormapMaxRange);
+        }
+
+        if(key.equals("pref_threshold_posture")){
+            String postureThresholdS = sharedPreferences.getString("pref_threshold_posture", "3.0");
+            postureThreshold = Float.parseFloat(postureThresholdS);
+            Log.d("PREFERENCES", "posture threshold value changed "+postureThreshold);
         }
 
     }

@@ -12,6 +12,21 @@
         android:title="@string/pref_threshold"
         android:summary="@string/pref_summary_threshold"
         android:defaultValue="0.7"/>
+    <EditTextPreference
+        android:key="pref_threshold_posture"
+        android:inputType="numberDecimal"
+        android:digits="0123456789."
+        android:title="@string/pref_title_threshold_posture"
+        android:summary="@string/pref_summary_threshold_posture"
+        android:defaultValue="3.0"></EditTextPreference>
+    <EditTextPreference
+        android:key="pref_max_range_colormap"
+        android:inputType="numberDecimal"
+        android:digits="0123456789."
+        android:title="@string/pref_title_max_range_colormap"
+        android:summary="@string/pref_summary_max_range_colormap"
+        android:defaultValue="2"></EditTextPreference>
+
     <CheckBoxPreference
         android:key="pref_vibrate"
         android:title="@string/pref_vibrate"
@@ -26,5 +41,6 @@
         android:key="open_sensor_preference_activity"
         android:title="@string/pref_title_open_sensor_prefs"
         android:summary="@string/pref_summary_open_sensor_prefs"></Preference>
+
 
 </PreferenceScreen>
