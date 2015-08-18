@@ -246,9 +246,7 @@ public class BluetoothService {
                                                             magx, // forming magnetometer  x data from two received data bytes
                                                             magy,// forming magnetometer  y data from two received data bytes
                                                             magz);// forming magnetometer z data from two recieved data bytes
-                                                    Log.d("BLUETOOTH_RECEIVE", ""+sensorbuffer.get(packet[0]).getAccRawNormX()+" "
-                                                                                 +sensorbuffer.get(packet[0]).getAccRawNormY()+" "
-                                                                                 +sensorbuffer.get(packet[0]).getAccRawNormZ());
+                                                    
                                                 }
                                             }
                                             if(packet[0]==batteryPacketIndex) {// if received battery status packet
