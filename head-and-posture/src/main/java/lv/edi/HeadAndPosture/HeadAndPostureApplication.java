@@ -60,6 +60,7 @@ public class HeadAndPostureApplication extends Application implements SharedPref
     Handler uiHandler;
     HeadTiltProcessingService processingService;
     PostureProcessingService postureProcessingService;
+    DataLogger dataLogger;
     HeadTiltView htView;
     Vibrator vibrator;
     MediaPlayer mp;

@@ -263,6 +263,7 @@ public class MainActivity extends Activity {
                 application.processingService.startProcessing(application.samplingFrequency);
 
                 application.postureProcessingService.startProcessing(application.samplingFrequency);
+                application.dataLogger = new DataLogger("test", application.processingService, application.postureProcessingService, application.samplingFrequency);
                 application.setIsProcessing(true);
             } else{
                 button.setChecked(false);
