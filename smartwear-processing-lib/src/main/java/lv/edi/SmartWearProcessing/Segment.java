@@ -28,7 +28,8 @@ public class Segment {
 	 *              iicross[1]=p1
 	 *              iicross[2]=p2
 	 *              iicross[3]=p3
-	 */ 
+	 */
+	private float verticalDistance, horizontalDistance;
 	public float[][] iicross={{0,0, (float)2.25},{(float)1.75,0,0},{0,0,(float)-2.25},{(float)-1.75,0,0}}; // initial cross consisting of 4 vectors depends on distance from sensors
 	/**
 	 * initial cross after rotation around vertical axis compensation
@@ -172,6 +173,8 @@ public class Segment {
 
 	/** sets initial cross vectors @args verticDistance - vertical distance between sensors horizDistance - horizontal ditances between sensors*/
 	public void setInitialCross2(float verticDistance, float horizDistance){
+		this.verticalDistance=verticDistance;
+		this.horizontalDistance=horizDistance;
 		initialCross[0][0]=0;
 		initialCross[0][1]=0;
 		initialCross[0][2]=verticDistance/2;
@@ -187,6 +190,10 @@ public class Segment {
 		initialCross[3][0]=-horizDistance/2;
 		initialCross[3][1]=0;
 		initialCross[3][2]=0;
+
+		initialCross[0][0]=0;
+		initialCross[0][1]=0;
+		initialCross[0][2]=verticDistance/2;
 	}
 	/**method sets segment center coordinates for segment grid @args segmentArray is array of segments , referenceRow
 	 * is row index for accelerometer from which to draw, referenceColumns is column index for accelerometer from which 
@@ -547,6 +554,24 @@ public class Segment {
 		}
 		return distances;
 	}
+
+	/**
+	 * Method computes distances between two segment arrays. segment arrays are of form Vector.
+	 * @param referenceState saved state segments
+	 * @param currentState current state segments
+	 * @param distances distances must be preallocated before
+	 */
+	public static void compareByDistances(Vector<Vector<Segment>> referenceState, Vector<Vector<Segment>> currentState, Vector<Vector<Float>> distances){
+
+		for(int i=0;i<referenceState.size();i++){
+			for(int j=0;j<referenceState.get(0).size();j++){
+				distances.get(i).set(j,new Float((float)sqrt(pow(referenceState.get(i).get(j).center[0]-currentState.get(i).get(j).center[0],2)+
+						pow(referenceState.get(i).get(j).center[1]-currentState.get(i).get(j).center[1],2)+
+						pow(referenceState.get(i).get(j).center[2]-currentState.get(i).get(j).center[2],2))));
+			}
+		}
+	}
+
 	/**method that compares two segment arrays by distances between segment centres in sagital plane
 	 * 
 	 *@param referenceState - first state Segment[][] array
@@ -642,5 +667,65 @@ public class Segment {
 				SensorDataProcessing.quatRotate(q2, temp.center, refferenceState[i][j].center);
 			}
 		}
+	}
+
+	/**
+	 * method for compensating for tilt
+	 * @param refferenceStateInitial
+	 * @param currentState
+	 * @param refferenceState
+	 * @param referenceRow
+	 * @param referenceCol
+	 */
+	public static void compansateCentersForTilt(Vector<Vector<Segment>> refferenceStateInitial, Vector<Vector<Segment>> currentState, Vector<Vector<Segment>> refferenceState, int referenceRow, int referenceCol){
+		float n[] = new float[3];
+		float n2[] = new float[3];
+		float fi;
+		float fi2;
+		float[] q = new float[4];
+		float[] q2 = new float[4];
+
+		SensorDataProcessing.crossProduct(refferenceStateInitial.get(referenceRow).get(referenceCol).cross[0], currentState.get(referenceRow).get(referenceCol).cross[0], n);
+
+		SensorDataProcessing.normalizeVector(n);
+
+		fi=(float)Math.acos(SensorDataProcessing.dotProduct(refferenceStateInitial.get(referenceRow).get(referenceCol).cross[0], currentState.get(referenceRow).get(referenceCol).cross[0])/
+				(SensorDataProcessing.getVectorLength(refferenceStateInitial.get(referenceRow).get(referenceCol).cross[0])*SensorDataProcessing.getVectorLength(currentState.get(referenceRow).get(referenceCol).cross[0])));
+
+		SensorDataProcessing.quaternion(n, fi, q);
+
+		for(int i=0; i<refferenceState.size(); i++){
+			for(int j=0; j<refferenceState.get(0).size();j++){
+				SensorDataProcessing.quatRotate(q, refferenceStateInitial.get(i).get(j).center, refferenceState.get(i).get(j).center);
+				for(int k=0; k<4; k++){
+					SensorDataProcessing.quatRotate(q, refferenceStateInitial.get(i).get(j).cross[k], refferenceState.get(i).get(j).cross[k]);
+				}
+
+			}
+		}
+		SensorDataProcessing.crossProduct(refferenceState.get(referenceRow).get(referenceCol).cross[1], currentState.get(referenceRow).get(referenceCol).cross[1], n2);
+		SensorDataProcessing.normalizeVector(n2);
+
+		fi2=(float)Math.acos(SensorDataProcessing.dotProduct(refferenceState.get(referenceRow).get(referenceCol).cross[1], currentState.get(referenceRow).get(referenceCol).cross[1])/
+				(SensorDataProcessing.getVectorLength(refferenceState.get(referenceRow).get(referenceCol).cross[1])*SensorDataProcessing.getVectorLength(currentState.get(referenceRow).get(referenceCol).cross[1])));
+		SensorDataProcessing.quaternion(n2, fi2, q2);
+
+		for(int i=0; i<refferenceState.size(); i++){
+			for(int j=0; j<refferenceState.get(0).size();j++){
+				Segment temp = new Segment();
+				temp.setInitialCross2(refferenceStateInitial.get(0).get(0).getVerticalDistance(), refferenceStateInitial.get(0).get(0).getHorizontalDistance());
+				for(int k=0; k<3; k++){
+					temp.center[k]=refferenceState.get(i).get(j).center[k];
+				}
+				SensorDataProcessing.quatRotate(q2, temp.center, refferenceState.get(i).get(j).center);
+			}
+		}
+	}
+
+	public float getVerticalDistance(){
+		return verticalDistance;
+	}
+	public float getHorizontalDistance(){
+		return horizontalDistance;
 	}
 }
