@@ -1,8 +1,5 @@
 package lv.edi.SmartWearProcessing;
 import java.util.Vector;
-
-import sun.rmi.runtime.Log;
-
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 
