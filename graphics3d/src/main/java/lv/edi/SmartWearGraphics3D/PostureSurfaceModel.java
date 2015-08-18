@@ -205,7 +205,7 @@ public class PostureSurfaceModel {
         }
 
         if(fill){
-            Log.d("RENDERING", "fill true");
+            //Log.d("RENDERING", "fill true");
             vertexBuffer.position(0);
             fillColors.position(0);
             //update color buffer
