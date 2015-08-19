@@ -107,7 +107,7 @@ public class PostureActivity extends Activity {
     public void onClickSave(View view){
         if(application.btService.isConnected()) {
 
-            application.processingService.setReference(application.sensors.get(application.headSensorIndex).getAccRawNorm());
+            application.processingService.setReference(application.sensors.get(application.headSensorIndex).getAccNorm());
             application.segmentsSaved.get(application.refRow).get(application.refCol).center[0]=0;
             application.segmentsSaved.get(application.refRow).get(application.refCol).center[1]=0;
             application.segmentsSaved.get(application.refRow).get(application.refCol).center[2]=0;

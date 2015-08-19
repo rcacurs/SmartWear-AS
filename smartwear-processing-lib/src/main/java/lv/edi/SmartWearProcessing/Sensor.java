@@ -18,7 +18,7 @@ public class Sensor {
 	private final int identifier;
 	private boolean filter = true; // if data should be filtered
 	/** Shows if accelerometer oriented up or down if up, then value true*/
-	private final boolean isOrientationUp;
+	private boolean isOrientationUp;
 	/**integer array that represents raw accelerometer data from sensor*/
 	private float[] rawAccData = new float[3];
 	private float[] rawAccFilteredData = new float[3];
@@ -90,6 +90,18 @@ public class Sensor {
 		return isOrientationUp;
 	}
 
+	public void setOrientationUp(boolean isOrientationUp){
+		this.isOrientationUp = isOrientationUp;
+		if(isOrientationUp){
+			mountTransformMatrix[0][1] = -1;
+			mountTransformMatrix[1][2] = 1;
+			mountTransformMatrix[2][0]=-1;
+		} else{
+			mountTransformMatrix[0][1]=1;
+			mountTransformMatrix[1][2]=1;
+			mountTransformMatrix[2][0]=1;
+		}
+	}
 	/**
 	 *
 	 * @return return normalized raw accelerometer data for X axis

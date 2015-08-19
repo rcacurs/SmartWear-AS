@@ -20,10 +20,11 @@ public class HeadTiltProcessingService{
     private Sensor sensor;
     private float[] referenceState = new float[3];
     private float[] currentSens1 = new float[3];
-    private float[] crossVertical = new float[3];
-    private float[] crossHorizontal = new float[3];
-    private float[] crossVerticalN = new float[3];
-    private float[] crossHorizontalN = new float[3];
+    float[] n = new float[3];
+    float[] q = new float[4];
+    float[] res=new float[3];
+    float[] refr= {0, 0, 1};
+
     private int timeInterval=10;
     private boolean isProcessing=false;
     private boolean isStateSaved=false;
@@ -148,62 +149,20 @@ public class HeadTiltProcessingService{
         timer.scheduleAtFixedRate(new TimerTask(){
             @Override
             public void run(){
-                currentSens1 = sensor.getAccRawNorm();
+                currentSens1 = sensor.getAccNorm();
 
-                Log.d("PROCESSING", "HEAD_TILT_SENSOR_DATA "+currentSens1[0]+" "+currentSens1[1]+" "+currentSens1[2]);
-                Log.d("PROCESSING", "SENSOR PROCESSED "+sensor.getIdentifier());
-                currentSens1[0] = filterX.filter(currentSens1[0]);
-                currentSens1[1] = filterY.filter(currentSens1[1]);
-                currentSens1[2] = filterZ.filter(currentSens1[2]);
 
-                if(isXZplane){
-                    tempSens[0]=currentSens1[0];
-                    tempSens[1]=0;
-                    tempSens[2]=currentSens1[2];
+                SensorDataProcessing.crossProduct(currentSens1, referenceState, n);
+                SensorDataProcessing.normalizeVector(n);
+                float fi=(float)Math.acos(SensorDataProcessing.dotProduct(referenceState, currentSens1));
 
-                    tempRef[0]=referenceState[0];
-                    tempRef[1]=0;
-                    tempRef[2]=referenceState[2];
+                SensorDataProcessing.quaternion(n, fi, q);
+                SensorDataProcessing.quatRotate(q, refr, res);
 
-                    SensorDataProcessing.crossProduct(tempRef, tempSens, crossVertical);
-
-                } else{
-                    tempSens[0]=0;
-                    tempSens[1]=currentSens1[1];
-                    tempSens[2]=currentSens1[2];
-
-                    tempRef[0]=0;
-                    tempRef[1]=referenceState[1];
-                    tempRef[2]=referenceState[2];
-
-                    SensorDataProcessing.crossProduct(tempRef, tempSens, crossVertical);
-                }
-
-                float length = SensorDataProcessing.getVectorLength(crossVertical);
-                verticalAngle = (float) Math.toDegrees(Math.asin(length));  // process vertical angle of sensor
-
-                Log.d("PROCESSING_VERTICAL", "COS ANGLE "+length+" VERTICAL ANGLE "+verticalAngle);
-                crossVerticalN = Arrays.copyOf(crossVertical, crossVertical.length);
-                SensorDataProcessing.normalizeVector(crossVerticalN);
-
-                tempSens[0]=currentSens1[0];
-                tempSens[1]=currentSens1[1];
-                tempSens[2]=0;
-
-                tempRef[0]=referenceState[0];
-                tempRef[1]=referenceState[1];
-                tempRef[2]=0;
-
-                SensorDataProcessing.crossProduct(tempSens, tempRef, crossHorizontal);
-                crossHorizontalN = Arrays.copyOf(crossHorizontal, crossHorizontal.length);
-                SensorDataProcessing.normalizeVector(crossHorizontalN);
-
-                SensorDataProcessing.absVector(crossHorizontal);
-                SensorDataProcessing.absVector(crossVertical);
-
-                XX=-(float)(Math.asin(SensorDataProcessing.dotProduct(crossHorizontal, crossHorizontalN))*180/Math.PI)/45; // may include sensitivity multiplier
-                YY=(float)(Math.asin(SensorDataProcessing.dotProduct(crossVertical, crossVerticalN))*180/Math.PI)/45;      // may include sensitivity mult in futuree
-
+                XX = res[0]*2;
+                YY = res[1]*2;
+                verticalAngle = (float)Math.toDegrees(fi);
+                Log.d("PROCESSING_SERVICE", "VERTICAL ANGLE"+verticalAngle);
                 float radius = ((float)Math.sqrt(Math.pow(XX,2)+Math.pow(YY, 2)))+iconSize;
                 Log.d("PROCESSING_SERVICE", "ICONSIZE: "+iconSize+" THRESHOLD: "+threshold);
                 if(radius>threshold){

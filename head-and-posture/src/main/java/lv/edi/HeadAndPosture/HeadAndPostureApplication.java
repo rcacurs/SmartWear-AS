@@ -125,6 +125,8 @@ public class HeadAndPostureApplication extends Application implements SharedPref
                 sensors.set(i, new Sensor(i, false));
             }
         }
+        sensors.get(headSensorIndex).setOrientationUp(true);
+
         batteryLevel = new BatteryLevel();
         batteryLevel.registerListener(this);
 
@@ -316,6 +318,9 @@ public class HeadAndPostureApplication extends Application implements SharedPref
             String postureThresholdS = sharedPreferences.getString("pref_threshold_posture", "3.0");
             postureThreshold = Float.parseFloat(postureThresholdS);
             Log.d("PREFERENCES", "posture threshold value changed "+postureThreshold);
+            if(postureProcessingService!=null){
+                postureProcessingService.setThreshold(postureThreshold);
+            }
         }
         if(key.equals("pref_sample_rate")){
             String samplingFrequencyS = sharedPreferences.getString("pref_sample_rate", "25");
