@@ -24,6 +24,7 @@ import lv.edi.SmartWearProcessing.Sensor;
 public class HeadTiltApplication extends Application implements SharedPreferences.OnSharedPreferenceChangeListener, BluetoothEventListener, ProcessingEventListener, BatteryLevelEventListener {
     public static final int  BATTERY_LEVEL_UPDATE = 45;
     final int NUMBER_OF_SENSORS = 1;
+    final int HEAD_SENSOR_INDEX = 0;
     final int REQUEST_ENABLE_BT = 2;
     SharedPreferences sharedPrefs;
     BluetoothAdapter btAdapter;

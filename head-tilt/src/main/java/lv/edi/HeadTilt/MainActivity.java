@@ -128,7 +128,7 @@ public class MainActivity extends Activity {
 
 
         if(application.processingService == null) {
-            application.processingService = new HeadTiltProcessingService(application.sensors.get(0), 10, application.threshold);
+            application.processingService = new HeadTiltProcessingService(application.sensors.get(application.HEAD_SENSOR_INDEX), 10, application.threshold);
             application.processingService.setProcessingEventListener(application);
         }
 
