@@ -45,6 +45,7 @@ public class ProcessingResult {
     }
 
     public ProcessingResult(float maxDistance, boolean isOverThreshold){
+        this(maxDistance);
         this.isOverThreshold = isOverThreshold;
     }
 
