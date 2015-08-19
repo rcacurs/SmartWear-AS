@@ -1,5 +1,7 @@
 package lv.edi.SmartWearProcessing;
 
+import java.util.Vector;
+
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 
@@ -468,6 +470,16 @@ public class SensorDataProcessing {
 				if(distances[i][j]>maxDistance){
 					maxDistance=distances[i][j];
 				}
+			}
+		}
+		return maxDistance;
+	}
+
+	public static float getMaxDistanceFromDistances(Vector<Vector <Float>> distances ){
+		float maxDistance=0;
+		for(int i=0; i<distances.size(); i++){
+			for(int j=0; j<distances.get(0).size(); j++){
+				maxDistance=Math.max(distances.get(i).get(j).floatValue(), maxDistance);
 			}
 		}
 		return maxDistance;
