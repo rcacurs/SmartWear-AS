@@ -289,5 +289,8 @@ public class HeadTiltProcessingService{
     public float getVerticalAngle(){
         return verticalAngle;
     }
+    public float getThreshold(){
+        return threshold;
+    }
 
 }

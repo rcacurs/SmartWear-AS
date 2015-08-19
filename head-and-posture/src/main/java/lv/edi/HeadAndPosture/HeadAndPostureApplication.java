@@ -6,11 +6,14 @@ import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
+import android.media.MediaScannerConnection;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Vector;
 
@@ -34,6 +37,9 @@ public class HeadAndPostureApplication extends Application implements SharedPref
     boolean alertFeedback;
     float threshold, postureThreshold=3;
     float colormapMaxRange=5;
+    float relativeIconRadius;
+
+    int activeActivity=0;
 
     int numberOfSensors;
     int headSensorIndex;
@@ -45,6 +51,7 @@ public class HeadAndPostureApplication extends Application implements SharedPref
     boolean startSensorLeft;
 
     private boolean isStateSaved=false;
+    File applicationFolder;
 
     BluetoothService btService;
     Vector<Sensor> sensors;
@@ -95,12 +102,16 @@ public class HeadAndPostureApplication extends Application implements SharedPref
         colDist = Float.parseFloat(colDistS);
         String rowDistS = sharedPrefs.getString("pref_row_distance", "6.75");
         rowDist = Float.parseFloat(rowDistS);
+        String thresholdSetting = sharedPrefs.getString("pref_threshold", "0.7");
+        threshold = Float.parseFloat(thresholdSetting);
         String postureThresholdS = sharedPrefs.getString("pref_threshold_posture", "3.0") ;
         postureThreshold = Float.parseFloat(postureThresholdS);
         String colormapMaxRangeS = sharedPrefs.getString("pref_max_range_colormap", "5.0");
         colormapMaxRange = Float.parseFloat(colormapMaxRangeS);
         String samplingFrequencyS = sharedPrefs.getString("pref_sample_rate", "20");
         samplingFrequency = Float.parseFloat(samplingFrequencyS);
+
+
 
         colorMapper = new ColorMapper(0, colormapMaxRange);
 
@@ -130,6 +141,14 @@ public class HeadAndPostureApplication extends Application implements SharedPref
         segmentsCurrent.setSize(nrOfRows);
         modelColors.setSize(nrOfRows);
         distances.setSize(nrOfRows);
+
+        applicationFolder = new File(Environment.getExternalStorageDirectory()+"/HeadAndPosture");
+
+        if(!applicationFolder.exists()){
+            applicationFolder.mkdir();
+        }
+        MediaScannerConnection.scanFile(this, new String[]{applicationFolder.toString()}, null, null);
+        Log.d("LOGGING", applicationFolder.toString());
 
         // initialize all aarays for posture 3D model
         for(int i=0; i<nrOfRows; i++){
@@ -176,6 +195,22 @@ public class HeadAndPostureApplication extends Application implements SharedPref
             modelColors.set(i, posturesRowColors);
             distances.set(i, distancesRow);
         }
+
+        if(processingService == null) {
+            Log.d("PREFERENCES", "HEAD SENSOR IDX "+headSensorIndex);
+            processingService = new HeadTiltProcessingService(sensors.get(headSensorIndex), 10, threshold);
+            processingService.setProcessingEventListener(this);
+            processingService.setThreshold(threshold);
+        }
+
+        if(postureProcessingService==null){
+            postureProcessingService=new PostureProcessingService(segmentsCurrent,
+                    sensorGrid, refRow, refCol, postureThreshold);
+            postureProcessingService.setDistancesArray(distances);
+            postureProcessingService.setProcessingResultEventListener(this);
+        }
+
+        dataLogger = new DataLogger(applicationFolder, processingService, postureProcessingService, samplingFrequency);
     }
 
     @Override
@@ -320,7 +355,7 @@ public class HeadAndPostureApplication extends Application implements SharedPref
     public void onProcessingResult(ProcessingResult result){
         if(result.getResultType()==ProcessingResult.RESULT_HEAD) {
             htView.onProcessingResult(result);
-            if (result.isOverThreshold()) {
+            if (result.isOverThreshold()&&(activeActivity==0)) {
                 if (vibrateFeedback) {
                     vibrator.vibrate(100);
                 }
@@ -331,6 +366,15 @@ public class HeadAndPostureApplication extends Application implements SharedPref
         }
 
         if(result.getResultType()==ProcessingResult.RESULT_POSTURE){
+            if (result.isOverThreshold()&&(activeActivity==1)) {
+                if (vibrateFeedback) {
+                    vibrator.vibrate(100);
+                }
+                if (alertFeedback && !mp.isPlaying()) {
+                    mp.start();
+                }
+            }
+
             for(int i=0; i<distances.size(); i++){
                 for(int j=0; j<distances.get(0).size(); j++){
                     byte[] color = colorMapper.getColor(distances.get(i).get(j));
@@ -355,5 +399,10 @@ public class HeadAndPostureApplication extends Application implements SharedPref
      */
     public boolean isProcessing(){
         return isProcessing;
+    }
+
+    public void setActiveActivity(int activeActivity){
+        this.activeActivity=activeActivity;
+        dataLogger.setActiveActivity(activeActivity);
     }
 }

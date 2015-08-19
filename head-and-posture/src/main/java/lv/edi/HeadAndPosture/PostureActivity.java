@@ -3,6 +3,7 @@ package lv.edi.HeadAndPosture;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.media.MediaScannerConnection;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -14,6 +15,8 @@ import android.view.View;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Vector;
 
 import lv.edi.BluetoothLib.BluetoothService;
@@ -97,6 +100,7 @@ public class PostureActivity extends Activity {
         };
 
         runButton.setChecked(application.isProcessing());
+        application.setActiveActivity(1);
 
     }
 
@@ -136,15 +140,22 @@ public class PostureActivity extends Activity {
                 application.postureProcessingService.startProcessing(application.samplingFrequency);
 
 
-                //application.processingService.setIconRadius(htView.getIconRelativeRadius());
+                application.processingService.setIconRadius(application.relativeIconRadius);
                 application.processingService.startProcessing(application.samplingFrequency);
 
                 application.setIsProcessing(true);
+                try {
+                    application.dataLogger.startLogSession(application.samplingFrequency);
+                } catch (FileNotFoundException ex){
+                    Log.d("LOGGING", "FILE NOT FOUND EXCEPTION");
+                }
             } else{
                 button.setChecked(false);
                 Toast.makeText(this, res.getString(R.string.toast_save_state), Toast.LENGTH_SHORT).show();
             }
         } else{
+            File logFile = application.dataLogger.stopLogSession();
+            MediaScannerConnection.scanFile(this, new String[]{logFile.toString()}, null, null); // solves problem with mtp
             application.postureProcessingService.stopProcessing();
             application.processingService.stopProcessing();
             application.setIsProcessing(false);

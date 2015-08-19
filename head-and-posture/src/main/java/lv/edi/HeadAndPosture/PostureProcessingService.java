@@ -32,6 +32,7 @@ public class PostureProcessingService {
     private Timer timer;
     private boolean isStateSaved = false;
     private ProcessingEventListener listener;
+    private boolean isOverThreshold;
 
     /**
      * constructor for posture processing service
@@ -98,7 +99,11 @@ public class PostureProcessingService {
                     Segment.compareByDistances(savedStateSegments, currentStateSegments, distances);
                 }
                // Log.d("PROCESSING", "POSTURE_PROCESSIN_PROCESSED");
-                ProcessingResult result = new ProcessingResult(3.0f); // TODO add exact value;
+                float maxDistance = SensorDataProcessing.getMaxDistanceFromDistances(distances);
+
+                isOverThreshold = maxDistance>threshold;
+
+                ProcessingResult result = new ProcessingResult(maxDistance, isOverThreshold); // TODO add exact value;
                 if(listener!=null){
                     listener.onProcessingResult(result);
                 }
@@ -123,6 +128,13 @@ public class PostureProcessingService {
 
     public float getMaxDistance(){
         return maxDistance;
+    }
+    public boolean isOverThreshold(){
+        return isOverThreshold;
+    }
+
+    public float getThreshold(){
+        return threshold;
     }
 
 

@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.media.MediaPlayer;
+import android.media.MediaScannerConnection;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -19,6 +20,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 import android.widget.ToggleButton;
+
+import java.io.File;
+import java.io.FileNotFoundException;
 
 import lv.edi.BluetoothLib.*;
 import lv.edi.SmartWearProcessing.Segment;
@@ -127,20 +131,6 @@ public class MainActivity extends Activity {
 
         // create processing service
 
-        String headSensorIndexS = application.sharedPrefs.getString("pref_head_idx", "20");
-        application.headSensorIndex = Integer.parseInt(headSensorIndexS);
-        if(application.processingService == null) {
-            Log.d("PREFERENCES", "HEAD SENSOR IDX "+application.headSensorIndex);
-            application.processingService = new HeadTiltProcessingService(application.sensors.get(application.headSensorIndex), 10, application.threshold);
-            application.processingService.setProcessingEventListener(application);
-        }
-
-        if(application.postureProcessingService==null){
-            application.postureProcessingService=new PostureProcessingService(application.segmentsCurrent,
-                    application.sensorGrid, application.refRow, application.refCol, application.postureThreshold);
-            application.postureProcessingService.setDistancesArray(application.distances);
-            application.postureProcessingService.setProcessingResultEventListener(application);
-        }
 
         runButton.setChecked(application.isProcessing());
 
@@ -155,11 +145,12 @@ public class MainActivity extends Activity {
 
             }
         });
+        application.relativeIconRadius=htView.getIconRelativeRadius();
         htView.setGoodTimePercentLable(res.getString(R.string.good_time_percent_lable));
         htView.setSessionTimeLable(res.getString(R.string.session_time_lable));
         htView.setGoodTimePercent(application.processingService.getGoodPercentage());
         htView.setSessionTime(DateUtils.formatElapsedTime(application.processingService.getSessionDuration()));
-
+        application.setActiveActivity(0);
     }
 
     @Override
@@ -263,16 +254,23 @@ public class MainActivity extends Activity {
                 application.processingService.startProcessing(application.samplingFrequency);
 
                 application.postureProcessingService.startProcessing(application.samplingFrequency);
-                application.dataLogger = new DataLogger("test", application.processingService, application.postureProcessingService, application.samplingFrequency);
+                try {
+                    application.dataLogger.startLogSession(application.samplingFrequency);
+                } catch (FileNotFoundException ex){
+                    Log.d("LOGGING", "FILE NOT FOUND EXCEPTION");
+                }
                 application.setIsProcessing(true);
             } else{
                 button.setChecked(false);
                 Toast.makeText(this, res.getString(R.string.toast_save_state), Toast.LENGTH_SHORT).show();
             }
         } else{
+            File logFile = application.dataLogger.stopLogSession();
+            MediaScannerConnection.scanFile(this, new String[]{logFile.toString()}, null, null); // solves problem with mtp
             application.processingService.stopProcessing();
             application.postureProcessingService.stopProcessing();
             application.setIsProcessing(false);
+
         }
     }
 
