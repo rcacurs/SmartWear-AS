@@ -99,9 +99,9 @@ public class PostureProcessingService {
                     Segment.compareByDistances(savedStateSegments, currentStateSegments, distances);
                 }
                // Log.d("PROCESSING", "POSTURE_PROCESSIN_PROCESSED");
-                float maxDistance = SensorDataProcessing.getMaxDistanceFromDistances(distances);
-
-                isOverThreshold = maxDistance>threshold;
+                maxDistance = SensorDataProcessing.getMaxDistanceFromDistances(distances);
+                Log.d("PROCESSING", "maxDistance "+maxDistance+" ");
+                isOverThreshold = (maxDistance>threshold);
 
                 ProcessingResult result = new ProcessingResult(maxDistance, isOverThreshold); // TODO add exact value;
                 if(listener!=null){

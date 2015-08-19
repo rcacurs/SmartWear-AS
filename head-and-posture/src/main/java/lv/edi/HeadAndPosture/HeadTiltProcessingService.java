@@ -149,6 +149,8 @@ public class HeadTiltProcessingService{
             @Override
             public void run(){
                 currentSens1 = sensor.getAccRawNorm();
+
+                Log.d("PROCESSING", "HEAD_TILT_SENSOR_DATA "+currentSens1[0]+" "+currentSens1[1]+" "+currentSens1[2]);
                 Log.d("PROCESSING", "SENSOR PROCESSED "+sensor.getIdentifier());
                 currentSens1[0] = filterX.filter(currentSens1[0]);
                 currentSens1[1] = filterY.filter(currentSens1[1]);
@@ -176,8 +178,10 @@ public class HeadTiltProcessingService{
 
                     SensorDataProcessing.crossProduct(tempRef, tempSens, crossVertical);
                 }
+
                 float length = SensorDataProcessing.getVectorLength(crossVertical);
                 verticalAngle = (float) Math.toDegrees(Math.asin(length));  // process vertical angle of sensor
+
                 Log.d("PROCESSING_VERTICAL", "COS ANGLE "+length+" VERTICAL ANGLE "+verticalAngle);
                 crossVerticalN = Arrays.copyOf(crossVertical, crossVertical.length);
                 SensorDataProcessing.normalizeVector(crossVerticalN);

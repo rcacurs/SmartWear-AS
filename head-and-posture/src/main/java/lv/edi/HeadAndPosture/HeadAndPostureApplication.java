@@ -84,7 +84,7 @@ public class HeadAndPostureApplication extends Application implements SharedPref
         String numberOfSensorsS = sharedPrefs.getString("pref_nr_sensors", "21");
         int numberOfSensors = Integer.parseInt(numberOfSensorsS);
         String headSensorIndexS = sharedPrefs.getString("pref_head_idx", "20");
-        int headSensorIndex = Integer.parseInt(headSensorIndexS);
+        headSensorIndex = Integer.parseInt(headSensorIndexS);
         String nrOfColsS = sharedPrefs.getString("pref_nr_cols", "4");
         nrOfCols = Integer.parseInt(nrOfColsS);
         String nrOfRowsS = sharedPrefs.getString("pref_nr_rows", "5");
@@ -108,7 +108,7 @@ public class HeadAndPostureApplication extends Application implements SharedPref
         postureThreshold = Float.parseFloat(postureThresholdS);
         String colormapMaxRangeS = sharedPrefs.getString("pref_max_range_colormap", "5.0");
         colormapMaxRange = Float.parseFloat(colormapMaxRangeS);
-        String samplingFrequencyS = sharedPrefs.getString("pref_sample_rate", "20");
+        String samplingFrequencyS = sharedPrefs.getString("pref_sample_rate", "25");
         samplingFrequency = Float.parseFloat(samplingFrequencyS);
 
 
@@ -284,7 +284,7 @@ public class HeadAndPostureApplication extends Application implements SharedPref
         }
 
         if(key.equals("pref_battery_idx")){
-            String batteryPacketIndexS = sharedPreferences.getString("pref_battery_idx", "63");
+            String batteryPacketIndexS = sharedPreferences.getString("pref_battery_idx", "21");
             batteryPacketIndex = Integer.parseInt(batteryPacketIndexS);
             if(btService!=null){
                 btService.setBatteryPacketIndex(batteryPacketIndex);
@@ -318,7 +318,7 @@ public class HeadAndPostureApplication extends Application implements SharedPref
             Log.d("PREFERENCES", "posture threshold value changed "+postureThreshold);
         }
         if(key.equals("pref_sample_rate")){
-            String samplingFrequencyS = sharedPreferences.getString("pref_sample_rate", "20");
+            String samplingFrequencyS = sharedPreferences.getString("pref_sample_rate", "25");
             samplingFrequency = Float.parseFloat(samplingFrequencyS);
             Log.d("PREFERENCES", "SAMPLING FREQ SET "+samplingFrequency);
         }
@@ -353,8 +353,9 @@ public class HeadAndPostureApplication extends Application implements SharedPref
 
     @Override
     public void onProcessingResult(ProcessingResult result){
-        if(result.getResultType()==ProcessingResult.RESULT_HEAD) {
+        if((result.getResultType())==ProcessingResult.RESULT_HEAD) {
             htView.onProcessingResult(result);
+            Log.d("PROCESSING", "ON HEAD PROCESSING"+result.isOverThreshold());
             if (result.isOverThreshold()&&(activeActivity==0)) {
                 if (vibrateFeedback) {
                     vibrator.vibrate(100);

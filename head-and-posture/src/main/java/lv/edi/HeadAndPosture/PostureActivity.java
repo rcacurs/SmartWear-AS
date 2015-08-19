@@ -140,7 +140,7 @@ public class PostureActivity extends Activity {
                 application.postureProcessingService.startProcessing(application.samplingFrequency);
 
 
-                application.processingService.setIconRadius(application.relativeIconRadius);
+                application.processingService.setIconRadius(application.htView.getIconRelativeRadius());
                 application.processingService.startProcessing(application.samplingFrequency);
 
                 application.setIsProcessing(true);

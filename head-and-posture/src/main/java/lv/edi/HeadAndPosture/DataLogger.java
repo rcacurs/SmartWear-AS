@@ -78,6 +78,7 @@ public class DataLogger {
 
 
     public File stopLogSession(){
+        timer.cancel();
         writer.close();
         return logFile;
 

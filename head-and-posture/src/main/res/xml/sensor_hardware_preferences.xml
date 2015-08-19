@@ -4,7 +4,7 @@
         android:key="pref_sample_rate"
         android:title="@string/pref_title_sample_rate"
         android:summary="@string/pref_summary_sample_rate"
-        android:defaultValue="20"
+        android:defaultValue="25"
         android:inputType="numberDecimal"
         android:digits="0123456789."></EditTextPreference>
     <EditTextPreference
@@ -86,7 +86,7 @@
         android:key="pref_battery_idx"
         android:title="@string/pref_title_battery_idx"
         android:summary="@string/pref_summary_battery_idx"
-        android:defaultValue="63"
+        android:defaultValue="21"
         android:inputType="numberDecimal"
         android:digits="0123456789">
     </EditTextPreference>
