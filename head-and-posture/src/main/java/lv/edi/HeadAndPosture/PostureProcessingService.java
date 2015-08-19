@@ -136,6 +136,8 @@ public class PostureProcessingService {
     public float getThreshold(){
         return threshold;
     }
-
+    public void setThreshold(float threshold){
+        this.threshold = threshold;
+    }
 
 }
