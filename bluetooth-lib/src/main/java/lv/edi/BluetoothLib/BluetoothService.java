@@ -239,7 +239,7 @@ public class BluetoothService {
                                                 short magz = (short)(packet[11]*256+packet[12]);
                                                 double accMagnitude = Math.sqrt(Math.pow(accx, 2)+Math.pow(accy, 2)+Math.pow(accz, 2));
                                                 double magMagnitude = Math.sqrt(Math.pow(magx, 2)+Math.pow(magy, 2)+Math.pow(magz, 2));
-                                                if(((accMagnitude<20800)&&(accMagnitude>11000)&&(magMagnitude>0)&&(magMagnitude<2000))){
+                                                if(((accMagnitude<24000)&&(accMagnitude>11000)&&(magMagnitude>0)&&(magMagnitude<2000))){
                                                     sensorbuffer.get(packet[0]).updateSensorData(accx, // forming accelerometer x data from two received data bytes
                                                             accy, // forming accelerometer y data from two received data bytes
                                                             accz, // forming accelerometer z data from two received data bytes
@@ -248,7 +248,9 @@ public class BluetoothService {
                                                             magz);// forming magnetometer z data from two recieved data bytes
 
                                                 }
+                                                Log.d("BLUETOOTH", "PACKET "+packet[0]+" "+accx+" "+accy+" "+accz);
                                             }
+
                                             if(packet[0]==batteryPacketIndex) {// if received battery status packet
                                                 if(batteryLevel!=null){
                                                     short battery_level_raw = (short) (packet[1] * 256 + packet[2]);
