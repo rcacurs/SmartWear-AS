@@ -18,14 +18,14 @@
         android:digits="0123456789."
         android:title="@string/pref_title_threshold_posture"
         android:summary="@string/pref_summary_threshold_posture"
-        android:defaultValue="3.0"></EditTextPreference>
+        android:defaultValue="5.0"></EditTextPreference>
     <EditTextPreference
         android:key="pref_max_range_colormap"
         android:inputType="numberDecimal"
         android:digits="0123456789."
         android:title="@string/pref_title_max_range_colormap"
         android:summary="@string/pref_summary_max_range_colormap"
-        android:defaultValue="2"></EditTextPreference>
+        android:defaultValue="5"></EditTextPreference>
 
     <CheckBoxPreference
         android:key="pref_vibrate"
