@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.media.MediaScannerConnection;
+import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Vibrator;
@@ -148,9 +149,11 @@ public class HeadAndPostureApplication extends Application implements SharedPref
 
         if(!applicationFolder.exists()){
             applicationFolder.mkdir();
+            MediaScannerConnection.scanFile(this, new String[]{applicationFolder.toString()}, null, null);
+            sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.parse(applicationFolder.toString())));
+            Log.d("LOGGING", applicationFolder.toString());
         }
-        MediaScannerConnection.scanFile(this, new String[]{applicationFolder.toString()}, null, null);
-        Log.d("LOGGING", applicationFolder.toString());
+
 
         // initialize all aarays for posture 3D model
         for(int i=0; i<nrOfRows; i++){
