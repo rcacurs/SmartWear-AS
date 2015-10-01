@@ -5,6 +5,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Vector;
 
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
@@ -56,6 +57,34 @@ public class Sensor {
 			mountTransformMatrix[1][2]=1;
 			mountTransformMatrix[2][0]=1;
 		}
+	}
+
+	/** Sets mount transformation matrix. each axis is represented with number x-1, y=2, z=3. Negative
+	 * integer means that axis should be flipped.
+	 *@param upXtr - which coordinate considered as x for up sensor
+	 *@param upYtr - which coordiante considered as y for up sensor
+	 *@param upZtr - which coordinate considered as z for up sensor
+	 *@param downXtr - which coordinate considered as x for up sensor
+	 *@param downYtr - which coordiante considered as y for up sensor
+	 *@param downZtr - which coordinate considered as z for up sensor
+	 *
+	 */
+
+	public void setMountTransformMatrix(int upXtr, int upYtr, int upZtr, int downXtr, int downYtr, int downZtr){
+		mountTransformMatrix=new float[3][3];
+		if(isOrientationUp){
+			mountTransformMatrix[0][Math.abs(upXtr)-1] = Math.signum(upXtr);
+			mountTransformMatrix[1][Math.abs(upYtr)-1] = Math.signum(upYtr);
+			mountTransformMatrix[2][Math.abs(upZtr)-1] = Math.signum(upZtr);
+		} else{
+			mountTransformMatrix[0][Math.abs(downXtr)-1] = Math.signum(downXtr);
+			mountTransformMatrix[1][Math.abs(downYtr)-1] = Math.signum(downYtr);
+			mountTransformMatrix[2][Math.abs(downZtr)-1] = Math.signum(downZtr);
+		}
+	}
+
+	public float[][] getMountTransformMatrix(){
+		return mountTransformMatrix;
 	}
 
 	/**
@@ -325,10 +354,29 @@ public class Sensor {
 	/**returns array of normed magnetometer data with transformed coordinates*/
 	public synchronized float[] getMagNorm(){
 		float[] data = new float [3];
-		data[0] = getMagNormX();
-		data[1] = getMagNormY();
-		data[2] = getMagNormZ();
-		return data;
+
+		if(filter){
+			data[0]=rawMagFilteredData[0];
+			data[1]=rawMagFilteredData[1];
+			data[2]=rawMagFilteredData[2];
+		} else{
+			if(calibratedMagData!=null){
+				data[0]=calibratedMagData[0];
+				data[1]=calibratedMagData[1];
+				data[2]=calibratedMagData[2];
+			} else{
+				data[0]=rawMagData[0];
+				data[1]=rawMagData[1];
+				data[2]=rawMagData[2];
+			}
+		}
+
+		SensorDataProcessing.normalizeVector(data);
+		float[] datares = new float[3];
+
+		SensorDataProcessing.multiplyMatrix(mountTransformMatrix, data, datares);
+
+		return datares;
 	}
 	
 	/**changes raw sensor data fields  for accelerometer and magnetometer sensor array rawAccData[3]
@@ -435,6 +483,47 @@ public class Sensor {
 				}
 			}
 		breader.close();
+		}else{
+			breader.close();
+			return;
+		}
+	}
+
+	/**
+	 * Sets magnetometer calibration data for all GRID
+	 * @param calibDataFile .csv file containing calibration data
+	 * @param sensorGrid sensor grid array
+	 * @throws IOException
+	 */
+	public static void  setGridMagnetometerCalibData(File calibDataFile, Vector<Vector<Sensor>> sensorGrid) throws IOException{
+		BufferedReader breader = new BufferedReader(new FileReader(calibDataFile));
+		String str = breader.readLine();
+		int numberOfSensors;
+		try {
+			numberOfSensors = Integer.parseInt(str);
+		} catch (NumberFormatException e) {
+			breader.close();
+			return;
+		}
+
+		if(numberOfSensors==(sensorGrid.size()*sensorGrid.get(0).size())){
+			for(int i=0; i<numberOfSensors; i++){
+				int[] sensorIndexes = SensorDataProcessing.getIndexes(i, sensorGrid.size(), sensorGrid.get(0).size());
+				str=breader.readLine();
+				String[] elements = str.split(",");
+				if(elements.length==12){
+					float[] calibData = new float[12];
+					for(int j=0; j<12; j++){
+						calibData[j]=(float)Double.parseDouble(elements[j]);
+					}
+					sensorGrid.get(sensorIndexes[0]).get(sensorIndexes[1]).updateMagnCalibrationData(calibData);
+				}else{
+					breader.close();
+
+					throw new IOException();
+				}
+			}
+			breader.close();
 		}else{
 			breader.close();
 			return;

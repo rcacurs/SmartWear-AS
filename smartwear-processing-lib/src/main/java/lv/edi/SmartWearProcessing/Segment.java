@@ -90,7 +90,8 @@ public class Segment {
 			SensorDataProcessing.multiplyMatrix(rotMat, initialCross[i], cross[i]);
 		}
 	}
-	
+
+
 	/**
 	 * Sets all segment orientation with triad algorithm defined in segment array
 	 * @param segmentArray array of segments
@@ -100,6 +101,14 @@ public class Segment {
 		for(int i=0; i<segmentArray.length; i++){
 			for(int j=0; j<segmentArray[0].length; j++){
 				segmentArray[i][j].setSegmentOrientationTRIAD(sensorGrid[i][j]);
+			}
+		}
+	}
+
+	public static void setAllSegmentOrientationsTRIAD(Vector<Vector <Segment>> segmentGrid, Vector<Vector <Sensor>> sensorGrid){
+		for(int i=0; i<segmentGrid.size(); i++){
+			for(int j=0; j<segmentGrid.get(0).size(); j++){
+				segmentGrid.get(i).get(j).setSegmentOrientationTRIAD(sensorGrid.get(i).get(j));
 			}
 		}
 	}
