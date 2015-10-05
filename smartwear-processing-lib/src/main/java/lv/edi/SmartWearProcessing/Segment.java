@@ -623,6 +623,18 @@ public class Segment {
 			}
 		}
 	}
+
+	public static void compansateCentersForTilt(Vector<Vector<Segment>> refferenceStateInitial, Vector<Vector<Segment>> refferenceState, float[][] Rreference, float[][] Rcurent){
+		float[][] R = SensorDataProcessing.multMatMatT(Rcurent, Rreference);
+
+		//SensorDataProcessing.transpose(R);
+		for(int i=0; i<refferenceState.size(); i++){
+			for(int j=0; j<refferenceState.get(0).size();j++){
+
+				SensorDataProcessing.multiplyMatrix(R, refferenceStateInitial.get(i).get(j).center, refferenceState.get(i).get(j).center);
+			}
+		}
+	}
 	/**
 	 * method for compensating for tilt 
 	 * @param refferenceStateInitial
