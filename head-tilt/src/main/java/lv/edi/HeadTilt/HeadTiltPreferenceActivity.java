@@ -17,13 +17,13 @@ import lv.edi.BluetoothLib.*;
  * Created by Richards on 17/06/2015.
  */
 public class HeadTiltPreferenceActivity extends Activity {
-    private static final int REQUEST_SELECT_TARGET_DEVICE = 2;
-    private static HeadTiltApplication application;
+            private static final int REQUEST_SELECT_TARGET_DEVICE = 2;
+            private static HeadTiltApplication application;
 
-    public static class SettingsFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
+            public static class SettingsFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
 
-        private Preference bluetoothTargetPreference;
-        @Override
+                private Preference bluetoothTargetPreference;
+                @Override
         public void onCreate(Bundle savedInstanceState){
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.preferences);
