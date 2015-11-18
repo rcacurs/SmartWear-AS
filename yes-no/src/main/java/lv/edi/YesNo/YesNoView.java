@@ -16,18 +16,33 @@ public class YesNoView extends View {
 
     private int canvasWidth;
     private int canvasHeight;
+    private float mRelPosX=0; // marker relative position
+    private float mRelPosY=0; // marker relative position
     private float optionRelativeRadius=0.7f;
     private Paint paint = new Paint();
+    private Bitmap smiley;
+    private Bitmap sadface;
+    private int scx;          // center coordinate in marker coordinates
+    private int scy;          // cetner coordinate in marker coordinates
 
+    public void initYesNoView(){
+        smiley = BitmapFactory.decodeResource(getResources(), R.drawable.happyface500);
+        sadface = BitmapFactory.decodeResource(getResources(), R.drawable.sadface500);
+        smiley = Bitmap.createScaledBitmap(smiley, smiley.getWidth() / 4, smiley.getHeight() / 4, false);
+        sadface = Bitmap.createScaledBitmap(sadface, sadface.getWidth() / 4, sadface.getHeight() / 4, false);
+        scx=smiley.getWidth()/2;
+        scy=smiley.getHeight()/2;
+    }
     public YesNoView(Context context) {
         super(context);
         setWillNotDraw(false);
+        initYesNoView();
     }
 
     public YesNoView(Context context, AttributeSet attrs){
         super(context, attrs);
         setWillNotDraw(false);
-
+        initYesNoView();
     }
 
     @Override
@@ -35,6 +50,9 @@ public class YesNoView extends View {
         super.onDraw(canvas);
         canvasWidth=canvas.getWidth();
         canvasHeight=canvas.getHeight();
+
+        int cx = canvasWidth/2;
+        int cy = canvasHeight/2;
 
         // draw no circle
         paint.setStyle(Paint.Style.FILL);
@@ -48,6 +66,7 @@ public class YesNoView extends View {
         paint.setAlpha(60);
         canvas.drawCircle(3*canvasWidth/4, canvasHeight/2, canvasWidth*optionRelativeRadius/4, paint);
 
+        canvas.drawBitmap(smiley, (int) (cx + mRelPosX * cx - scx), (int) (cy + mRelPosY * cy - scy), null);
 
     }
 }
