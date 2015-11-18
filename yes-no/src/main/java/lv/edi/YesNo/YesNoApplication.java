@@ -33,6 +33,8 @@ public class YesNoApplication extends Application implements SharedPreferences.O
     boolean alertFeedback=false;
     Vector<Sensor> sensors;
 
+    YesNoProcessingService processingService;
+
     public void onCreate(){
         super.onCreate();
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -43,6 +45,7 @@ public class YesNoApplication extends Application implements SharedPreferences.O
         for(int i=0; i<NUMBER_OF_SENSORS; i++){
             sensors.set(i,new Sensor(i, true));
         }
+        processingService = new YesNoProcessingService(sensors.get(0));
     }
 
     @Override

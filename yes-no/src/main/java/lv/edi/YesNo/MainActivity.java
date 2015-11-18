@@ -39,6 +39,7 @@ public class MainActivity extends Activity {
 
         application = (YesNoApplication)getApplication();
         ynView = (YesNoView) findViewById(R.id.yesNoView);
+        application.processingService.setYesNoView(ynView);
         runButton = (ToggleButton) findViewById(R.id.toggle_button_start);
 
         application.btAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -68,6 +69,14 @@ public class MainActivity extends Activity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         optionsMenu=menu;
+
+        if(application.btService!=null){
+            if(application.btService.isConnected()){
+                optionsMenu.findItem(R.id.action_bluetooth_connection_status).setIcon(R.drawable.check);
+            } else{
+                optionsMenu.findItem(R.id.action_bluetooth_connection_status).setIcon(R.drawable.not);
+            }
+        }
         return true;
     }
     @Override
@@ -109,6 +118,11 @@ public class MainActivity extends Activity {
                 }
             }
         };
+        if(application.processingService.isProcessing()){
+            runButton.setChecked(true);
+        } else{
+            runButton.setChecked(false);
+        }
     }
 
     @Override
@@ -158,13 +172,14 @@ public class MainActivity extends Activity {
         ToggleButton button = (ToggleButton)view;
         if(button.isChecked()){
             if(application.btService.isConnected()){
-
+                application.processingService.start(20);
             } else{
                 Toast.makeText(this, res.getString(R.string.toast_must_connect_bt), Toast.LENGTH_LONG).show();
                 button.setChecked(false);
             }
         } else{
-            //application.processingService.stopProcessing();
+            //application.processingService.stopProcessing()
+            application.processingService.stop();
         }
     }
 }

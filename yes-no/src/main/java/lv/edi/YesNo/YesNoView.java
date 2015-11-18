@@ -69,4 +69,10 @@ public class YesNoView extends View {
         canvas.drawBitmap(smiley, (int) (cx + mRelPosX * cx - scx), (int) (cy + mRelPosY * cy - scy), null);
 
     }
+
+    public void setMarkerPosition(float[] newPosition){
+        mRelPosX=newPosition[0];
+        mRelPosY=newPosition[1];
+        postInvalidate();
+    }
 }
