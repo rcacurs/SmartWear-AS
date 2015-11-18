@@ -18,7 +18,7 @@ public class YesNoView extends View {
     private int canvasHeight;
     private float mRelPosX=0; // marker relative position
     private float mRelPosY=0; // marker relative position
-    private float optionRelativeRadius=0.7f;
+    private float relativeRadius=0.7f;
     private Paint paint = new Paint();
     private Bitmap smiley;
     private Bitmap sadface;
@@ -58,21 +58,25 @@ public class YesNoView extends View {
         paint.setStyle(Paint.Style.FILL);
         paint.setColor(Color.RED);
         paint.setAlpha(60);
-        canvas.drawCircle(canvasWidth/4, canvasHeight/2, canvasWidth*optionRelativeRadius/4, paint);
+        canvas.drawCircle(canvasWidth/4, canvasHeight/2, canvasWidth*relativeRadius/4, paint);
 
         // draw yes circle
         paint.setStyle(Paint.Style.FILL);
         paint.setColor(Color.GREEN);
         paint.setAlpha(60);
-        canvas.drawCircle(3*canvasWidth/4, canvasHeight/2, canvasWidth*optionRelativeRadius/4, paint);
+        canvas.drawCircle(3*canvasWidth/4, canvasHeight/2, canvasWidth*relativeRadius/4, paint);
 
-        canvas.drawBitmap(smiley, (int) (cx + mRelPosX * cx - scx), (int) (cy + mRelPosY * cy - scy), null);
+        canvas.drawBitmap(smiley, (int) (cx + mRelPosX * cx - scx), (int) (cy + mRelPosY * cx - scy), null);
 
     }
 
     public void setMarkerPosition(float[] newPosition){
         mRelPosX=newPosition[0];
         mRelPosY=newPosition[1];
+        postInvalidate();
+    }
+    public void setRadius(float radius){
+        this.relativeRadius = radius;
         postInvalidate();
     }
 }

@@ -2,13 +2,13 @@
     <string name="app_name">Jā-Nē</string>
     <string name="action_settings">Iestatījumi</string>
     <string name="pref_bluetooth_target">Bluetooth ierīce</string>
-    <string name="pref_threshold">Slieksnis</string>
+    <string name="pref_radius">Rādiuss</string>
     <string name="pref_vibrate">Vibro signāla atgriezeniskā saite</string>
     <string name="pref_alert">Skaņas signāla atgriezeniskā saite</string>
     <string name="pref_summary_vibrate">Uzstāda vibrējošu signālu pie sliekšņa pārsniegšanas</string>
     <string name="pref_summary_alert">Uzstāda skaņas signālu pie sliekšņa pārsniegšanas</string>
     <string name="pref_summary_bluetooth_target">Bluetooth ierīces nosaukums</string>
-    <string name="pref_summary_threshold">Sliekšņa vērtība pie, kuras tiek ģenerēts atgriezeniskās saites signāls</string>
+    <string name="pref_summary_radius">Izvēļu apļu rādiuss</string>
     <string name="preferences_label">Iestatījumi</string>
     <string name="bt_device_select">Bluetooth ierīču saraksts</string>
     <string name="title_paired_devices">Sapārotās ierīces</string>

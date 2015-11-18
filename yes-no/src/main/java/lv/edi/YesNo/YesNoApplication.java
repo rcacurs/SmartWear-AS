@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.SharedPreferences;
 import android.os.Handler;
+import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -32,6 +33,8 @@ public class YesNoApplication extends Application implements SharedPreferences.O
     boolean vibrateFeedback=false;
     boolean alertFeedback=false;
     Vector<Sensor> sensors;
+    float radiusSetting;
+    Vibrator v;
 
     YesNoProcessingService processingService;
 
@@ -59,13 +62,11 @@ public class YesNoApplication extends Application implements SharedPreferences.O
             }
         }
 
-        if(key.equals("pref_threshold")){
-            String thresholdSetting = sharedPreferences.getString("pref_threshold", "0.7");
-            float thresholdSettingf = Float.parseFloat(thresholdSetting);
-//            htView.setThreshold(thresholdSettingf);
-//            if(processingService!=null){
-////                processingService.setThreshold(thresholdSettingf);
-//            }
+        if(key.equals("pref_radius")){
+            String thresholdSetting = sharedPreferences.getString("pref_radius", "0.7");
+            float radiusSettingf = Float.parseFloat(thresholdSetting);
+            processingService.setRadius(radiusSettingf);
+            Log.d("PREFERENCES", "radius set");
         }
 
         if(key.equals("pref_vibrate")){

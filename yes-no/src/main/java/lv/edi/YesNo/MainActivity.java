@@ -2,12 +2,14 @@ package lv.edi.YesNo;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.os.Vibrator;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -57,6 +59,9 @@ public class MainActivity extends Activity {
         // fetch preferences
 
         String btAddress = application.sharedPrefs.getString("pref_bluetooth_target", "none");
+        String radiusS = application.sharedPrefs.getString("pref_radius","0.7");
+        application.processingService.setRadius(Float.parseFloat(radiusS));
+
         if(btAddress.equals("none")){
             application.btDevice = null;
         } else{
@@ -123,6 +128,9 @@ public class MainActivity extends Activity {
         } else{
             runButton.setChecked(false);
         }
+
+        application.v = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
+        application.processingService.setVibrator(application.v);
     }
 
     @Override
