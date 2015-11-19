@@ -3,9 +3,9 @@ package lv.edi.YesNo;
 import android.app.Application;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Handler;
-import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -24,6 +24,7 @@ public class YesNoApplication extends Application implements SharedPreferences.O
     final int NUMBER_OF_SENSORS = 1;
     static final int BATTERY_LEVEL_UPDATE=45;
     static final int BATTERY_PACKET_INDEX=1;
+    private static Context context;
     BluetoothService btService;
     BluetoothAdapter btAdapter;
     BluetoothDevice btDevice;
@@ -34,12 +35,12 @@ public class YesNoApplication extends Application implements SharedPreferences.O
     boolean alertFeedback=false;
     Vector<Sensor> sensors;
     float radiusSetting;
-    Vibrator v;
 
     YesNoProcessingService processingService;
 
     public void onCreate(){
         super.onCreate();
+        context = getApplicationContext();
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         sharedPrefs.registerOnSharedPreferenceChangeListener(this);
 
@@ -49,6 +50,7 @@ public class YesNoApplication extends Application implements SharedPreferences.O
             sensors.set(i,new Sensor(i, true));
         }
         processingService = new YesNoProcessingService(sensors.get(0));
+
     }
 
     @Override
@@ -80,6 +82,9 @@ public class YesNoApplication extends Application implements SharedPreferences.O
         }
     }
 
+    public static Context getAppContext(){
+        return context;
+    }
     // battery level listeners
     public void onBatteryLevelChange(BatteryLevel bLevel){
         uiHandler.obtainMessage(BATTERY_LEVEL_UPDATE).sendToTarget();

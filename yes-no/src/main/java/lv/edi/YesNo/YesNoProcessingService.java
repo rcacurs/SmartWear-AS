@@ -1,8 +1,11 @@
 package lv.edi.YesNo;
 
+import android.content.Context;
+import android.media.MediaPlayer;
 import android.os.Vibrator;
 import android.util.Log;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -40,7 +43,10 @@ public class YesNoProcessingService {
     private final int YES=1;
     private final int NO=-1;
     private final int NONE=0;
+    private int prevState=NONE;
     private Vibrator v;
+    private MediaPlayer mp;
+
 
     float testAngleZ=0;
 
@@ -48,9 +54,12 @@ public class YesNoProcessingService {
         filterX = new Filter();
         filterY = new Filter();
         filterZ = new Filter();
-
+        mp = MediaPlayer.create(YesNoApplication.getAppContext(), R.raw.chocalo);
+        v = (Vibrator) YesNoApplication.getAppContext().getSystemService(Context.VIBRATOR_SERVICE);
+        mp.setLooping(true);
+        mp.setVolume(1.0f, 1.0f);
         this.sensor=sensor;
-        this.ynView=ynView;
+
     }
     public void setYesNoView(YesNoView ynView){
         this.ynView = ynView;
@@ -83,7 +92,18 @@ public class YesNoProcessingService {
                         testPos[1]=0.15f;
 
                         markerRelPos=testPos;
-                        detectRegion();
+                        int curState = detectRegion();
+                        if((prevState==NONE)&&(curState==YES)) {
+                            mp.seekTo(0);
+                            mp.start();
+                            v.vibrate(50);
+                        }
+
+                        if((prevState==YES)&&(curState==NONE)){
+                            mp.pause();
+                            v.vibrate(100);
+                        }
+                        prevState=curState;
                         ynView.setMarkerPosition(testPos);
                     }
 
@@ -172,23 +192,13 @@ public class YesNoProcessingService {
         if(sqrt(pow(markerRelPos[0]-0.5f,2)+pow(markerRelPos[1],2)) <=  radius/2) { // radius/2 because radius is set relative to 1/4 of witdh of the screen
             res = YES;
             Log.d("PROCESSING_REGION", "REGION YES");
-            if(v!=null){
-                v.vibrate(1);
-            }
         }
 
         if(sqrt(pow(markerRelPos[0]+0.5f,2)+pow(markerRelPos[1],2)) <=  radius/2) { // radius/2 because radius is set relative to 1/4 of witdh of the screen
-            res = YES;
+            res = NO;
             Log.d("PROCESSING_REGION", "REGION NO");
-            if(v!=null){
-                v.vibrate(5);
-            }
         }
         return res;
-    }
-
-    public void setVibrator(Vibrator v){
-        this.v=v;
     }
 
 }

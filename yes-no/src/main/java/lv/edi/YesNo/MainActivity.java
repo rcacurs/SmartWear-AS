@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -129,8 +130,6 @@ public class MainActivity extends Activity {
             runButton.setChecked(false);
         }
 
-        application.v = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
-        application.processingService.setVibrator(application.v);
     }
 
     @Override
@@ -179,7 +178,7 @@ public class MainActivity extends Activity {
     public void onClickStart(View view){
         ToggleButton button = (ToggleButton)view;
         if(button.isChecked()){
-            if(application.btService.isConnected()){
+            if(true/*application.btService.isConnected()*/){
                 application.processingService.start(20);
             } else{
                 Toast.makeText(this, res.getString(R.string.toast_must_connect_bt), Toast.LENGTH_LONG).show();
