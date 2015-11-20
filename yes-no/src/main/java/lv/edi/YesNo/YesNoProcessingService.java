@@ -45,8 +45,13 @@ public class YesNoProcessingService {
     private final int NONE=0;
     private int prevState=NONE;
     private Vibrator v;
-    private MediaPlayer mp;
-
+    private MediaPlayer mpYes;
+    private MediaPlayer mpNo;
+    private long lastTransitionTime=0;
+    private long deltaTime=0;
+    private long acceptTimeThreshold=3000;
+    private float yesProgress=0;
+    private float noProgress=0;
 
     float testAngleZ=0;
 
@@ -54,10 +59,13 @@ public class YesNoProcessingService {
         filterX = new Filter();
         filterY = new Filter();
         filterZ = new Filter();
-        mp = MediaPlayer.create(YesNoApplication.getAppContext(), R.raw.chocalo);
+        mpYes = MediaPlayer.create(YesNoApplication.getAppContext(), R.raw.deskbell);
+        mpNo = MediaPlayer.create(YesNoApplication.getAppContext(), R.raw.buzzer);
         v = (Vibrator) YesNoApplication.getAppContext().getSystemService(Context.VIBRATOR_SERVICE);
-        mp.setLooping(true);
-        mp.setVolume(1.0f, 1.0f);
+        mpYes.setLooping(false);
+        mpYes.setVolume(1.0f, 1.0f);
+        mpNo.setLooping(false);
+        mpNo.setVolume(1.0f, 1.0f);
         this.sensor=sensor;
 
     }
@@ -86,25 +94,55 @@ public class YesNoProcessingService {
                 public void run(){
                     markerRelPos = computeMarkerPosition();
                     if(ynView!=null){                           // TODO repace with real data
-                        testAngleZ += Math.PI/180;
-                        float[] testPos=new float[2];
-                        testPos[0]=(float)Math.cos(testAngleZ);
-                        testPos[1]=0.15f;
+                        //testAngleZ += Math.PI/180;
+                       // float[] testPos=new float[2];
+                       // testPos[0]=(float)Math.cos(testAngleZ);
+                        //testPos[1]=0.15f;
 
-                        markerRelPos=testPos;
+                        //markerRelPos=testPos;
                         int curState = detectRegion();
                         if((prevState==NONE)&&(curState==YES)) {
-                            mp.seekTo(0);
-                            mp.start();
+                            lastTransitionTime=System.currentTimeMillis();
+
                             v.vibrate(50);
                         }
+                        if(curState==YES){
+                            deltaTime = System.currentTimeMillis() - lastTransitionTime;
+                            yesProgress = (float)deltaTime/ acceptTimeThreshold;
+                            if(deltaTime>acceptTimeThreshold){
+                                mpYes.seekTo(0);
+                                mpYes.start();
+                                lastTransitionTime=System.currentTimeMillis();
+                            }
+                        }
 
-                        if((prevState==YES)&&(curState==NONE)){
-                            mp.pause();
+                        if((prevState==YES)&&(curState==NONE)) {
                             v.vibrate(100);
+                            deltaTime=0;
+                            yesProgress=0;
+                        }
+
+                        if((prevState==NONE)&&(curState==NO)) {
+                            lastTransitionTime=System.currentTimeMillis();
+                            v.vibrate(50);
+                        }
+                        if(curState==NO){
+                            deltaTime = System.currentTimeMillis() - lastTransitionTime;
+                            noProgress = (float)deltaTime/ acceptTimeThreshold;
+                            if(deltaTime>acceptTimeThreshold){
+                                mpNo.seekTo(0);
+                                mpNo.start();
+                                lastTransitionTime=System.currentTimeMillis();
+                            }
+                        }
+
+                        if((prevState==NO)&&(curState==NONE)) {
+                            v.vibrate(100);
+                            deltaTime=0;
+                            noProgress=0;
                         }
                         prevState=curState;
-                        ynView.setMarkerPosition(testPos);
+                        ynView.updateData(markerRelPos, yesProgress, noProgress);
                     }
 
 
@@ -118,7 +156,6 @@ public class YesNoProcessingService {
         isProcessing=false;
         timer.cancel();
         timer = null;
-
     }
 
     boolean isProcessing(){
