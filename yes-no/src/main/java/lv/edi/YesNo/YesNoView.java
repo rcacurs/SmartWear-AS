@@ -29,12 +29,7 @@ public class YesNoView extends View {
     private float noProgress = 0.0f;
 
     public void initYesNoView(){
-        smiley = BitmapFactory.decodeResource(getResources(), R.drawable.happyface500);
-        sadface = BitmapFactory.decodeResource(getResources(), R.drawable.sadface500);
-        smiley = Bitmap.createScaledBitmap(smiley, smiley.getWidth() / 4, smiley.getHeight() / 4, false);
-        sadface = Bitmap.createScaledBitmap(sadface, sadface.getWidth() / 4, sadface.getHeight() / 4, false);
-        scx=smiley.getWidth()/2;
-        scy=smiley.getHeight()/2;
+
     }
     public YesNoView(Context context) {
         super(context);
@@ -96,10 +91,22 @@ public class YesNoView extends View {
     }
 
     private void drawProgressCircle(Canvas canvas, float cx, float cy, float progress, Paint paint){
-        canvas.drawArc(new RectF(cx - canvasWidth*relativeRadius/4,
-                                 cy - canvasWidth*relativeRadius/4,
-                                 cx + canvasWidth*relativeRadius/4,
-                                 cy + canvasWidth*relativeRadius/4),
-                0, 360*progress, true, paint);
+        canvas.drawArc(new RectF(cx - canvasWidth * relativeRadius / 4,
+                        cy - canvasWidth * relativeRadius / 4,
+                        cx + canvasWidth * relativeRadius / 4,
+                        cy + canvasWidth * relativeRadius / 4),
+                0, 360 * progress, true, paint);
+    }
+    @Override
+    public void onSizeChanged(int w, int h, int wo, int ho){
+        super.onSizeChanged(w, h, wo, ho);
+
+        smiley = BitmapFactory.decodeResource(getResources(), R.drawable.happyface500);
+        sadface = BitmapFactory.decodeResource(getResources(), R.drawable.sadface500);
+        smiley = Bitmap.createScaledBitmap(smiley, w / 8, w / 8, false);
+        sadface = Bitmap.createScaledBitmap(sadface, sadface.getWidth() / 4, sadface.getHeight() / 4, false);
+        scx=smiley.getWidth()/2;
+        scy=smiley.getHeight()/2;
+
     }
 }
