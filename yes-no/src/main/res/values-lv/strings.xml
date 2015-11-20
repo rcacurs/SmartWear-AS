@@ -32,4 +32,6 @@
     <string name="toast_disconnected_bt">Nav bluetooth savienojuma!</string>
     <string name="session_time_lable">Laiks</string>
     <string name="good_time_percent_lable">Labi</string>
+    <string name="pref_accept_time">Atbildes pieņemšanas laiks [s]</string>
+    <string name="pref_summary_accept_time">Iestata laiku pēc kura tiek signalizēts par pieņemtu atbildi</string>
 </resources>

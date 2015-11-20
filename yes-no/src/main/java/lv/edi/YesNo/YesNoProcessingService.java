@@ -238,4 +238,8 @@ public class YesNoProcessingService {
         return res;
     }
 
+    public void setAcceptTimeThreshold(long acceptTimeThreshold){
+        this.acceptTimeThreshold=acceptTimeThreshold;
+    }
+
 }

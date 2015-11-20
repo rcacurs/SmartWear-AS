@@ -61,7 +61,9 @@ public class MainActivity extends Activity {
 
         String btAddress = application.sharedPrefs.getString("pref_bluetooth_target", "none");
         String radiusS = application.sharedPrefs.getString("pref_radius","0.7");
+        String timeS = application.sharedPrefs.getString("pref_accept_time", "2.0");
         application.processingService.setRadius(Float.parseFloat(radiusS));
+        application.processingService.setAcceptTimeThreshold((long)(Float.parseFloat(timeS)*1000));
 
         if(btAddress.equals("none")){
             application.btDevice = null;

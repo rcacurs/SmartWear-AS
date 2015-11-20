@@ -71,15 +71,12 @@ public class YesNoApplication extends Application implements SharedPreferences.O
             Log.d("PREFERENCES", "radius set");
         }
 
-        if(key.equals("pref_vibrate")){
-            vibrateFeedback = sharedPreferences.getBoolean("pref_vibrate", false);
-            Log.d("PREFERENCES", "vibrate set " + vibrateFeedback);
-        }
-
-        if(key.equals("pref_alert")){
-            alertFeedback = sharedPreferences.getBoolean("pref_alert", false);
-            //Log.d("PREFERENCES", "alert set "+alertFeedback);
-        }
+       if(key.equals("pref_accept_time")){
+           String acceptTimeS = sharedPreferences.getString("pref_accept_time", "2.0");
+           float acceptTime = Float.parseFloat(acceptTimeS);
+           processingService.setAcceptTimeThreshold((long) (acceptTime * 1000));
+           Log.d("PREFERENCES", "acceptTimeset: "+acceptTime+" [s]");
+       }
     }
 
     public static Context getAppContext(){

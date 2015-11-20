@@ -12,15 +12,12 @@
         android:title="@string/pref_radius"
         android:summary="@string/pref_summary_radius"
         android:defaultValue="0.7"/>
-    <CheckBoxPreference
-        android:key="pref_vibrate"
-        android:title="@string/pref_vibrate"
-        android:summary="@string/pref_summary_vibrate"
-        android:defaultValue="false"/>
-    <CheckBoxPreference
-        android:key="pref_alert"
-        android:title="@string/pref_alert"
-        android:summary="@string/pref_summary_alert"
-        android:defaultValue="false"/>
+   <EditTextPreference
+       android:key="pref_accept_time"
+       android:inputType="numberDecimal"
+       android:digits="0123456789."
+       android:title="@string/pref_accept_time"
+       android:summary="@string/pref_summary_accept_time"
+       android:defaultValue="2.0"/>
 
 </PreferenceScreen>
