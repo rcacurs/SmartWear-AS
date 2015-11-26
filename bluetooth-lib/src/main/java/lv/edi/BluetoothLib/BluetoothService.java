@@ -35,12 +35,15 @@ public class BluetoothService {
     ConnectThread connectThread; // instance of thread that creates bluetooth connection
     ReceiveThread receiveThread; // instance of thread that continously fetches data from bluetooth adapter
 
+    public BluetoothService (){
+        batteryLevel = new BatteryLevel();
+    };
     /**
      * Constructor for creating bluetooth service
      * @param sensors Vector of type Senssors where sensor data will be stored
      */
-
     public BluetoothService(Vector<Sensor> sensors){
+        this();
         sensorbuffer=sensors;
     }
 
@@ -51,7 +54,7 @@ public class BluetoothService {
      */
 
     public BluetoothService(Vector<Sensor> sensors, int batteryPacketIndex){
-        sensorbuffer=sensors;
+       this(sensors);
         this.batteryPacketIndex = batteryPacketIndex;
     }
 
