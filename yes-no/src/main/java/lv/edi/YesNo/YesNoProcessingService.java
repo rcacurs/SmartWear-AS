@@ -75,9 +75,9 @@ public class YesNoProcessingService {
 
     public void start(long period){
         timer = new Timer();
-        referenceState[0]=sensor.getAccNormX();
-        referenceState[1]=sensor.getAccNormY();
-        referenceState[2]=sensor.getAccNormZ();
+        referenceState[0]=sensor.getAccRawNormX();
+        referenceState[1]=sensor.getAccRawNormY();
+        referenceState[2]=sensor.getAccRawNormZ();
 
 
         if(referenceState[0]>Math.abs(referenceState[1])){
@@ -110,8 +110,10 @@ public class YesNoProcessingService {
                             deltaTime = System.currentTimeMillis() - lastTransitionTime;
                             yesProgress = (float)deltaTime/ acceptTimeThreshold;
                             if(deltaTime>acceptTimeThreshold){
-                                mpYes.seekTo(0);
+                                Log.d("PROCESSING_SERV_feedb", "YES_TRIGGER ");
+                                //mpYes.seekTo(0);
                                 mpYes.start();
+                                Log.d("PROCESSING_SERV_feedb", "YES_TRIGGER "+mpYes.toString());
                                 lastTransitionTime=System.currentTimeMillis();
                             }
                         }
@@ -130,7 +132,7 @@ public class YesNoProcessingService {
                             deltaTime = System.currentTimeMillis() - lastTransitionTime;
                             noProgress = (float)deltaTime/ acceptTimeThreshold;
                             if(deltaTime>acceptTimeThreshold){
-                                mpNo.seekTo(0);
+                                //mpNo.seekTo(0);
                                 mpNo.start();
                                 lastTransitionTime=System.currentTimeMillis();
                             }

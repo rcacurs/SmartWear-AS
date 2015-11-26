@@ -91,9 +91,9 @@ public class MainActivity extends Activity {
     public void onResume(){
         super.onResume();
         if(application.btService==null) {
-            application.btService = new BluetoothService(application.sensors); // create service instance
-            application.btService.setBatteryLevelAlocator(application.batteryLevel);
+            application.btService = new BluetoothService(application.sensors, 63); // create service instance
             application.btService.registerBluetoothEventListener(application);
+
         }
 
         application.uiHandler = new Handler(Looper.getMainLooper()){
