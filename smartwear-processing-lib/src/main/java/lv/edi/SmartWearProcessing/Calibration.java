@@ -17,7 +17,7 @@ public class Calibration {
      * @param W_inverted DenseMatrix64F 3x3 matrix for scaling compensation
      */
     public static void ellipsoidFitCalibration(DenseMatrix64F inputData, DenseMatrix64F outputOffset, DenseMatrix64F W_inverted) throws IllegalArgumentException{
-        System.out.println("inputData "+inputData);
+//        System.out.println("inputData "+inputData);
         DenseMatrix64F x = new DenseMatrix64F(inputData.numRows, 1); // preallocate for x, y, z
         DenseMatrix64F y = new DenseMatrix64F(inputData.numRows, 1);
         DenseMatrix64F z = new DenseMatrix64F(inputData.numRows, 1);
@@ -34,8 +34,8 @@ public class Calibration {
         DenseMatrix64F sums = CommonOps.sumRows(Dt, null);
         DenseMatrix64F DtD = new DenseMatrix64F(Dt.numRows, D.numCols);
         CommonOps.mult(Dt, D, DtD);
-        System.out.println("DtD "+DtD);
-        System.out.println("D "+D);
+//        System.out.println("DtD "+DtD);
+//        System.out.println("D "+D);
         DenseMatrix64F params = new DenseMatrix64F(sums.numRows, sums.numCols);
 
         if(!(CommonOps.solve(DtD, sums, params))){ // solve system to find ellipsoid parameters
@@ -43,7 +43,7 @@ public class Calibration {
         }
         DenseMatrix64F DtDi = new DenseMatrix64F(DtD.numRows, DtD.numCols);
         CommonOps.invert(DtD, DtDi);
-        System.out.println("Inverse DtD "+DtDi);
+//        System.out.println("Inverse DtD "+DtDi);
 
         DenseMatrix64F A = new DenseMatrix64F(4,4);
         A.set(0,0, params.get(0));
@@ -87,13 +87,13 @@ public class Calibration {
         CommonOps.add(z, (offsets.get(2)));
 
         DenseMatrix64F K = constructModel(x, y, z, true);
-        System.out.println("K "+K);
+//        System.out.println("K "+K);
         DenseMatrix64F Kt = CommonOps.transpose(K, null);
         DenseMatrix64F rowSums = CommonOps.sumRows(Kt, null);
         DenseMatrix64F KtK = new DenseMatrix64F(Kt.numRows, K.numCols);
         CommonOps.mult(Kt, K, KtK);
         DenseMatrix64F params2 = new DenseMatrix64F(rowSums.numRows, 1);
-        System.out.println("KtK "+KtK);
+//        System.out.println("KtK "+KtK);
         if(!(CommonOps.solve(KtK, rowSums, params2))){ // solve system to find ellipsoid parameters
             throw new IllegalArgumentException("Singular matrix constructed from input data");
         }
@@ -111,27 +111,27 @@ public class Calibration {
         AA.set(2, 0, params2.get(4));
         AA.set(2, 1, params2.get(5));
         AA.set(2, 2, params2.get(2));
-        System.out.println("AA "+AA);
+//        System.out.println("AA "+AA);
 
         // eigenvalue analysis
         EigenDecomposition<DenseMatrix64F> eig = DecompositionFactory.eig(AA.numCols, true);
         if(eig.decompose(AA)){
-            System.out.println("Decomposition succesfull!");
+//            System.out.println("Decomposition succesfull!");
         } else{
-            System.out.println("Decomposition unsucessfull");
+//            System.out.println("Decomposition unsucessfull");
         }
         DenseMatrix64F Dv = EigenOps.createMatrixD(eig);
-        System.out.println("Dv "+Dv);
+//        System.out.println("Dv "+Dv);
         DenseMatrix64F V = EigenOps.createMatrixV(eig);
-        System.out.println("V "+V);
+//        System.out.println("V "+V);
         DenseMatrix64F eigvals = new DenseMatrix64F(Dv.numRows, 1);
         CommonOps.extractDiag(Dv, eigvals);
-        System.out.println("eigvals "+eigvals);
+//        System.out.println("eigvals "+eigvals);
         CommonOps.divide(1.0, eigvals);
-        System.out.println("divide eigvals "+eigvals);
+//        System.out.println("divide eigvals "+eigvals);
         DenseMatrix64F radii = new DenseMatrix64F(eigvals.numRows, eigvals.numCols);
         CommonOps.elementPower(eigvals, 0.5, radii);
-        System.out.println("radii "+radii);
+//        System.out.println("radii "+radii);
 
         double Bfield = Math.pow(radii.get(0)*radii.get(1)*radii.get(2), 1.0/3.0 );
 
