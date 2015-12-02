@@ -73,9 +73,7 @@ public class Main {
     		  Segment segment = new Segment();
     		  segment.setInitialCross2(ROW_DIST, COL_DIST);
     		  segmentRow.add(segment);
-    		  
 
-    		    
     	  }
     	  segmentGrid.add(segmentRow);
     	  sensorGrid.add(row);
@@ -104,7 +102,7 @@ public class Main {
         
         System.out.println("Enter index of device to connect!");
         s=cons.nextLine();
-        if(s.equals("exit")){
+        if(s.equals("quit")){
         	System.out.println("Prgogram will now close!");
         	return;
         }
