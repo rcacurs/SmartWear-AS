@@ -7,6 +7,7 @@ dependencies {
 }
 
 jar{
+    archiveName = "calibration-app.jar"
     from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
     manifest{
         attributes 'Main-Class': 'lv.edi.SmartWearCalibJavaApp.Main'

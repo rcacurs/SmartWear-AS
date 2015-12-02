@@ -131,7 +131,7 @@ public class Main {
 
         try {
             Calibration.writeCalibDataToFile(offsets, scaling, calibFile);
-            System.out.println("Calibration finished! Calibration data saved to" + calibFile.toString());
+            System.out.println("Calibration finished! Calibration data saved to " + calibFile.toString());
         } catch (IOException e) {
             System.out.println("Problem saving calib data");
         }
