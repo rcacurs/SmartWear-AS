@@ -16,6 +16,15 @@ public class Calibration {
      * @param outputOffset DenseMatrix64F column vector dim 3 (allocated before hand)
      * @param W_inverted DenseMatrix64F 3x3 matrix for scaling compensation
      */
+    private static EigenDecomposition<DenseMatrix64F> eig;
+
+    /*
+    * This function initialized Calibration class. Must be called for funcionts - ellipsoidFitCalibration
+    * to work
+     */
+    public static void init(){
+       eig = DecompositionFactory.eig(3, true);
+    }
     public static void ellipsoidFitCalibration(DenseMatrix64F inputData, DenseMatrix64F outputOffset, DenseMatrix64F W_inverted) throws IllegalArgumentException{
 //        System.out.println("inputData "+inputData);
         DenseMatrix64F x = new DenseMatrix64F(inputData.numRows, 1); // preallocate for x, y, z
@@ -38,12 +47,9 @@ public class Calibration {
 //        System.out.println("D "+D);
         DenseMatrix64F params = new DenseMatrix64F(sums.numRows, sums.numCols);
 
-        if(!(CommonOps.solve(DtD, sums, params))){ // solve system to find ellipsoid parameters
+        if(!(CommonOps.solve(DtD, sums, params))) { // solve system to find ellipsoid parameters
             throw new IllegalArgumentException("Singular matrix constructed from input data");
         }
-        DenseMatrix64F DtDi = new DenseMatrix64F(DtD.numRows, DtD.numCols);
-        CommonOps.invert(DtD, DtDi);
-//        System.out.println("Inverse DtD "+DtDi);
 
         DenseMatrix64F A = new DenseMatrix64F(4,4);
         A.set(0,0, params.get(0));
@@ -114,7 +120,7 @@ public class Calibration {
 //        System.out.println("AA "+AA);
 
         // eigenvalue analysis
-        EigenDecomposition<DenseMatrix64F> eig = DecompositionFactory.eig(AA.numCols, true);
+
         if(eig.decompose(AA)){
 //            System.out.println("Decomposition succesfull!");
         } else{

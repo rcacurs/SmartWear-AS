@@ -15,6 +15,7 @@ public class Main {
         DenseMatrix64F inputData = new DenseMatrix64F(30, 3, true, data);
         DenseMatrix64F W_inverted = new DenseMatrix64F(3, 3);
         DenseMatrix64F offsets = new DenseMatrix64F(3,1);
+        Calibration.init();
         long tick1= System.currentTimeMillis();
         Calibration.ellipsoidFitCalibration(inputData, offsets, W_inverted);
         long tick2=System.currentTimeMillis();
@@ -22,10 +23,10 @@ public class Main {
         System.out.println("Offsets: "+offsets.toString());
         System.out.println("Scaling: "+W_inverted);
 
-        for(int i=0; i<10; i++){
-            System.out.print(i+"\r");
-            Thread.sleep(1000);
-        }
+//        for(int i=0; i<10; i++){
+//            System.out.print(i+"\r");
+//            Thread.sleep(1000);
+//        }
 
     }
 }
