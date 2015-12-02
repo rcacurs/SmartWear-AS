@@ -261,7 +261,6 @@ public class BluetoothService implements DiscoveryListener{
 											}
 
                                         }
-                                        
                                     }
 									packet_indicator=false; // reset packet indicator, bacause we have received all packet data
 									bytes_received=0;// reset received byte counter
