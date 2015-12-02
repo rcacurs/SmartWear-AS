@@ -39,6 +39,11 @@ public class Main {
     }
     public static void main(String args[]) throws InterruptedException {
         Calibration.init(); // initalize calibration
+            if(args.length>0){
+                numberOfSamples = Integer.parseInt(args[0]);
+                ///System.out.println("Number of samples: "+numberOfSamples);
+            }
+
         cons = new Scanner(System.in);
         currentDirectory = System.getProperty("user.dir");
         sensorBuffer = new Vector<Sensor>(numberOfSensors);
@@ -105,7 +110,7 @@ public class Main {
         while(!RUN_CALIBRATION){
             Thread.sleep(100);
         }
-        System.out.println("Calibration Strated!");
+
 
 
         Vector<DenseMatrix64F> offsets = new Vector<DenseMatrix64F>(numberOfSensors);
@@ -120,12 +125,18 @@ public class Main {
             offsets.add(offs);
             scaling.add(Winv);
         }
-        System.out.println("number of samples: "+magnMeas.get(0).numRows);
-
-        System.out.println("Calibration finished!");
 
 
 
+
+        try {
+            Calibration.writeCalibDataToFile(offsets, scaling, calibFile);
+            System.out.println("Calibration finished! Calibration data saved to" + calibFile.toString());
+        } catch (IOException e) {
+            System.out.println("Problem saving calib data");
+        }
+
+        System.out.println("Program closing");
     }
 
     /**
