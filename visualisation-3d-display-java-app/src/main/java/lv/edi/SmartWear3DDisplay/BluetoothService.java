@@ -34,7 +34,7 @@ public class BluetoothService implements DiscoveryListener{
 	private Thread dataReceiveThread;
 	private boolean runReceiveThread=false;
 	private int bytes_in_packet=13;
-	private Vector<BluetoothEventListener> btEventListeners;
+	private Vector<BluetoothEventListener> btEventListeners = new Vector<BluetoothEventListener>();
 
 	public BluetoothService(Vector<Sensor> sensorBuffer){ // Bluetooth service constructor
 		this.sensorBuffer = sensorBuffer;
@@ -61,44 +61,16 @@ public class BluetoothService implements DiscoveryListener{
 				e.printStackTrace();
 			}
 		}
-		
-		//agent.startInquiry(DiscoveryAgent.GIAC, this);
-		
-		
-//		try{
-//			synchronized(lock){
-//				lock.wait();
-//			}
-//		} catch(InterruptedException e){
-//			e.printStackTrace();
-//		}
-		
-
-		
-//		if(vecDevices.isEmpty()){
-//			System.out.println("No Devices Found.");
-//			throw new BluetoothStateException();
-//		}
-//		
-//		System.out.println("Enter device index to which connect. Press non-existant index to cancel.");
-//		while(selectedDevice!=9){
-//			try{
-//				selectedDevice=input.nextInt();
-//			} catch (InputMismatchException ex){
-//				System.out.println("Device index must be integer. Try Again.");
-//				selectedDevice=remoteDeviceCounter+1;
-//
-//			}
-//			if((selectedDevice>=0 )&& (selectedDevice < remoteDeviceCounter)){
-//				System.out.println("Selected Device: "+selectedDevice);
-//				break;
-//			} else{
-//				throw new BluetoothStateException();
-//			}		
-//		}
-		
-		
 	}
+
+    /**
+     * Register bt event listener
+     * @param listener
+     */
+    public void registerSensorDataPacketReceivedListener(BluetoothEventListener listener){
+        btEventListeners.add(listener);
+        System.out.println("Register listener: "+listener);
+    }
 	
 	public void startReceiveData(int selectedDevice) throws IOException{
 		
@@ -238,7 +210,8 @@ public class BluetoothService implements DiscoveryListener{
                                         short magz = (short)(packet[11]*256+packet[12]);
                                         double accMagnitude = Math.sqrt(Math.pow(accx, 2)+Math.pow(accy, 2)+Math.pow(accz, 2));
                                         double magMagnitude = Math.sqrt(Math.pow(magx, 2)+Math.pow(magy, 2)+Math.pow(magz, 2));
-                                        if(((accMagnitude<24000)&&(accMagnitude>11000)&&(magMagnitude>0)&&(magMagnitude<2000))){
+                                        //if(((accMagnitude<24000)&&(accMagnitude>11000)&&(magMagnitude>0)&&(magMagnitude<2000))){
+                                        if(packet[0]<63){
                                             sensorBuffer.get(packet[0]).updateSensorData(accx, // forming accelerometer x data from two received data bytes
                                                     accy, // forming accelerometer y data from two received data bytes
                                                     accz, // forming accelerometer z data from two received data bytes
