@@ -6,6 +6,9 @@ import org.ejml.interfaces.decomposition.EigenDecomposition;
 import org.ejml.ops.CommonOps;
 import org.ejml.ops.EigenOps;
 
+import java.io.File;
+import java.util.Vector;
+
 /**
  * Created by Richards on 01.12.2015..
  */
@@ -210,5 +213,28 @@ public class Calibration {
         }
 
         return D;
+    }
+
+    /**
+     * Calibrates all sensors paced in data
+     * @param data [measrment index][sensor index][Floats of data]
+     * @param offsets result offsets must be alloctated before hand
+     * @param W_inverted result scaling must be allocated before hand
+     */
+    public void calibrateAllSensors(Vector<DenseMatrix64F> data, Vector<DenseMatrix64F> offsets, Vector<DenseMatrix64F> W_inverted){
+        offsets.clear();
+        W_inverted.clear();
+        for(int i=0; i<data.size(); i++){
+            DenseMatrix64F offs = new DenseMatrix64F(3,1);
+            DenseMatrix64F Winv = new DenseMatrix64F(3,3);
+            ellipsoidFitCalibration(data.get(i), offs, Winv);
+
+            offsets.add(offs);
+            W_inverted.add(Winv);
+        }
+    }
+
+    public void writeCalibDataToFile(File calibData){
+        
     }
 }
