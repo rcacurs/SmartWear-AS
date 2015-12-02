@@ -34,6 +34,7 @@ public class BluetoothService implements DiscoveryListener{
 	private Thread dataReceiveThread;
 	private boolean runReceiveThread=false;
 	private int bytes_in_packet=13;
+	private Vector<BluetoothEventListener> btEventListeners;
 	
 	
 	
@@ -248,6 +249,16 @@ public class BluetoothService implements DiscoveryListener{
                                                     magx, // forming magnetometer  x data from two received data bytes
                                                     magy,// forming magnetometer  y data from two received data bytes
                                                     magz);// forming magnetometer z data from two recieved data bytes
+											for(BluetoothEventListener i:btEventListeners){
+												Vector<Float> vec = new Vector<Float>(6);
+												vec.add(new Float(accx));
+												vec.add(new Float(accy));
+												vec.add(new Float(accz));
+												vec.add(new Float(magx));
+												vec.add(new Float(magy));
+												vec.add(new Float(magz));
+												i.onSensorDataPacketReceived(packet[0], vec);
+											}
 
                                         }
                                         
