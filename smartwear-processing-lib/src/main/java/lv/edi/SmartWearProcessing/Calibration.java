@@ -239,19 +239,20 @@ public class Calibration {
     // method for flushin calibration data to csv file
     public static void writeCalibDataToFile(Vector<DenseMatrix64F> offsets, Vector<DenseMatrix64F> scaling, File calibDataFile) throws IOException{
         PrintWriter pw = new PrintWriter(calibDataFile);
-        pw.write(""+(offsets.size()));
+        pw.write(""+(offsets.size())+"\n");
         for(int i=0; i<offsets.size(); i++) {
-            pw.print(offsets.get(i).get(0)+","+offsets.get(i).get(1)+","+offsets.get(2)+",");
+            pw.print(offsets.get(i).get(0) + "," + offsets.get(i).get(1) + "," + offsets.get(i).get(2) + ",");
             for(int j=0; j<9; j++){
                 pw.print(scaling.get(i).get(j));
-                if(i<8){
+                if(j<8){
                     pw.print(",");
                 } else{
                     pw.print("\n");
                 }
             }
-            pw.close();
         }
+        pw.flush();
+        pw.close();
 
 
 
