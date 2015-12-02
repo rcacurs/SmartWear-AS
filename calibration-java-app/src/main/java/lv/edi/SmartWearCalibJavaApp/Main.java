@@ -3,30 +3,186 @@ package lv.edi.SmartWearCalibJavaApp;
 import org.ejml.data.DenseMatrix64F;
 import org.ejml.ops.CommonOps;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Scanner;
+import java.util.Vector;
+
+import javax.bluetooth.BluetoothStateException;
+
+import lv.edi.SmartWear3DDisplay.BluetoothEventListener;
+import lv.edi.SmartWear3DDisplay.BluetoothService;
 import lv.edi.SmartWearProcessing.Calibration;
+import lv.edi.SmartWearProcessing.Sensor;
 
 public class Main {
+    static int ROWS = 9;
+    static int COLS = 7;
+    static int numberOfSensors = 63;
+    static int numberOfSamples = 100;
+    static boolean RUN_CALIBRATION = false;
+    static boolean ACQUIRE_DATA = false;
+    static Vector<Sensor> sensorBuffer;
+    static Vector<DenseMatrix64F> magnMeas = new Vector<DenseMatrix64F>(numberOfSensors);
 
-    static double data[] =   {-1.0667,0.32706,0.079934,0.93373,1.0826,-0.94848,0.35032,1.0061,0.41149,-0.029006,-0.65091,0.67698,0.18245,0.25706,0.85773,-1.5651,-0.94438,-0.69116,-0.084539,-1.3218,0.44938,1.6039,0.92483,0.10063,0.098348,4.9849e-05,0.82607,0.041374,-0.054919,0.53616,-0.73417,0.91113,0.89789,-0.030814,0.59458,-0.13194,0.23235,0.3502,-0.1472,0.42639,1.2503,1.0078,-0.37281,0.92979,-2.1237,-0.23645,0.23976,-0.50459,2.0237,-0.69036,-1.2706,-2.2584,-0.65155,-0.38258,2.2294,1.1921,0.64868,0.33756,-1.6118,0.82573,1.0001,-0.024462,-1.0149,-1.6642,-1.9488,-0.47107,-0.59003,1.0205,0.13702,-0.27806,0.86172,-0.29186,0.42272,0.0011621,0.30182,-1.6702,-0.070837,0.39993,0.47163,-2.4863,-0.92996,-1.2128,0.58117,-0.17683,0.06619,-2.1924,-2.1321,0.65236,-2.3193,1.1454
-    };
-    public static void main(String args[]) throws InterruptedException{
-        System.out.print("Text\r");
-        System.out.println("New");
-        DenseMatrix64F inputData = new DenseMatrix64F(30, 3, true, data);
-        DenseMatrix64F W_inverted = new DenseMatrix64F(3, 3);
-        DenseMatrix64F offsets = new DenseMatrix64F(3,1);
-        Calibration.init();
-        long tick1= System.currentTimeMillis();
-        Calibration.ellipsoidFitCalibration(inputData, offsets, W_inverted);
-        long tick2=System.currentTimeMillis();
-        System.out.printf("elips fit time: %d [ms]\n", (tick2-tick1));
-        System.out.println("Offsets: "+offsets.toString());
-        System.out.println("Scaling: "+W_inverted);
+    static String currentDirectory;
 
-//        for(int i=0; i<10; i++){
-//            System.out.print(i+"\r");
-//            Thread.sleep(1000);
-//        }
+    static BluetoothService btService;
+    static String s;
+    static int selectedDeviceIndex=0;
+    static private File calibFile;
+    static Scanner cons;
+    static MyBluetoothListener btListener = new MyBluetoothListener();
+
+    public Main(){
+        btListener = new MyBluetoothListener();
+    }
+    public static void main(String args[]) throws InterruptedException {
+        Calibration.init(); // initalize calibration
+        cons = new Scanner(System.in);
+        currentDirectory = System.getProperty("user.dir");
+        sensorBuffer = new Vector<Sensor>(numberOfSensors);
+        sensorBuffer.setSize(numberOfSensors);
+
+        // allocate memory for sensor data
+        for(int i=0; i<numberOfSensors; i++){
+            int columnIndex = i/ROWS;
+            Sensor sen = new Sensor(i, true);
+            sensorBuffer.set(i, sen);
+
+            magnMeas.add(new DenseMatrix64F(numberOfSamples, 3));
+        }
+
+
+
+        // prepare file for calibration data
+        calibFile = new File("calibration_data.csv");
+        // bluetooth listener
+
+
+        btService = new BluetoothService(sensorBuffer);
+        btService.registerSensorDataPacketReceivedListener(btListener);
+        try {
+            btService.initBluetoothService();
+        } catch (BluetoothStateException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            System.out.println("Error: bluetooth error");
+        }
+
+        System.out.println("Enter index of device to connect!");
+        s=cons.nextLine();
+        if(s.equals("exit")){
+            System.out.println("Prgogram will now close!");
+            return;
+        }
+
+        selectedDeviceIndex=Integer.parseInt(s);
+
+        try {
+            btService.startReceiveData(selectedDeviceIndex);
+        } catch (IOException e) {
+            System.out.println("Problem with specified index! Program will close");
+            return;
+        }
+
+        System.out.println("Connected to device!");
+
+
+        for(int i = 3; i>=0; i--){
+
+            System.out.printf("Calibation will start in %d seconds. Be ready! ", i);
+            if(i==0){
+                System.out.print("\n");
+            } else{
+                System.out.print("\r");
+            }
+
+            Thread.sleep(1000);
+        }
+        ACQUIRE_DATA=true;
+
+        while(!RUN_CALIBRATION){
+            Thread.sleep(100);
+        }
+        System.out.println("Calibration Strated!");
+
+
+        Vector<DenseMatrix64F> offsets = new Vector<DenseMatrix64F>(numberOfSensors);
+        Vector<DenseMatrix64F> scaling = new Vector<DenseMatrix64F>(numberOfSensors);
+        System.out.println("Magnetometer data size: " + magnMeas.size());
+
+        for(int i=0; i<magnMeas.size(); i++){
+            DenseMatrix64F offs = new DenseMatrix64F(3,1);
+            DenseMatrix64F Winv = new DenseMatrix64F(3,3);
+            Calibration.ellipsoidFitCalibration(magnMeas.get(i), offs, Winv);
+
+            offsets.add(offs);
+            scaling.add(Winv);
+        }
+        System.out.println("number of samples: "+magnMeas.get(0).numRows);
+
+        System.out.println("Calibration finished!");
+
+
 
     }
+
+    /**
+     * print progress bar on console
+     * @param progress float 0-1.0 showing current progress
+     * @param carrReturn if next text will be drawen on top of this
+     */
+    public static void printProgressBar(float progress, boolean carrReturn){
+        int size = 10;
+        int progressI = (int ) (progress*size);
+        String endline = "";
+        if(carrReturn){
+           endline="\r";
+        } else{
+            endline="\n";
+        }
+        System.out.printf("Progress: ");
+
+        for(int i=0; i<progressI; i++){
+            System.out.printf("\u2588");
+        }
+        for(int i=progressI; i<size; i++){
+            System.out.printf("\u2591");
+        }
+        System.out.printf("\t %d %%" + endline, (int)(progress * 100));
+    }
+
+    static class MyBluetoothListener implements BluetoothEventListener{
+        int sampleCount = 0;
+        int packetsReceived=0;
+
+        public void onSensorDataPacketReceived(int index, Vector<Float> sensorData){
+            if(ACQUIRE_DATA) {
+                if (packetsReceived == index) {
+                    magnMeas.get(index).set(sampleCount, 0, sensorData.get(3));
+                    magnMeas.get(index).set(sampleCount, 1, sensorData.get(4));
+                    magnMeas.get(index).set(sampleCount, 2, sensorData.get(5));
+                    packetsReceived++;
+
+                    if (packetsReceived >= numberOfSensors) {
+                        packetsReceived = 0;
+                        sampleCount++;
+                        printProgressBar((float) sampleCount / numberOfSamples, true);
+                        if (sampleCount == numberOfSamples) {
+                            printProgressBar(1.0f, false);
+                            btService.stopReceiveData();
+                            ACQUIRE_DATA = false;
+                            RUN_CALIBRATION = true;
+
+
+                        }
+                    }
+                    ;
+                }
+            }
+        }
+    }
 }
+
+
