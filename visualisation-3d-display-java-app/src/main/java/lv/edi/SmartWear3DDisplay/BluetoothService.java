@@ -35,10 +35,6 @@ public class BluetoothService implements DiscoveryListener{
 	private boolean runReceiveThread=false;
 	private int bytes_in_packet=13;
 	private Vector<BluetoothEventListener> btEventListeners;
-	
-	
-	
-	Main main;
 
 	BluetoothService(Vector<Sensor> sensorBuffer){ // Bluetooth service constructor
 		this.sensorBuffer = sensorBuffer;
