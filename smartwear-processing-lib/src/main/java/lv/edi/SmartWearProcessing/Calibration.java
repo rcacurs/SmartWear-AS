@@ -235,6 +235,6 @@ public class Calibration {
     }
 
     public void writeCalibDataToFile(File calibData){
-        
+
     }
 }

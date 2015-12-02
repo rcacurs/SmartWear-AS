@@ -33,3 +33,6 @@ proguard/
 /.idea/libraries
 /.idea
 .DS_STORE
+
+# obj files
+*.obj
