@@ -7,6 +7,7 @@ dependencies {
 }
 
 jar{
+    archiveName = "vis3D-app.jar"
     from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
     manifest{
         attributes 'Main-Class': 'lv.edi.SmartWear3DDisplay.Main'
