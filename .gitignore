@@ -36,3 +36,6 @@ proguard/
 
 # obj files
 *.obj
+
+# csv files
+*.csv
