@@ -19,7 +19,7 @@ public class Main {
     static int ROWS = 9;
     static int COLS = 7;
     static int numberOfSensors = 63;
-    static int numberOfSamples = 100;
+    static int numberOfSamples = 500;
     static boolean RUN_CALIBRATION = false;
     static boolean ACQUIRE_DATA = false;
     static Vector<Sensor> sensorBuffer;
