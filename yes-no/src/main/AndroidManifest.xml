@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="lv.edi.YesNo" >
 
+    <uses-skd
+        android:minSdkVersion="17"
+        android:targetSdkVersion="20" />
+
     <uses-permission
         android:name="android.permission.BLUETOOTH"
         />
