@@ -111,6 +111,8 @@ public class MainActivity extends Activity {
                     case BluetoothService.BT_DISCONNECTED:
                         Toast.makeText(getApplicationContext(), res.getString(R.string.toast_disconnected_bt), Toast.LENGTH_SHORT).show();
                         optionsMenu.findItem(R.id.action_bluetooth_connection_status).setIcon(R.drawable.not);
+                        application.processingService.stop();
+                        runButton.setChecked(false);
                         break;
                     case YesNoApplication.BATTERY_LEVEL_UPDATE:
                         int batteryLevelIndex = (int) (application.batteryLevel.getBatteryPercentage() / 20);
@@ -180,7 +182,7 @@ public class MainActivity extends Activity {
     public void onClickStart(View view){
         ToggleButton button = (ToggleButton)view;
         if(button.isChecked()){
-            if(true/*application.btService.isConnected()*/){
+            if(application.btService.isConnected()){
                 application.processingService.start(20);
             } else{
                 Toast.makeText(this, res.getString(R.string.toast_must_connect_bt), Toast.LENGTH_LONG).show();

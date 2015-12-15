@@ -74,6 +74,10 @@ public class YesNoProcessingService {
     }
 
     public void start(long period){
+        filterX.clear();
+        filterY.clear();
+        filterZ.clear();
+
         timer = new Timer();
         referenceState[0]=sensor.getAccRawNormX();
         referenceState[1]=sensor.getAccRawNormY();
@@ -155,9 +159,11 @@ public class YesNoProcessingService {
     }
 
     public void stop(){
-        isProcessing=false;
-        timer.cancel();
-        timer = null;
+        if(isProcessing) {
+            isProcessing = false;
+            timer.cancel();
+            timer = null;
+        }
     }
 
     boolean isProcessing(){
