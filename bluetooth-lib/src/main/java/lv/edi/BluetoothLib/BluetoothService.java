@@ -82,6 +82,10 @@ public class BluetoothService {
         btEventListener = listener;
     }
 
+    public void registerBateryLevelEventListener(BatteryLevelEventListener listener){
+        batteryLevel.registerListener(listener);
+    }
+
     /**
      * Unregister bluetooth event listener
      */
