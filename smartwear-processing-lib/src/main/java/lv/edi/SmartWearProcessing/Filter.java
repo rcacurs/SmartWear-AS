@@ -25,4 +25,11 @@ public class Filter {
         acc_bufy[0]=filteredVal;
         return filteredVal;
     }
+
+    public void clear(){
+        acc_bufx = new float[num.length];
+        acc_bufy = new float[num.length];
+
+        accy_temp = new float[den.length];
+    }
 }
