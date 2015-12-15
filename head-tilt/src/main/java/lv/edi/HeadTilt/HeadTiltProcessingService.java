@@ -129,6 +129,9 @@ public class HeadTiltProcessingService{
      *
      */
     public void startProcessing(){
+        filterX.clear();
+        filterY.clear();
+        filterZ.clear();
         timer = new Timer();
         isProcessing = true;
         startTime=System.currentTimeMillis();
