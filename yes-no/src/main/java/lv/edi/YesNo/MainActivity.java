@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Vibrator;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -93,6 +94,7 @@ public class MainActivity extends Activity {
         if(application.btService==null) {
             application.btService = new BluetoothService(application.sensors, 63); // create service instance
             application.btService.registerBluetoothEventListener(application);
+            application.btService.registerBateryLevelEventListener(application);
 
         }
 
@@ -115,7 +117,7 @@ public class MainActivity extends Activity {
                         runButton.setChecked(false);
                         break;
                     case YesNoApplication.BATTERY_LEVEL_UPDATE:
-                        int batteryLevelIndex = (int) (application.batteryLevel.getBatteryPercentage() / 20);
+                        int batteryLevelIndex = inputMessage.arg1 /20;
                         if(batteryLevelIndex < 0){
                             batteryLevelIndex = 0;
                         }
@@ -123,6 +125,7 @@ public class MainActivity extends Activity {
                             batteryLevelIndex = batteryIcons.length - 1;
                         }
                         optionsMenu.findItem(R.id.action_battery_level_icon).setIcon(batteryIcons[batteryLevelIndex]);
+                        Log.d("BATTERY_LEVEL_UPD", "UI UPDATE BATTERY LVL INDEX "+batteryLevelIndex);
                     default:
                         break;
                 }

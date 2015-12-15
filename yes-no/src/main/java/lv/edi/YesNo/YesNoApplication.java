@@ -84,7 +84,9 @@ public class YesNoApplication extends Application implements SharedPreferences.O
     }
     // battery level listeners
     public void onBatteryLevelChange(BatteryLevel bLevel){
-        uiHandler.obtainMessage(BATTERY_LEVEL_UPDATE).sendToTarget();
+        int lvl = (int) bLevel.getBatteryPercentage();
+        uiHandler.obtainMessage(BATTERY_LEVEL_UPDATE, lvl, 0).sendToTarget();
+        Log.d("BATTERY_LEVEL_UPD", "BATTERY_LEVEL_CHANGE_APPCALLBACK "+lvl);
     }
     // Bluetooth event listeners
     @Override
