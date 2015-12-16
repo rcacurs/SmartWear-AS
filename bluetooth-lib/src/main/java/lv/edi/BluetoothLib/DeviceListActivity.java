@@ -16,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -57,6 +58,14 @@ public class DeviceListActivity extends Activity {
             public void onClick(View v) {
                 doDiscovery();
                 v.setVisibility(View.GONE);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+                params.weight = 1.0f;
+                LinearLayout ll= (LinearLayout)findViewById(R.id.new_devices_cont);
+                ll.setLayoutParams(params);
+
+                ListView pairedListView = (ListView) findViewById(R.id.paired_devices);
+                pairedListView.setLayoutParams(params);
             }
         });
 
