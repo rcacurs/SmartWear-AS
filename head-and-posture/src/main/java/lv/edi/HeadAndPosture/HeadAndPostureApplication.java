@@ -343,7 +343,7 @@ public class HeadAndPostureApplication extends Application implements SharedPref
 
     // battery level listeners
     public void onBatteryLevelChange(BatteryLevel bLevel){
-        uiHandler.obtainMessage(BATTERY_LEVEL_UPDATE).sendToTarget();
+        uiHandler.obtainMessage(BATTERY_LEVEL_UPDATE, (int)bLevel.getBatteryPercentage(), 1).sendToTarget();
     }
     // Bluetooth event listeners
     @Override

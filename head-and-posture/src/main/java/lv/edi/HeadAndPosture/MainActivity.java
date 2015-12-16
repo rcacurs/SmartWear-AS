@@ -94,9 +94,12 @@ public class MainActivity extends Activity {
                     case BluetoothService.BT_DISCONNECTED:
                         Toast.makeText(getApplicationContext(), res.getString(R.string.toast_disconnected_bt), Toast.LENGTH_SHORT).show();
                         optionsMenu.findItem(R.id.action_bluetooth_connection_status).setIcon(R.drawable.not);
+                        application.processingService.stopProcessing();
+                        application.postureProcessingService.stopProcessing();
+                        runButton.setChecked(false);
                         break;
                     case HeadAndPostureApplication.BATTERY_LEVEL_UPDATE:
-                        int batteryLevelIndex = (int) (application.batteryLevel.getBatteryPercentage() / 20);
+                        int batteryLevelIndex = inputMessage.arg1 / 20;
                         if(batteryLevelIndex < 0){
                             batteryLevelIndex = 0;
                         }
@@ -126,13 +129,14 @@ public class MainActivity extends Activity {
             application.btService = new BluetoothService(application.sensors); // create service instance
             application.btService.setBatteryLevelAlocator(application.batteryLevel);
             application.btService.registerBluetoothEventListener(application);
+            application.btService.registerBateryLevelEventListener(application);
         }
 
 
         // create processing service
 
 
-        runButton.setChecked(application.isProcessing());
+        runButton.setChecked(application.processingService.isProcessing());
 
         htView.post(new Runnable() {
             @Override
@@ -249,20 +253,25 @@ public class MainActivity extends Activity {
     public void onClickStart(View view){
         ToggleButton button = (ToggleButton)view;
         if(button.isChecked()){
-            if(application.processingService.isStateSaved()) {
-                application.processingService.setIconRadius(htView.getIconRelativeRadius());
-                application.processingService.startProcessing(application.samplingFrequency);
+            if(application.btService.isConnected())
+                if(application.processingService.isStateSaved()) {
+                    application.processingService.setIconRadius(htView.getIconRelativeRadius());
+                    application.processingService.startProcessing(application.samplingFrequency);
 
-                application.postureProcessingService.startProcessing(application.samplingFrequency);
-                try {
-                    application.dataLogger.startLogSession(application.samplingFrequency);
-                } catch (FileNotFoundException ex){
-                    Log.d("LOGGING", "FILE NOT FOUND EXCEPTION");
-                }
-                application.setIsProcessing(true);
-            } else{
+                    application.postureProcessingService.startProcessing(application.samplingFrequency);
+                    try {
+                        application.dataLogger.startLogSession(application.samplingFrequency);
+                    } catch (FileNotFoundException ex){
+                        Log.d("LOGGING", "FILE NOT FOUND EXCEPTION");
+                    }
+                    application.setIsProcessing(true);
+                } else{
+                    button.setChecked(false);
+                    Toast.makeText(this, res.getString(R.string.toast_save_state), Toast.LENGTH_SHORT).show();
+                    }
+            else{
                 button.setChecked(false);
-                Toast.makeText(this, res.getString(R.string.toast_save_state), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, res.getString(R.string.toast_must_connect_bt), Toast.LENGTH_SHORT).show();
             }
         } else{
             File logFile = application.dataLogger.stopLogSession();
@@ -271,7 +280,7 @@ public class MainActivity extends Activity {
             application.postureProcessingService.stopProcessing();
             application.setIsProcessing(false);
 
-        }
+            }
     }
 
 }

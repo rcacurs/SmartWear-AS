@@ -83,9 +83,12 @@ public class PostureActivity extends Activity {
                     case BluetoothService.BT_DISCONNECTED:
                         Toast.makeText(getApplicationContext(), res.getString(R.string.toast_disconnected_bt), Toast.LENGTH_SHORT).show();
                         optionsMenu.findItem(R.id.action_bluetooth_connection_status).setIcon(R.drawable.not);
+                        application.processingService.stopProcessing();
+                        application.postureProcessingService.stopProcessing();
+                        runButton.setChecked(false);
                         break;
                     case HeadAndPostureApplication.BATTERY_LEVEL_UPDATE:
-                        int batteryLevelIndex = (int) (application.batteryLevel.getBatteryPercentage() / 20);
+                        int batteryLevelIndex = inputMessage.arg1 / 20;;
                         if(batteryLevelIndex < 0){
                             batteryLevelIndex = 0;
                         }
@@ -99,7 +102,7 @@ public class PostureActivity extends Activity {
             }
         };
 
-        runButton.setChecked(application.isProcessing());
+        runButton.setChecked(application.processingService.isProcessing());
         application.setActiveActivity(1);
 
     }
@@ -135,25 +138,30 @@ public class PostureActivity extends Activity {
 
     public void onClickStart(View view){
         ToggleButton button = (ToggleButton)view;
-        if(button.isChecked()){
-            if(application.postureProcessingService.isStateSaved()) {
-                application.postureProcessingService.startProcessing(application.samplingFrequency);
+        if(button.isChecked()) {
+            if (application.btService.isConnected()){
+                if (application.postureProcessingService.isStateSaved()) {
+                    application.postureProcessingService.startProcessing(application.samplingFrequency);
 
 
-                application.processingService.setIconRadius(application.htView.getIconRelativeRadius());
-                application.processingService.startProcessing(application.samplingFrequency);
+                    application.processingService.setIconRadius(application.htView.getIconRelativeRadius());
+                    application.processingService.startProcessing(application.samplingFrequency);
 
-                application.setIsProcessing(true);
-                try {
-                    application.dataLogger.startLogSession(application.samplingFrequency);
-                } catch (FileNotFoundException ex){
-                    Log.d("LOGGING", "FILE NOT FOUND EXCEPTION");
+                    application.setIsProcessing(true);
+                    try {
+                        application.dataLogger.startLogSession(application.samplingFrequency);
+                    } catch (FileNotFoundException ex) {
+                        Log.d("LOGGING", "FILE NOT FOUND EXCEPTION");
+                    }
+                } else {
+                    button.setChecked(false);
+                    Toast.makeText(this, res.getString(R.string.toast_save_state), Toast.LENGTH_SHORT).show();
                 }
-            } else{
+            } else {
+                Toast.makeText(this, res.getString(R.string.toast_must_connect_bt), Toast.LENGTH_SHORT).show();
                 button.setChecked(false);
-                Toast.makeText(this, res.getString(R.string.toast_save_state), Toast.LENGTH_SHORT).show();
             }
-        } else{
+        } else {
             File logFile = application.dataLogger.stopLogSession();
             MediaScannerConnection.scanFile(this, new String[]{logFile.toString()}, null, null); // solves problem with mtp
             application.postureProcessingService.stopProcessing();
