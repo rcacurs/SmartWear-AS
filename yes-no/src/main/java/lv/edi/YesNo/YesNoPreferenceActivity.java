@@ -21,7 +21,7 @@ public class YesNoPreferenceActivity extends Activity {
             private static final int REQUEST_SELECT_TARGET_DEVICE = 2;
             private static YesNoApplication application;
 
-            public static class SettingsFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
+    public static class SettingsFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
 
                 private Preference bluetoothTargetPreference;
                 @Override

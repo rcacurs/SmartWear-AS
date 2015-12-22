@@ -59,8 +59,8 @@ public class YesNoProcessingService {
         filterX = new Filter();
         filterY = new Filter();
         filterZ = new Filter();
-        mpYes = MediaPlayer.create(YesNoApplication.getAppContext(), R.raw.deskbell);
-        mpNo = MediaPlayer.create(YesNoApplication.getAppContext(), R.raw.buzzer);
+        mpYes = MediaPlayer.create(YesNoApplication.getAppContext(), R.raw.yes);
+        mpNo = MediaPlayer.create(YesNoApplication.getAppContext(), R.raw.no);
         v = (Vibrator) YesNoApplication.getAppContext().getSystemService(Context.VIBRATOR_SERVICE);
         mpYes.setLooping(false);
         mpYes.setVolume(1.0f, 1.0f);

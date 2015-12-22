@@ -60,7 +60,7 @@ public class YesNoApplication extends Application implements SharedPreferences.O
             if(btDeviceAddress.equals("none")){
                 btDevice = null;
             } else{
-                btAdapter.getRemoteDevice(btDeviceAddress);
+                btDevice = btAdapter.getRemoteDevice(btDeviceAddress);
             }
         }
 
