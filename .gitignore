@@ -23,7 +23,8 @@ proguard/
 
 # Log Files
 *.log
-
+#android studio files
+*.iml
 /local.properties
 /.idea/workspace.xml
 /.idea/libraries
