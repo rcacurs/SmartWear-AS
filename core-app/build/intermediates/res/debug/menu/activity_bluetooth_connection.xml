@@ -1,0 +1,21 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/bluetoth_connection_activity"
+        android:title="@string/title_activity_bluetooth_connection"
+        android:showAsAction="never" />
+    <item android:id="@+id/processing_activity"
+        android:title="@string/title_processing_data"
+        android:showAsAction="never"
+        />
+    <item android:id="@+id/drawing_accivity"
+        android:title="@string/drawing_activity_title"
+        android:showAsAction="never"
+        />
+    <item android:id="@+id/statistics"
+        android:title="@string/statistics_label"
+        android:showAsAction="never"></item>    
+    <item android:id="@+id/settings"
+        android:title="@string/preferences_activity_title"
+        android:showAsAction="never"></item>  
+    
+</menu>
+<!-- From: file:/C:/Users/Richards/Dropbox/EDI/Projekts_Skolioze/Kodi/Repos/SmartWear-AS/core-app/src/main/res/menu/activity_bluetooth_connection.xml -->

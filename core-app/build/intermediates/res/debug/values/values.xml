@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/C:/Users/Richards/Dropbox/EDI/Projekts_Skolioze/Kodi/Repos/SmartWear-AS/core-app/src/main/res/values/arrays.xml -->
+    <eat-comment/>
+    <string-array name="algorithms">
+        <item name="distances">Average Distance</item>
+        <item name="angles"> Compare Angles</item>
+    </string-array>
+    <string-array name="algorithms_values">
+        <item name="distances">distances</item>
+        <item name="angles">angles</item>
+    </string-array>
+    <!-- From: file:/C:/Users/Richards/Dropbox/EDI/Projekts_Skolioze/Kodi/Repos/SmartWear-AS/core-app/src/main/res/values/strings.xml -->
+    <eat-comment/>
+    <string name="GoodTimePercentageValue"> </string>
+    <string name="alertPrefDescritption">Set sound alert on feedback</string>
+    <string name="alertPrefString">Feedback Sound Alert</string>
+    <string name="alert_feedback_view_label">Alert feedback:</string>
+    <string name="alert_feedback_view_value">Off</string>
+    <string name="algorithms_setting_title">Algorithm</string>
+    <string name="app_name">SmartWear</string>
+    <string name="average_cor_delta">Average Δ cor.:</string>
+    <string name="average_delta_view_label">Average Δ:</string>
+    <string name="average_delta_view_value">No data</string>
+    <string name="average_sag_delta">Average Δ sag.:</string>
+    <string name="battery_status_view_value">Unknown</string>
+    <string name="bluetooth_connection_view_value">not connected</string>
+    <string name="bluetooth_status_:">Bluetooth Status:</string>
+    <string name="button_scan">Scan</string>
+    <string name="close">Close</string>
+    <string name="close_button_label">Close</string>
+    <string name="connect">Connect</string>
+    <string name="create_button_label">Create</string>
+    <string name="create_log_file_activity">CreateLogFileActivity</string>
+    <string name="create_log_file_button_label">Select Log File</string>
+    <string name="drawing_activity_title">3D-Model</string>
+    <string name="enter_log_file_name_edit_default">Default </string>
+    <string name="enter_log_file_name_edit_hint">Enter Log File Name</string>
+    <string name="enter_log_file_name_view_label">Enter Log File Name</string>
+    <string name="enter_posture_name">Enter Posture Name</string>
+    <string name="exit_application">Exit</string>
+    <string name="goodTimePercentageViewLabel">Good Time %</string>
+    <string name="loadPosture1">Posture 1</string>
+    <string name="loadPosture2">Posture 2</string>
+    <string name="log_enable_description">Enables data logging feature to a file. Loggin also requires to create a log file from processing screen</string>
+    <string name="log_file_name_view_label">Log file name:</string>
+    <string name="log_file_name_view_value">Not created</string>
+    <string name="loggingPrefTitle">Enable data logging</string>
+    <string name="logging_feature_view_label">Logging feature setting:</string>
+    <string name="logging_feature_view_value">Off</string>
+    <string name="manage_log_file_title">Select Log file</string>
+    <string name="max_delta">Max Δ</string>
+    <string name="max_delta_cor">Max Δ cor.:</string>
+    <string name="max_delta_sag">Max Δ sag.:</string>
+    <string name="menu_settings">Settings</string>
+    <string name="no_data">No Data</string>
+    <string name="none_found">No new devices found</string>
+    <string name="none_paired">No paired devices</string>
+    <string name="not_selected">Not Selected</string>
+    <string name="persons_height_view_label">Persons height:</string>
+    <string name="posture_reference_activity">Posture Reference Activity</string>
+    <string name="preferences_activity_title">Preferences</string>
+    <string name="processing_state_view_label">Processing state:</string>
+    <string name="processing_state_view_value">Stopped</string>
+    <string name="radio_select_source_label">Select Data Source:</string>
+    <string name="radio_source_bluetooth">Bluetooth</string>
+    <string name="radio_source_file">File</string>
+    <string name="reading_status_:">Reading Status:</string>
+    <string name="save">Save</string>
+    <string name="save_posture_activity">Save Posture</string>
+    <string name="save_posture_img_activity">Save Posture Image</string>
+    <string name="save_state_button_label">Save State</string>
+    <string name="saved_state_view_label"> State Saved</string>
+    <string name="saved_state_view_value"> No</string>
+    <string name="scanning">Scanning</string>
+    <string name="select_bt_device_:">Select BT Device:</string>
+    <string name="select_device">Select Device</string>
+    <string name="select_file">Select File</string>
+    <string name="select_source">Select Data Source</string>
+    <string name="select_source_file">Select Data Source File</string>
+    <string name="selected_file_:">Selected File:</string>
+    <string name="stamp_in_log_button_label">Stamp in Log</string>
+    <string name="start_read">Start Read</string>
+    <string name="statistics_label">Statistics</string>
+    <string name="target_battery_level_:">Target Battery Level:</string>
+    <string name="target_device">Target Device:</string>
+    <string name="test_preference_title">Test Preferences</string>
+    <string name="threshold_view_label">Threshold: </string>
+    <string name="title_activity_bluetooth_connection">Data Source</string>
+    <string name="title_bluetooth_connection">Data Source</string>
+    <string name="title_other_devices">Other Devices</string>
+    <string name="title_paired_devices">Paired devices</string>
+    <string name="title_processing_data">Processing</string>
+    <string name="vibratePrefDescription">Set vibration on feedback</string>
+    <string name="vibratePrefTitle">Feedback Vibrate</string>
+    <string name="vibrate_feedback_view_label">Vibrate feedback:</string>
+    <string name="vibrate_feedback_view_value">Off</string>
+    <!-- From: file:/C:/Users/Richards/Dropbox/EDI/Projekts_Skolioze/Kodi/Repos/SmartWear-AS/core-app/src/main/res/values/styles.xml -->
+    <eat-comment/>
+    <style name="AppTheme" parent="android:Theme.Holo"/>
+    <style name="PrefTheme">
+    	<item name="android:background"> #333333</item>
+    	<item name="android:textColor">#FFFFFF</item>
+    </style>
+</resources>

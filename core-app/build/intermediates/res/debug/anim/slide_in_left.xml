@@ -1,0 +1,5 @@
+
+<set xmlns:android="http://schemas.android.com/apk/res/android">
+    <translate android:fromXDelta="-100%p" android:toXDelta="0" android:duration="100" />
+    
+</set><!-- From: file:/C:/Users/Richards/Dropbox/EDI/Projekts_Skolioze/Kodi/Repos/SmartWear-AS/core-app/src/main/res/anim/slide_in_left.xml -->
